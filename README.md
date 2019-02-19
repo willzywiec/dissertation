@@ -4,17 +4,15 @@ These scripts combine a Bayesian network with a (deep feed forward) neural netwo
 
 Everything is run from **vessel.R**.
 
-Prerequisites
-==========
-MCNP6.2
+## Prerequisites
+MCNP6.2  
 FREYA
 
-R Packages
-==========
-bnlearn
-caret
-graph
-igraph
-keras
-parallel
+## R Packages
+bnlearn  
+caret  
+graph  
+igraph  
+keras  
+parallel  
 scales
