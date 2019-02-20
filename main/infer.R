@@ -10,9 +10,9 @@ Infer <- function(ensemble.size, sample.size, training.directory) {
   # generate sample data
   bn.data <- cpdist(bn, nodes = c('mass', 'mod', 'rad', 'ref', 'dim'), evidence = TRUE, n = sample.size) %>% na.omit()
   bn.data[[1]] <- unlist(bn.data[[1]]) %>% as.character() %>% as.numeric() # mass
-  bn.data[[2]] <- unlist(bn.data[[2]])                   # mod
+  bn.data[[2]] <- unlist(bn.data[[2]]) # mod
   bn.data[[3]] <- unlist(bn.data[[3]]) %>% as.character() %>% as.numeric() # radius
-  bn.data[[4]] <- unlist(bn.data[[4]])                   # ref
+  bn.data[[4]] <- unlist(bn.data[[4]]) # ref
   bn.data[[5]] <- unlist(bn.data[[5]]) %>% as.character() %>% as.numeric() # dim
 
   # tabulate sample data

@@ -287,19 +287,19 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   } else if (ref == 'cs') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  6000.80c  ', -5.00000e-03, ' $ C',
-      '\n\t26054.80c ', -5.82080e-02, ' $ Fe-54',
-      '\n\t26056.80c ', -9.12913e-01, ' $ Fe-56',
-      '\n\t26057.80c ', -2.10940e-02, ' $ Fe-57',
-      '\n\t26058.80c ', -2.78600e-03, ' $ Fe-58',
+      '\nm2  6000.80c  ', -0.005 %>% formatC(, format = 'e', digits = 5), ' $ C',
+      '\n\t26054.80c ', -0.058208 %>% formatC(, format = 'e', digits = 5), ' $ Fe-54',
+      '\n\t26056.80c ', -0.912913 %>% formatC(, format = 'e', digits = 5), ' $ Fe-56',
+      '\n\t26057.80c ', -0.021094 %>% formatC(, format = 'e', digits = 5), ' $ Fe-57',
+      '\n\t26058.80c ', -0.002786 %>% formatC(, format = 'e', digits = 5), ' $ Fe-58',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'cu') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  29063.80c ', -6.91500e-01, ' $ Cu-63',
-      '\n\t29065.80c ', -3.08500e-01, ' $ Cu-65',
+      '\nm2  29063.80c ', -0.6915 %>% formatC(, format = 'e', digits = 5), ' $ Cu-63',
+      '\n\t29065.80c ', -0.3085 %>% formatC(, format = 'e', digits = 5), ' $ Cu-65',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
@@ -323,29 +323,29 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   } else if (ref == 'ss304') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  6000.80c  ', -4.00000e-04, ' $ C',
-      '\n\t14028.80c ', -4.61000e-03, ' $ Si-28',
-      '\n\t14029.80c ', -2.35000e-04, ' $ Si-29',
-      '\n\t14030.80c ', -1.55000e-04, ' $ Si-30',
-      '\n\t15031.80c ', -2.30000e-04, ' $ P',
-      '\n\t16032.80c ', -1.42485e-04, ' $ S-32',
-      '\n\t16033.80c ', -1.12500e-06, ' $ S-33',
-      '\n\t16034.80c ', -6.37500e-06, ' $ S-34',
-      '\n\t16036.80c ', -1.50000e-08, ' $ S-36',
-      '\n\t24050.80c ', -8.25600e-03, ' $ Cr-50',
-      '\n\t24052.80c ', -1.59199e-01, ' $ Cr-52',
-      '\n\t24053.80c ', -9.50100e-02, ' $ Cr-53',
-      '\n\t24054.80c ', -2.36500e-02, ' $ Cr-54',
-      '\n\t25055.80c ', -1.00000e-02, ' $ Mn',
-      '\n\t26054.80c ', -4.10510e-02, ' $ Fe-54',
-      '\n\t26056.80c ', -6.43837e-01, ' $ Fe-56',
-      '\n\t26057.80c ', -1.48770e-02, ' $ Fe-57',
-      '\n\t26058.80c ', -1.96500e-03, ' $ Fe-58',
-      '\n\t28058.80c ', -6.29710e-02, ' $ Ni-58',
-      '\n\t28060.80c ', -2.42560e-02, ' $ Ni-60',
-      '\n\t28061.80c ', -1.05500e-03, ' $ Ni-61',
-      '\n\t28062.80c ', -3.36200e-03, ' $ Ni-62',
-      '\n\t28064.80c ', -8.57000e-04, ' $ Ni-64',
+      '\nm2  6000.80c  ', -0.0004 %>% formatC(, format = 'e', digits = 5), ' $ C',
+      '\n\t14028.80c ', -0.004610 %>% formatC(, format = 'e', digits = 5), ' $ Si-28',
+      '\n\t14029.80c ', -0.000235 %>% formatC(, format = 'e', digits = 5), ' $ Si-29',
+      '\n\t14030.80c ', -0.000155 %>% formatC(, format = 'e', digits = 5), ' $ Si-30',
+      '\n\t15031.80c ', -0.00023 %>% formatC(, format = 'e', digits = 5), ' $ P',
+      '\n\t16032.80c ', -0.000142485 %>% formatC(, format = 'e', digits = 5), ' $ S-32',
+      '\n\t16033.80c ', -0.000001125 %>% formatC(, format = 'e', digits = 5), ' $ S-33',
+      '\n\t16034.80c ', -0.000006375 %>% formatC(, format = 'e', digits = 5), ' $ S-34',
+      '\n\t16036.80c ', -0.000000015 %>% formatC(, format = 'e', digits = 5), ' $ S-36',
+      '\n\t24050.80c ', -0.008256 %>% formatC(, format = 'e', digits = 5), ' $ Cr-50',
+      '\n\t24052.80c ', -0.159199 %>% formatC(, format = 'e', digits = 5), ' $ Cr-52',
+      '\n\t24053.80c ', -0.095010 %>% formatC(, format = 'e', digits = 5), ' $ Cr-53',
+      '\n\t24054.80c ', -0.023650 %>% formatC(, format = 'e', digits = 5), ' $ Cr-54',
+      '\n\t25055.80c ', -0.01 %>% formatC(, format = 'e', digits = 5), ' $ Mn',
+      '\n\t26054.80c ', -0.041051 %>% formatC(, format = 'e', digits = 5), ' $ Fe-54',
+      '\n\t26056.80c ', -0.643837 %>% formatC(, format = 'e', digits = 5), ' $ Fe-56',
+      '\n\t26057.80c ', -0.014877 %>% formatC(, format = 'e', digits = 5), ' $ Fe-57',
+      '\n\t26058.80c ', -0.001965 %>% formatC(, format = 'e', digits = 5), ' $ Fe-58',
+      '\n\t28058.80c ', -0.062971 %>% formatC(, format = 'e', digits = 5), ' $ Ni-58',
+      '\n\t28060.80c ', -0.024256 %>% formatC(, format = 'e', digits = 5), ' $ Ni-60',
+      '\n\t28061.80c ', -0.001055 %>% formatC(, format = 'e', digits = 5), ' $ Ni-61',
+      '\n\t28062.80c ', -0.003362 %>% formatC(, format = 'e', digits = 5), ' $ Ni-62',
+      '\n\t28064.80c ', -0.000857 %>% formatC(, format = 'e', digits = 5), ' $ Ni-64',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
@@ -359,8 +359,8 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   } else if (ref == 'v') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  23050.80c ', -2.50000e-03, ' $ V-50',
-      '\n\t23051.80c ', -9.97500e-01, ' $ V-51',
+      '\nm2  23050.80c ', -0.0025 %>% formatC(, format = 'e', digits = 5), ' $ V-50',
+      '\n\t23051.80c ', -0.9975 %>% formatC(, format = 'e', digits = 5), ' $ V-51',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
@@ -388,23 +388,23 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   if (shape == 'sph') {
     source.cards <- paste0(
       'kcode 10000 1 50 200',
-      '\nksrc  0 0 0  ',
-      source.coord, ' 0 0 ',
-      ' 0 ', source.coord, ' 0 ',
-      ' 0 0 ', source.coord, '  ',
-      -source.coord, ' 0 0 ',
-      ' 0 ', -source.coord, ' 0 ',
-      ' 0 0 ', -source.coord)
+      '\nksrc  0 0 0',
+      '\n\t  ', source.coord, ' 0 0',
+      '\n\t  0 ', source.coord, ' 0',
+      '\n\t  0 0 ', source.coord,
+      '\n\t  ', -source.coord, ' 0 0',
+      '\n\t  0 ', -source.coord, ' 0',
+      '\n\t  0 0 ', -source.coord)
   } else if (shape == 'rcc' || shape == 'rpp') {
     source.cards <- paste0(
       'kcode 10000 1 50 500',
-      '\nksrc  0 0 ', (ht / 2) %>% round(2), '  ',
-      source.coord, ' 0 ', (ht / 2) %>% round(2), ' ',
-      ' 0 ', source.coord, ' ', (ht / 2) %>% round(2), ' ',
-      ' 0 0 ', (5/6 * ht) %>% round(2), '  ',
-      -source.coord, ' 0 ', (ht / 2) %>% round(2), ' ',
-      ' 0 ', -source.coord, ' ', (ht / 2) %>% round(2), ' ',
-      ' 0 0 ', (ht / 6) %>% round(2))
+      '\nksrc  0 0 ', (ht / 2) %>% round(2),
+      '\n\t  ', source.coord, ' 0 ', (ht / 2) %>% round(2),
+      '\n\t  0 ', source.coord, ' ', (ht / 2) %>% round(2),
+      '\n\t  0 0 ', (5/6 * ht) %>% round(2),
+      '\n\t  ', -source.coord, ' 0 ', (ht / 2) %>% round(2),
+      '\n\t  0 ', -source.coord, ' ', (ht / 2) %>% round(2),
+      '\n\t  0 0 ', (ht / 6) %>% round(2))
   }
 
   # write input to file

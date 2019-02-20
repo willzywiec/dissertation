@@ -15,7 +15,7 @@ library(parallel)
 
 # set source and training directories
 source.directory <- 'C:/Users/Will/Dropbox/Dissertation/R'
-training.directory <- 'D:/random_29jan19'
+training.directory <- 'C:/Users/Will/Desktop/test'
 
 # set variables
 ensemble.size <- 1
@@ -28,10 +28,10 @@ source(paste0(source.directory, '/bn.R'))
 source(paste0(source.directory, '/risk.R'))
 
 # build neural network
-# NN(ensemble.size, source.directory, training.directory)
+NN(ensemble.size, source.directory, training.directory)
 
 # build Bayesian network
-BN()
+# BN()
 
 # assess risk
 # Risk(ensemble.size, sample.size, risk.pool, source.directory, training.directory)
