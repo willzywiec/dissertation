@@ -19,7 +19,7 @@ training.directory <- 'D:/random_29jan19'
 
 # set variables
 ensemble.size <- 1
-sample.size <- 1e06
+sample.size <- 1e+06
 risk.pool <- 5
 
 # load functions
