@@ -12,7 +12,7 @@ Subset <- function(training.data) {
 
   if (nrow(training.data) > 1) {
 
-    # one-hot encode data
+    # one-hot encode categorical variables
     dummy <- dummyVars(~., data = training.data)
     training.data <- data.frame(predict(dummy, newdata = training.data))
 
@@ -24,25 +24,26 @@ Subset <- function(training.data) {
     test.data <<- test.data
     training.data <<- training.data
 
-    # subset training data
-    training.df <- training.data[c(-12, -13)]
-    training.df$form <- training.df$form %>% as.factor() %>% as.numeric()
-    training.df$mod <- training.df$mod %>% as.factor() %>% as.numeric()
-    training.df$ref <- training.df$ref %>% as.factor() %>% as.numeric()
-    training.df$shape <- training.df$shape %>% as.factor() %>% as.numeric()
+    # subset data
+    test.df <- test.data[c(-29, -30)]
+    training.df <- training.data[c(-29, -30)]
 
-    # subset test data
-    test.df <- test.data[c(-12, -13)]
-    test.df$form <- test.df$form %>% as.factor() %>% as.numeric()
-    test.df$mod <- test.df$mod %>% as.factor() %>% as.numeric()
-    test.df$ref <- test.df$ref %>% as.factor() %>% as.numeric()
-    test.df$shape <- test.df$shape %>% as.factor() %>% as.numeric()
+    # scale data
+    num <- c(1, 8, 21, 25:28)
+    training.mean <<- apply(training.df[num], 2, mean)
+    training.sd <<- apply(training.df[num], 2, sd)
 
-    # scale training and test data
-    training.mean <<- apply(training.df, 2, mean)
-    training.sd <<- apply(training.df, 2, sd)
-    training.df <<- scale(training.df, center = training.mean, scale = training.sd)
-    test.df <<- scale(test.df, center = training.mean, scale = training.sd)
+    i <- 1 # counter
+
+    while (i < length(num)) {
+      training.df[num[i]] <- scale(training.df[num[i]], center = training.mean[i], scale = training.sd[i])
+      test.df[num[i]] <- scale(test.df[num[i]], center = training.mean[i], scale = training.sd[i])
+      i = i + 1
+    }
+
+    # convert data frames to matrices (Keras requirement)
+    test.df <<- as.matrix(test.df)
+    training.df <<- as.matrix(training.df)
 
   } else {
 

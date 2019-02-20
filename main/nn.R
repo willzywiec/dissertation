@@ -87,7 +87,7 @@ NN <- function(ensemble.size, source.directory, training.directory) {
   for (i in 1:ensemble.size) {
     ensemble.model[[i]] <- load_model_hdf5(hdf5.files[i])
     ensemble.history[[i]] <- Fit(ensemble.model[[i]], batch.size, 100, validation.split, i)
-    svg(filename = paste0('model_', i, '_1.svg')) # save plots
+    svg(filename = paste0('model_', i, '_1.svg')) # save plot
     Plot(ensemble.history[[i]], paste('Model', i))
     dev.off()
   } 
