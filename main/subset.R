@@ -12,6 +12,10 @@ Subset <- function(training.data) {
 
   if (nrow(training.data) > 1) {
 
+    # one-hot encode data
+    dummy <- dummyVars(~., data = training.data)
+    training.data <- data.frame(predict(dummy, newdata = training.data))
+
     # partition data
     training.partition <- createDataPartition(training.data$keff, p = 0.8, list = FALSE)
     test.data <- training.data[-training.partition, ]

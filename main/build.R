@@ -224,8 +224,8 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       '\n\t94240.80c ', (-0.05 * pu.frac) %>% formatC(, format = 'e', digits = 5), ' $ Pu-240')
   } else if (form != 'oxide' && mod == 'none') {
     material.cards <- paste0(
-      'm1  94239.80c ', -0.95, ' $ Pu-239',
-      '\n\t94240.80c ', -0.05, ' $ Pu-240')
+      'm1  94239.80c ', -0.95 %>% formatC(, format = 'e', digits = 5), ' $ Pu-239',
+      '\n\t94240.80c ', -0.05 %>% formatC(, format = 'e', digits = 5), ' $ Pu-240')
   } else if (form == 'oxide' && mod == 'ch2') {
     material.cards <- paste0(
       'm1  1001.80c  ', (-0.143716 * mod.frac) %>% formatC(, format = 'e', digits = 5), ' $ H-1',
@@ -253,9 +253,9 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       '\n\t94240.80c ', (-0.044098 * pu.frac) %>% formatC(, format = 'e', digits = 5), ' $ Pu-240')
   } else if (form == 'oxide' && mod == 'none') {
     material.cards <- paste0(
-      'm1  8016.80c  ', -0.118030, ' $ O-16',
-      '\n\t94239.80c ', -0.837871, ' $ Pu-239',
-      '\n\t94240.80c ', -0.044098, ' $ Pu-240')
+      'm1  8016.80c  ', -0.118030 %>% formatC(, format = 'e', digits = 5), ' $ O-16',
+      '\n\t94239.80c ', -0.837871 %>% formatC(, format = 'e', digits = 5), ' $ Pu-239',
+      '\n\t94240.80c ', -0.044098 %>% formatC(, format = 'e', digits = 5), ' $ Pu-240')
   }
   # materials 2 and 3
   if (ref == 'al') {
@@ -385,9 +385,10 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   source.coord <- (2/3 * rad) %>% round(2)
 
   # build source cards
+  kcode <- 'kcode 10000 1 50 500'
   if (shape == 'sph') {
     source.cards <- paste0(
-      'kcode 10000 1 50 200',
+      kcode,
       '\nksrc  0 0 0',
       '\n\t  ', source.coord, ' 0 0',
       '\n\t  0 ', source.coord, ' 0',
@@ -397,7 +398,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       '\n\t  0 0 ', -source.coord)
   } else if (shape == 'rcc' || shape == 'rpp') {
     source.cards <- paste0(
-      'kcode 10000 1 50 500',
+      kcode,
       '\nksrc  0 0 ', (ht / 2) %>% round(2),
       '\n\t  ', source.coord, ' 0 ', (ht / 2) %>% round(2),
       '\n\t  0 ', source.coord, ' ', (ht / 2) %>% round(2),
@@ -409,8 +410,8 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
 
   # write input to file
   file.name <- paste(gsub(' ', '_', title.card)) 
-  input.deck <- paste(title.card, 'c', cell.cards, surface.cards, material.cards, 'c', source.cards, 'print', sep='\n')
-  write(input.deck, file=paste0(file.name, '.i'))
+  input.deck <- paste(title.card, 'c', cell.cards, surface.cards, material.cards, 'c', source.cards, 'print', sep = '\n')
+  write(input.deck, file = paste0(file.name, '.i'))
 
   # run MCNP
   system(paste0(

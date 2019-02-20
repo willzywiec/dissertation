@@ -51,14 +51,14 @@ Tabulate <- function() {
           ht[i] <- as.numeric(file.name[8])
         }
         if (shape[i] == 'sph') {
-          vol[i] <- 4/3 * pi * rad[i]^3
+          vol[i] <- 4/3 * pi * rad[i]^3 %>% round(5)
         } else if (shape[i] == 'rcc') {
-          vol[i] <- pi * rad[i]^2 * ht[i]
+          vol[i] <- pi * rad[i]^2 * ht[i] %>% round(5)
         } else if (shape[i] == 'rpp') {
-          vol[i] <- rad[i]^2 * ht[i]
+          vol[i] <- rad[i]^2 * ht[i] %>% round(5)
         }
-        conc[i] <- (mass[i] / (vol[i] * 0.001)) %>% signif(6) # concentration (g/L)
-        hd[i] <- ht[i] / (2 * rad[i]) # height:diameter
+        conc[i] <- (mass[i] / (vol[i] * 0.001)) %>% round(5) # concentration (g/L)
+        hd[i] <- (ht[i] / (2 * rad[i])) %>% round(5) # height:diameter
         keff[i] <- as.numeric(output[4]) %>% round(5)
         sd[i] <- as.numeric(output[5]) %>% round(5)
       }

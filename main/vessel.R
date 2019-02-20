@@ -28,7 +28,7 @@ source(paste0(source.directory, '/bn.R'))
 source(paste0(source.directory, '/risk.R'))
 
 # build neural network
-NN(ensemble.size, source.directory, training.directory)
+# NN(ensemble.size, source.directory, training.directory)
 
 # build Bayesian network
 # BN()
