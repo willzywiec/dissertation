@@ -14,7 +14,7 @@ cat('\014')
 library(parallel)
 
 # set source and training directories
-source.directory <- 'C:/Users/Will/Dropbox/Dissertation/R'
+source.directory <- 'C:/Users/Will/Dropbox/Dissertation/R/main'
 training.directory <- 'C:/Users/Will/Desktop/test'
 
 # set variables
