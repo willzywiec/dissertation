@@ -50,12 +50,13 @@ Tabulate <- function() {
         } else {
           ht[i] <- as.numeric(file.name[8])
         }
+        # volume (L)
         if (shape[i] == 'sph') {
-          vol[i] <- 4/3 * pi * rad[i]^3 %>% round(5)
+          vol[i] <- (4/3 * pi * rad[i]^3 * 0.001) %>% round(5)
         } else if (shape[i] == 'rcc') {
-          vol[i] <- pi * rad[i]^2 * ht[i] %>% round(5)
+          vol[i] <- (pi * rad[i]^2 * ht[i] * 0.001) %>% round(5)
         } else if (shape[i] == 'rpp') {
-          vol[i] <- rad[i]^2 * ht[i] %>% round(5)
+          vol[i] <- (rad[i]^2 * ht[i] * 0.001) %>% round(5)
         }
         conc[i] <- (mass[i] / (vol[i] * 0.001)) %>% round(5) # concentration (g/L)
         hd[i] <- (ht[i] / (2 * rad[i])) %>% round(5)

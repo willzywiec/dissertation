@@ -24,7 +24,7 @@ Model <- function(neurons) {
 
   model %>% compile(
     loss = 'mse',
-    optimizer = optimizer_adamax(),
+    optimizer = optimizer_adam(),
     metrics = c('mean_absolute_error'))
 
 }

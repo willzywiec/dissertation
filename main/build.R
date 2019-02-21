@@ -68,7 +68,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
     vol <- rad^2 * ht
   }
 
-  # reset moderator, volume, and radius
+  # reset moderator, volume (cc), and radius (cm)
   if (vol <= pu.mass / pu.density) {
     mod <- 'none'
     vol <- pu.mass / pu.density
@@ -384,7 +384,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       '\nmt2 lwtr.20t')
   }
 
-  # calculate source coordinate
+  # calculate source coordinates
   source.coord <- (2/3 * rad) %>% round(2)
 
   # build source cards
