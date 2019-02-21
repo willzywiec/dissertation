@@ -14,6 +14,7 @@ BN <- function() {
 
   # set arcs
   dag <- empty.graph(nodes = c('operation', 'condition', 'mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht'))
+  #
   dag <- set.arc(dag, from = 'operation', to = 'condition')
   dag <- set.arc(dag, from = 'operation', to = 'mass')
   dag <- set.arc(dag, from = 'operation', to = 'form')
@@ -23,6 +24,7 @@ BN <- function() {
   dag <- set.arc(dag, from = 'operation', to = 'dim')
   dag <- set.arc(dag, from = 'operation', to = 'shape')
   dag <- set.arc(dag, from = 'operation', to = 'ht')
+  #
   dag <- set.arc(dag, from = 'condition', to = 'mass')
   dag <- set.arc(dag, from = 'condition', to = 'form')
   dag <- set.arc(dag, from = 'condition', to = 'mod')

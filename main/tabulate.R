@@ -58,7 +58,7 @@ Tabulate <- function() {
           vol[i] <- rad[i]^2 * ht[i] %>% round(5)
         }
         conc[i] <- (mass[i] / (vol[i] * 0.001)) %>% round(5) # concentration (g/L)
-        hd[i] <- (ht[i] / (2 * rad[i])) %>% round(5) # height:diameter
+        hd[i] <- (ht[i] / (2 * rad[i])) %>% round(5)
         keff[i] <- as.numeric(output[4]) %>% round(5)
         sd[i] <- as.numeric(output[5]) %>% round(5)
       }
