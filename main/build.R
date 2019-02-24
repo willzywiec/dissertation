@@ -161,7 +161,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
     cell.cards <- paste0(
       '1  1 ', -bulk.density %>% Format(), ' -1     imp:n=1',
       '\n2  2 ', -h2o.density %>% Format(), ' +1 -2  imp:n=1',
-      '\n3  0 +2', strrep('  ', 9), ' imp:n=0')
+      '\n3  0 +2', strrep(' ', 18), ' imp:n=0')
     if (shape == 'sph') {
       surface.cards <- paste0(
         '\n1  so  ', rad,
@@ -180,7 +180,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       '1  1 ', -bulk.density %>% Format(), ' -1     imp:n=1',
       '\n2  2 ', -ref.density %>% Format(), ' +1 -2  imp:n=1',
       '\n3  3 ', -h2o.density %>% Format(), ' +2 -3  imp:n=1',
-      '\n4  0 +3', strrep('  ', 9), ' imp:n=0')
+      '\n4  0 +3', strrep(' ', 18), ' imp:n=0')
     if (shape == 'sph') {
       surface.cards <- paste0(
         '\n1  so  ', rad,
