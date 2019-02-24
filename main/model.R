@@ -19,12 +19,18 @@ Model <- function(neurons) {
       units = neurons / 2,
       activation = 'relu') %>%
     layer_dense(
+      units = neurons / 4,
+      activation = 'relu') %>%
+    layer_dense(
+      units = neurons / 8,
+      activation = 'relu') %>%
+    layer_dense(
       units = 1,
       activation = 'linear')
 
   model %>% compile(
     loss = 'mse',
-    optimizer = optimizer_adam(),
+    optimizer = optimizer_adamax(),
     metrics = c('mean_absolute_error'))
 
 }
