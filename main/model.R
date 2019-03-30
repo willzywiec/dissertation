@@ -29,7 +29,7 @@ Model <- function(neurons) {
       activation = 'linear')
 
   model %>% compile(
-    loss = 'mse',
+    loss = 'mean_squared_error',
     optimizer = optimizer_adamax(),
     metrics = c('mean_absolute_error'))
 

@@ -5,16 +5,18 @@
 #
 # ...
 
-Subset <- function(training.data) {
+Subset <- function(data.set) {
 
   # load packages
   library(caret)
 
-  if (nrow(training.data) > 1) {
+  data.set <<- data.set
+
+  if (nrow(data.set) > 1) {
 
     # one-hot encode categorical variables
-    dummy <- dummyVars(~., data = training.data)
-    training.data <- data.frame(predict(dummy, newdata = training.data))
+    dummy <- dummyVars(~., data = data.set)
+    training.data <- data.frame(predict(dummy, newdata = data.set))
 
     # partition data
     training.partition <- createDataPartition(training.data$keff, p = 0.8, list = FALSE)

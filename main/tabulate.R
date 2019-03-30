@@ -9,14 +9,14 @@ Tabulate <- function() {
 
   output.files <- list.files(pattern = '\\.o$')
 
-  # load training data
-  if (file.exists('training_data.csv')) {
+  # load data set
+  if (file.exists('data_set.csv')) {
 
-    training.data <- read.csv('training_data.csv', header = TRUE)
+    data.set <- read.csv('data_set.csv', header = TRUE)
 
-    if (nrow(training.data) >= length(output.files)) {
-      Subset(na.omit(training.data))
-      return(cat('Loaded training_data.csv\n'))
+    if (nrow(data.set) >= length(output.files)) {
+      Subset(na.omit(data.set))
+      return(cat('Loaded data_set.csv\n'))
     }
 
   } 
@@ -26,7 +26,7 @@ Tabulate <- function() {
     mass <- rad <- dim <- ht <- vol <- conc <- hd <- keff <- sd <- numeric()
     form <- mod <- ref <- shape <- character()
 
-    # tabulate training data
+    # tabulate data
     for (i in 1:length(output.files)) {
       if (any(readLines(output.files[i]) %>% grep('final result', .))) {
         output <- readLines(output.files[i]) %>% grep('final result', ., value = TRUE) %>% strsplit('\\s+') %>% unlist()
@@ -50,22 +50,22 @@ Tabulate <- function() {
         } else {
           ht[i] <- as.numeric(file.name[8])
         }
-        # volume (L)
+        # volume (cc)
         if (shape[i] == 'sph') {
-          vol[i] <- (4/3 * pi * rad[i]^3 * 0.001) %>% round(5)
+          vol[i] <- (4/3 * pi * rad[i]^3)
         } else if (shape[i] == 'rcc') {
-          vol[i] <- (pi * rad[i]^2 * ht[i] * 0.001) %>% round(5)
+          vol[i] <- (pi * rad[i]^2 * ht[i])
         } else if (shape[i] == 'rpp') {
-          vol[i] <- (rad[i]^2 * ht[i] * 0.001) %>% round(5)
+          vol[i] <- ((2 * rad[i])^2 * ht[i])
         }
-        conc[i] <- (mass[i] / (vol[i] * 0.001)) %>% round(5) # concentration (g/L)
-        hd[i] <- (ht[i] / (2 * rad[i])) %>% round(5)
-        keff[i] <- as.numeric(output[4]) %>% round(5)
-        sd[i] <- as.numeric(output[5]) %>% round(5)
+        conc[i] <- (mass[i] / vol[i]) # concentration (g/cc)
+        hd[i] <- (ht[i] / (2 * rad[i]))
+        keff[i] <- as.numeric(output[4])
+        sd[i] <- as.numeric(output[5])
       }
     }
 
-    training.data <- data.frame(
+    data.set <- data.frame(
       mass = mass,
       form = form,
       mod = mod,
@@ -80,10 +80,10 @@ Tabulate <- function() {
       keff = keff,
       sd = sd)
 
-    # write training data to file
-    write.csv(training.data, file = 'training_data.csv', row.names = FALSE)
-    Subset(na.omit(training.data))
-    return(cat('Saved training_data.csv\n'))
+    # write data set to file
+    write.csv(data.set, file = 'data_set.csv', row.names = FALSE)
+    Subset(na.omit(data.set))
+    return(cat('Saved data_set.csv\n'))
 
   }
 

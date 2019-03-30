@@ -7,7 +7,7 @@
 
 Fit <- function(model, batch.size, epochs, validation.split, i) {
 
-  early.stop <- callback_early_stopping(monitor = 'val_mean_absolute_error', patience = 500)
+  early.stop <- callback_early_stopping(monitor = 'val_mean_absolute_error', patience = 1000)
 
   if (missing(i)) {
     model %>% fit(

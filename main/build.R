@@ -45,7 +45,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   library(parallel)
 
   # format numbers
-  Format <- function(x) formatC(x, format = 'e', digits = 5)
+  Format <- function(x) formatC(x, format = 'e', digits = 14)
 
   # set Pu mass (g) and density (g/cc)
   if (form == 'alpha') {
@@ -65,7 +65,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   } else if (shape == 'rcc') {
     vol <- pi * rad^2 * ht
   } else if (shape == 'rpp') {
-    vol <- rad^2 * ht
+    vol <- (2 * rad)^2 * ht
   }
 
   # reset moderator, volume (cc), and radius (cm)
@@ -73,11 +73,11 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
     mod <- 'none'
     vol <- pu.mass / pu.density
     if (shape == 'sph') {
-      rad <- (3/4 * vol / pi)^(1/3) %>% round(4)
+      rad <- (3/4 * vol / pi)^(1/3)
     } else if (shape == 'rcc') {
-      rad <- (vol / ht / pi)^(1/3) %>% round(4)
+      rad <- (vol / ht / pi)^(1/2)
     } else if (shape == 'rpp') {
-      rad <- (vol / ht)^(1/2) %>% round(4)
+      rad <- ((vol / ht)^(1/2) / 2)
     }
   }
 
@@ -87,7 +87,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   }
 
   # set polyethylene and water densities (g/cc)
-  ch2.density <- 0.96
+  ch2.density <- 0.965
   h2o.density <- 0.998207
 
   # set moderator density (g/cc)
@@ -161,7 +161,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
     cell.cards <- paste0(
       '1  1 ', -bulk.density %>% Format(), ' -1     imp:n=1',
       '\n2  2 ', -h2o.density %>% Format(), ' +1 -2  imp:n=1',
-      '\n3  0 +2', strrep(' ', 18), 'imp:n=0')
+      '\n3  0 +2', strrep(' ', 27), 'imp:n=0')
     if (shape == 'sph') {
       surface.cards <- paste0(
         '\n1  so  ', rad,
@@ -180,7 +180,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       '1  1 ', -bulk.density %>% Format(), ' -1     imp:n=1',
       '\n2  2 ', -ref.density %>% Format(), ' +1 -2  imp:n=1',
       '\n3  3 ', -h2o.density %>% Format(), ' +2 -3  imp:n=1',
-      '\n4  0 +3', strrep(' ', 18), 'imp:n=0')
+      '\n4  0 +3', strrep(' ', 27), 'imp:n=0')
     if (shape == 'sph') {
       surface.cards <- paste0(
         '\n1  so  ', rad,
@@ -204,61 +204,61 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   if (form != 'oxide' && mod == 'ch2') {
     material.cards <- paste0(
       '\nm1  1001.80c  ', (-0.143716 * mod.frac) %>% Format(), ' $ H-1',
-      '\n    6000.80c  ', (-0.856284 * mod.frac) %>% Format(), ' $ C',
-      '\n    94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n    94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240')
+      '\n\t  6000.80c  ', (-0.856284 * mod.frac) %>% Format(), ' $ C',
+      '\n\t  94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240')
   } else if (form != 'oxide' && mod == 'sepiolite') {
     material.cards <- paste0(
       '\nm1  1001.80c  ', (-0.021782 * mod.frac) %>% Format(), ' $ H-1',
-      '\n    8016.80c  ', (-0.568029 * mod.frac) %>% Format(), ' $ O-16',
-      '\n    12024.80c ', (-0.118555 * mod.frac) %>% Format(), ' $ Mg-24',
-      '\n    12025.80c ', (-0.015007 * mod.frac) %>% Format(), ' $ Mg-25',
-      '\n    12026.80c ', (-0.016508 * mod.frac) %>% Format(), ' $ Mg-26',
-      '\n    14028.80c ', (-0.239830 * mod.frac) %>% Format(), ' $ Si-28',
-      '\n    14029.80c ', (-0.012226 * mod.frac) %>% Format(), ' $ Si-29',
-      '\n    14030.80c ', (-0.008064 * mod.frac) %>% Format(), ' $ Si-30',
-      '\n    94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n    94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240')
+      '\n\t  8016.80c  ', (-0.568029 * mod.frac) %>% Format(), ' $ O-16',
+      '\n\t  12024.80c ', (-0.118555 * mod.frac) %>% Format(), ' $ Mg-24',
+      '\n\t  12025.80c ', (-0.015007 * mod.frac) %>% Format(), ' $ Mg-25',
+      '\n\t  12026.80c ', (-0.016508 * mod.frac) %>% Format(), ' $ Mg-26',
+      '\n\t  14028.80c ', (-0.239830 * mod.frac) %>% Format(), ' $ Si-28',
+      '\n\t  14029.80c ', (-0.012226 * mod.frac) %>% Format(), ' $ Si-29',
+      '\n\t  14030.80c ', (-0.008064 * mod.frac) %>% Format(), ' $ Si-30',
+      '\n\t  94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240')
   } else if (form != 'oxide' && mod == 'h2o') {
     material.cards <- paste0(
       '\nm1  1001.80c  ', (-0.111894 * mod.frac) %>% Format(), ' $ H-1',
-      '\n    8016.80c  ', (-0.888106 * mod.frac) %>% Format(), ' $ O-16',
-      '\n    94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n    94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240')
+      '\n\t  8016.80c  ', (-0.888106 * mod.frac) %>% Format(), ' $ O-16',
+      '\n\t  94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240')
   } else if (form != 'oxide' && mod == 'none') {
     material.cards <- paste0(
       '\nm1  94239.80c ', -0.95 %>% Format(), ' $ Pu-239',
-      '\n    94240.80c ', -0.05 %>% Format(), ' $ Pu-240')
+      '\n\t  94240.80c ', -0.05 %>% Format(), ' $ Pu-240')
   } else if (form == 'oxide' && mod == 'ch2') {
     material.cards <- paste0(
       '\nm1  1001.80c  ', (-0.143716 * mod.frac) %>% Format(), ' $ H-1',
-      '\n    6000.80c  ', (-0.856284 * mod.frac) %>% Format(), ' $ C',
-      '\n    8016.80c  ', (-0.118030 * pu.frac) %>% Format(), ' $ O-16',
-      '\n    94239.80c ', (-0.837871 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n    94240.80c ', (-0.044098 * pu.frac) %>% Format(), ' $ Pu-240')
+      '\n\t  6000.80c  ', (-0.856284 * mod.frac) %>% Format(), ' $ C',
+      '\n\t  8016.80c  ', (-0.118030 * pu.frac) %>% Format(), ' $ O-16',
+      '\n\t  94239.80c ', (-0.837871 * pu.frac) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.044098 * pu.frac) %>% Format(), ' $ Pu-240')
   } else if (form == 'oxide' && mod == 'sepiolite') {
     material.cards <- paste0(
       '\nm1  1001.80c  ', (-0.021782 * mod.frac) %>% Format(), ' $ H-1',
-      '\n    8016.80c  ', (-0.568029 * mod.frac - 0.118030 * pu.frac) %>% Format(), ' $ O-16',
-      '\n    12024.80c ', (-0.118555 * mod.frac) %>% Format(), ' $ Mg-24',
-      '\n    12025.80c ', (-0.015007 * mod.frac) %>% Format(), ' $ Mg-25',
-      '\n    12026.80c ', (-0.016508 * mod.frac) %>% Format(), ' $ Mg-26',
-      '\n    14028.80c ', (-0.239830 * mod.frac) %>% Format(), ' $ Si-28',
-      '\n    14029.80c ', (-0.012226 * mod.frac) %>% Format(), ' $ Si-29',
-      '\n    14030.80c ', (-0.008064 * mod.frac) %>% Format(), ' $ Si-30',
-      '\n    94239.80c ', (-0.837871 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n    94240.80c ', (-0.044098 * pu.frac) %>% Format(), ' $ Pu-240')
+      '\n\t  8016.80c  ', (-0.568029 * mod.frac - 0.118030 * pu.frac) %>% Format(), ' $ O-16',
+      '\n\t  12024.80c ', (-0.118555 * mod.frac) %>% Format(), ' $ Mg-24',
+      '\n\t  12025.80c ', (-0.015007 * mod.frac) %>% Format(), ' $ Mg-25',
+      '\n\t  12026.80c ', (-0.016508 * mod.frac) %>% Format(), ' $ Mg-26',
+      '\n\t  14028.80c ', (-0.239830 * mod.frac) %>% Format(), ' $ Si-28',
+      '\n\t  14029.80c ', (-0.012226 * mod.frac) %>% Format(), ' $ Si-29',
+      '\n\t  14030.80c ', (-0.008064 * mod.frac) %>% Format(), ' $ Si-30',
+      '\n\t  94239.80c ', (-0.837871 * pu.frac) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.044098 * pu.frac) %>% Format(), ' $ Pu-240')
   } else if (form == 'oxide' && mod == 'h2o') {
     material.cards <- paste0(
       '\nm1  1001.80c  ', (-0.111894 * mod.frac) %>% Format(), ' $ H-1',
-      '\n    8016.80c  ', (-0.888106 * mod.frac - 0.118030 * pu.frac) %>% Format(), ' $ O-16',
-      '\n    94239.80c ', (-0.837871 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n    94240.80c ', (-0.044098 * pu.frac) %>% Format(), ' $ Pu-240')
+      '\n\t  8016.80c  ', (-0.888106 * mod.frac - 0.118030 * pu.frac) %>% Format(), ' $ O-16',
+      '\n\t  94239.80c ', (-0.837871 * pu.frac) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.044098 * pu.frac) %>% Format(), ' $ Pu-240')
   } else if (form == 'oxide' && mod == 'none') {
     material.cards <- paste0(
       '\nm1  8016.80c  ', -0.118030 %>% Format(), ' $ O-16',
-      '\n    94239.80c ', -0.837871 %>% Format(), ' $ Pu-239',
-      '\n    94240.80c ', -0.044098 %>% Format(), ' $ Pu-240')
+      '\n\t  94239.80c ', -0.837871 %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', -0.044098 %>% Format(), ' $ Pu-240')
   }
   # materials 2 and 3
   if (ref == 'al') {
@@ -267,7 +267,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       '\nm2  13027.80c +1 $ Al-27',
       '\nmt2 al27.22t',
       '\nm3  1001.80c  +2 $ H-1',
-      '\n    8016.80c  +1 $ O-16',
+      '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'be') {
     material.cards <- paste0(
@@ -275,36 +275,36 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       '\nm2  4009.80c  +1 $ Be-9',
       '\nmt2 be.20t',
       '\nm3  1001.80c  +2 $ H-1',
-      '\n    8016.80c  +1 $ O-16',
+      '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'beo') {
     material.cards <- paste0(
       material.cards,
       '\nm2  4009.80c  +1 $ Be-9',
-      '\n    8016.80c  +1 $ O-16',
+      '\n\t  8016.80c  +1 $ O-16',
       '\nmt2 be-o.20t',
-      '\n    o-be.20t',
+      '\n\t  o-be.20t',
       '\nm3  1001.80c  +2 $ H-1',
-      '\n    8016.80c  +1 $ O-16',
+      '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'cs') {
     material.cards <- paste0(
       material.cards,
       '\nm2  6000.80c  ', -0.005 %>% Format(), ' $ C',
-      '\n    26054.80c ', -0.058208 %>% Format(), ' $ Fe-54',
-      '\n    26056.80c ', -0.912913 %>% Format(), ' $ Fe-56',
-      '\n    26057.80c ', -0.021094 %>% Format(), ' $ Fe-57',
-      '\n    26058.80c ', -0.002786 %>% Format(), ' $ Fe-58',
+      '\n\t  26054.80c ', -0.058208 %>% Format(), ' $ Fe-54',
+      '\n\t  26056.80c ', -0.912913 %>% Format(), ' $ Fe-56',
+      '\n\t  26057.80c ', -0.021094 %>% Format(), ' $ Fe-57',
+      '\n\t  26058.80c ', -0.002786 %>% Format(), ' $ Fe-58',
       '\nm3  1001.80c  +2 $ H-1',
-      '\n    8016.80c  +1 $ O-16',
+      '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'cu') {
     material.cards <- paste0(
       material.cards,
       '\nm2  29063.80c ', -0.6915 %>% Format(), ' $ Cu-63',
-      '\n    29065.80c ', -0.3085 %>% Format(), ' $ Cu-65',
+      '\n\t  29065.80c ', -0.3085 %>% Format(), ' $ Cu-65',
       '\nm3  1001.80c  +2 $ H-1',
-      '\n    8016.80c  +1 $ O-16',
+      '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'c') {
     material.cards <- paste0(
@@ -312,75 +312,75 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       '\nm2  6000.80c  +1 $ C',
       '\nmt2 grph.20t',
       '\nm3  1001.80c  +2 $ H-1',
-      '\n    8016.80c  +1 $ O-16',
+      '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'ch2') {
     material.cards <- paste0(
       material.cards,
       '\nm2  1001.80c  +2 $ H-1',
-      '\n    6000.80c  +1 $ C',
+      '\n\t  6000.80c  +1 $ C',
       '\nmt2 poly.20t',
       '\nm3  1001.80c  +2 $ H-1',
-      '\n    8016.80c  +1 $ O-16',
+      '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'ss304') {
     material.cards <- paste0(
       material.cards,
       '\nm2  6000.80c  ', -0.0004 %>% Format(), ' $ C',
-      '\n    14028.80c ', -0.004610 %>% Format(), ' $ Si-28',
-      '\n    14029.80c ', -0.000235 %>% Format(), ' $ Si-29',
-      '\n    14030.80c ', -0.000155 %>% Format(), ' $ Si-30',
-      '\n    15031.80c ', -0.00023 %>% Format(), ' $ P',
-      '\n    16032.80c ', -0.000142485 %>% Format(), ' $ S-32',
-      '\n    16033.80c ', -0.000001125 %>% Format(), ' $ S-33',
-      '\n    16034.80c ', -0.000006375 %>% Format(), ' $ S-34',
-      '\n    16036.80c ', -0.000000015 %>% Format(), ' $ S-36',
-      '\n    24050.80c ', -0.008256 %>% Format(), ' $ Cr-50',
-      '\n    24052.80c ', -0.159199 %>% Format(), ' $ Cr-52',
-      '\n    24053.80c ', -0.095010 %>% Format(), ' $ Cr-53',
-      '\n    24054.80c ', -0.023650 %>% Format(), ' $ Cr-54',
-      '\n    25055.80c ', -0.01 %>% Format(), ' $ Mn',
-      '\n    26054.80c ', -0.041051 %>% Format(), ' $ Fe-54',
-      '\n    26056.80c ', -0.643837 %>% Format(), ' $ Fe-56',
-      '\n    26057.80c ', -0.014877 %>% Format(), ' $ Fe-57',
-      '\n    26058.80c ', -0.001965 %>% Format(), ' $ Fe-58',
-      '\n    28058.80c ', -0.062971 %>% Format(), ' $ Ni-58',
-      '\n    28060.80c ', -0.024256 %>% Format(), ' $ Ni-60',
-      '\n    28061.80c ', -0.001055 %>% Format(), ' $ Ni-61',
-      '\n    28062.80c ', -0.003362 %>% Format(), ' $ Ni-62',
-      '\n    28064.80c ', -0.000857 %>% Format(), ' $ Ni-64',
+      '\n\t  14028.80c ', -0.004610 %>% Format(), ' $ Si-28',
+      '\n\t  14029.80c ', -0.000235 %>% Format(), ' $ Si-29',
+      '\n\t  14030.80c ', -0.000155 %>% Format(), ' $ Si-30',
+      '\n\t  15031.80c ', -0.00023 %>% Format(), ' $ P',
+      '\n\t  16032.80c ', -0.000142485 %>% Format(), ' $ S-32',
+      '\n\t  16033.80c ', -0.000001125 %>% Format(), ' $ S-33',
+      '\n\t  16034.80c ', -0.000006375 %>% Format(), ' $ S-34',
+      '\n\t  16036.80c ', -0.000000015 %>% Format(), ' $ S-36',
+      '\n\t  24050.80c ', -0.008256 %>% Format(), ' $ Cr-50',
+      '\n\t  24052.80c ', -0.159199 %>% Format(), ' $ Cr-52',
+      '\n\t  24053.80c ', -0.095010 %>% Format(), ' $ Cr-53',
+      '\n\t  24054.80c ', -0.023650 %>% Format(), ' $ Cr-54',
+      '\n\t  25055.80c ', -0.01 %>% Format(), ' $ Mn',
+      '\n\t  26054.80c ', -0.041051 %>% Format(), ' $ Fe-54',
+      '\n\t  26056.80c ', -0.643837 %>% Format(), ' $ Fe-56',
+      '\n\t  26057.80c ', -0.014877 %>% Format(), ' $ Fe-57',
+      '\n\t  26058.80c ', -0.001965 %>% Format(), ' $ Fe-58',
+      '\n\t  28058.80c ', -0.062971 %>% Format(), ' $ Ni-58',
+      '\n\t  28060.80c ', -0.024256 %>% Format(), ' $ Ni-60',
+      '\n\t  28061.80c ', -0.001055 %>% Format(), ' $ Ni-61',
+      '\n\t  28062.80c ', -0.003362 %>% Format(), ' $ Ni-62',
+      '\n\t  28064.80c ', -0.000857 %>% Format(), ' $ Ni-64',
       '\nm3  1001.80c  +2 $ H-1',
-      '\n    8016.80c  +1 $ O-16',
+      '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'ta') {
     material.cards <- paste0(
       material.cards,
       '\nm2  73181.80c +1 $ Ta',
       '\nm3  1001.80c  +2 $ H-1',
-      '\n    8016.80c  +1 $ O-16',
+      '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'v') {
     material.cards <- paste0(
       material.cards,
       '\nm2  23050.80c ', -0.0025 %>% Format(), ' $ V-50',
-      '\n    23051.80c ', -0.9975 %>% Format(), ' $ V-51',
+      '\n\t  23051.80c ', -0.9975 %>% Format(), ' $ V-51',
       '\nm3  1001.80c  +2 $ H-1',
-      '\n    8016.80c  +1 $ O-16',
+      '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'h2o') {
     material.cards <- paste0(
       material.cards,
       '\nm2  1001.80c  +2 $ H-1',
-      '\n    8016.80c  +1 $ O-16',
+      '\n\t  8016.80c  +1 $ O-16',
       '\nmt2 lwtr.20t',
       '\nm3  1001.80c  +2 $ H-1',
-      '\n    8016.80c  +1 $ O-16',
+      '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'none') {
     material.cards <- paste0(
       material.cards,
       '\nm2  1001.80c  +2 $ H-1',
-      '\n    8016.80c  +1 $ O-16',
+      '\n\t  8016.80c  +1 $ O-16',
       '\nmt2 lwtr.20t')
   }
 
@@ -394,22 +394,22 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
     source.cards <- paste0(
       kcode,
       '\nksrc  0 0 0',
-      '\n      ', source.coord, ' 0 0',
-      '\n      0 ', source.coord, ' 0',
-      '\n      0 0 ', source.coord,
-      '\n      ', -source.coord, ' 0 0',
-      '\n      0 ', -source.coord, ' 0',
-      '\n      0 0 ', -source.coord)
+      '\n\t    ', source.coord, ' 0 0',
+      '\n\t    0 ', source.coord, ' 0',
+      '\n\t    0 0 ', source.coord,
+      '\n\t    ', -source.coord, ' 0 0',
+      '\n\t    0 ', -source.coord, ' 0',
+      '\n\t    0 0 ', -source.coord)
   } else if (shape == 'rcc' || shape == 'rpp') {
     source.cards <- paste0(
       kcode,
       '\nksrc  0 0 ', (ht / 2) %>% round(2),
-      '\n      ', source.coord, ' 0 ', (ht / 2) %>% round(2),
-      '\n      0 ', source.coord, ' ', (ht / 2) %>% round(2),
-      '\n      0 0 ', (5/6 * ht) %>% round(2),
-      '\n      ', -source.coord, ' 0 ', (ht / 2) %>% round(2),
-      '\n      0 ', -source.coord, ' ', (ht / 2) %>% round(2),
-      '\n      0 0 ', (ht / 6) %>% round(2))
+      '\n\t    ', source.coord, ' 0 ', (ht / 2) %>% round(2),
+      '\n\t    0 ', source.coord, ' ', (ht / 2) %>% round(2),
+      '\n\t    0 0 ', (5/6 * ht) %>% round(2),
+      '\n\t    ', -source.coord, ' 0 ', (ht / 2) %>% round(2),
+      '\n\t    0 ', -source.coord, ' ', (ht / 2) %>% round(2),
+      '\n\t    0 0 ', (ht / 6) %>% round(2))
   }
 
   # write input to file

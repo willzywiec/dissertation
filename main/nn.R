@@ -39,9 +39,9 @@ NN <- function(ensemble.size, source.directory, training.directory) {
 
     # build and train models
     if (length(hdf5.files) == 0) {
-      if (file.exists('training_data.csv')) {
-        if (nrow(training.data) < deck.size) {
-          Generate(deck.size - nrow(training.data))
+      if (file.exists('data_set.csv')) {
+        if (nrow(data.set) < deck.size) {
+          Generate(deck.size - nrow(data.set))
         }
       } else {
         Generate(deck.size)

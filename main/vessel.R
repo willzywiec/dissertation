@@ -24,7 +24,7 @@ risk.pool <- 5
 
 # load functions
 source(paste0(source.directory, '/nn.R'))
-source(paste0(source.directory, '/bn.R'))
+# source(paste0(source.directory, '/bn.R'))
 source(paste0(source.directory, '/risk.R'))
 
 # build neural network
