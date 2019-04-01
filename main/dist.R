@@ -138,10 +138,34 @@ for (i in 1:6) {
 
 }
 
+for (i in 1:6) {
+  for (j in 1:7) {
+    if (i == 1 && j == 7) {
+      mass[[i]][[j]] <- rep.int(0, 1001)
+    } else if (i == 2) {
+      if (j == 2 || j == 3 || j == 4 || j == 5 || j == 7) {
+        mass[[i]][[j]] <- rep.int(0, 1001)
+      }
+    } else if (i == 3) {
+      if (j == 3 || j == 4 || j == 6 || j == 7) {
+        mass[[i]][[j]] <- rep.int(0, 1001)
+      }
+    } else if (i == 4) {
+      if (j == 3 || j == 4 || j == 5 || j == 6 || j == 7) {
+        mass[[i]][[j]] <- rep.int(0, 1001)
+      }
+    } else if (i == 5) {
+      if (j == 2 || j == 3 || j == 4 || j == 5 || j == 6 || j == 7) {
+        mass[[i]][[j]] <- rep.int(0, 1001)
+      }
+    } else if (i == 6) {
+      if (j == 1 || j == 2 || j == 3 || j == 4 || j == 5 || j == 6) {
+        mass[[i]][[j]] <- rep.int(0, 1001)
+      }
+    }
+  }
+}
+
 mass <- unlist(mass)
-
-setwd('C:/Users/Will/Desktop')
 save(mass, file = 'mass.RData')
-# ?save
-
 # load('mass.RData')
