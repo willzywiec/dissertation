@@ -5,26 +5,25 @@
 #
 # ...
 
-Risk <- function(ensemble.size, sample.size, risk.pool, source.directory, training.directory) {
+Risk <- function(bn, ensemble.size, sample.size, risk.pool, source.directory, training.directory) {
 
   # load functions
   source(paste0(source.directory, '/infer.R'))
 
-  # load risk
   setwd(training.directory)
+
   if (file.exists('risk.csv')) {
     risk <- read.csv('risk.csv')
   } else {
     risk <- data.frame(risk = numeric())
   }
 
-  # assess risk
   if (risk.pool > 0) {
 
     bn.data <- list()
 
     for (i in 1:risk.pool) {
-      bn.data[[i]] <- Infer(ensemble.size, sample.size, training.directory)
+      bn.data[[i]] <- Infer(bn, ensemble.size, sample.size, training.directory)
       risk[nrow(risk) + 1, ] <- mean(bn.data[[i]]$keff > 1.0)
       if (file.exists('risk.csv')) {
         write.csv(bn.data[[i]], file = paste0('bn_', nrow(risk) + i, '.csv'), row.names = FALSE)

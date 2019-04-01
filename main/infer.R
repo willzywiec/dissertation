@@ -5,33 +5,58 @@
 #
 # ...
 
-Infer <- function(ensemble.size, sample.size, training.directory) {
+Infer <- function(bn, ensemble.size, sample.size, training.directory) {
 
-  # generate sample data
-  bn.data <- cpdist(bn, nodes = c('mass', 'mod', 'rad', 'ref', 'dim'), evidence = TRUE, n = sample.size) %>% na.omit()
+  # generate data
+  bn.data <- cpdist(bn, nodes = c('mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht'), evidence = TRUE, n = sample.size) %>% na.omit()
   bn.data[[1]] <- unlist(bn.data[[1]]) %>% as.character() %>% as.numeric() # mass
-  bn.data[[2]] <- unlist(bn.data[[2]]) # mod
-  bn.data[[3]] <- unlist(bn.data[[3]]) %>% as.character() %>% as.numeric() # radius
-  bn.data[[4]] <- unlist(bn.data[[4]]) # ref
-  bn.data[[5]] <- unlist(bn.data[[5]]) %>% as.character() %>% as.numeric() # dim
+  bn.data[[2]] <- unlist(bn.data[[2]])                                     # form
+  bn.data[[3]] <- unlist(bn.data[[3]])                                     # mod
+  bn.data[[4]] <- unlist(bn.data[[4]]) %>% as.character() %>% as.numeric() # rad
+  bn.data[[5]] <- unlist(bn.data[[5]])                                     # ref
+  bn.data[[6]] <- unlist(bn.data[[6]]) %>% as.character() %>% as.numeric() # dim
+  bn.data[[7]] <- unlist(bn.data[[7]])                                     # shape
+  bn.data[[8]] <- unlist(bn.data[[8]]) %>% as.character() %>% as.numeric() # ht
 
-  # tabulate sample data
-  conc <- numeric()
+  vol <- conc <- hd <- numeric()
 
+  # tabulate data
   for (i in 1:nrow(bn.data)) {
-    if (bn.data[i, 1] == 0) {
-      conc[i] <- 0
-    } else {
-      conc[i] <- (bn.data[i, 1] / (4/3 * pi * bn.data[i, 3]^3 * 0.001)) %>% round(2)
+
+  	# dim (cm)
+    if (bn.data$ref[i] == 'none') {
+      bn.data$dim[i] <- 0
     }
+
+    # ht (cm)
+    if (bn.data$shape[i] == 'sph') {
+      bn.data$ht[i] <- 2 * bn.data$rad[i]
+    }
+
+    # vol (cc)
+    if (bn.data$shape[i] == 'sph') {
+      vol[i] <- (4/3 * pi * bn.data$rad[i]^3)
+    } else if (bn.data$shape[i] == 'rcc') {
+      vol[i] <- (pi * bn.data$rad[i]^2 * bn.data$ht[i])
+    } else if (bn.data$shape[i] == 'rpp') {
+      vol[i] <- ((2 * bn.data$rad[i])^2 * bn.data$ht[i])
+    }
+
+    conc[i] <- (bn.data$mass[i] / vol[i]) # conc (g/cc)
+    hd[i] <- (bn.data$ht[i] / (2 * bn.data$rad[i])) # h:d
+
   }
 
+  bn.data$vol <- vol
   bn.data$conc <- conc
+  bn.data$hd <- hd
 
-  # scale sample data
+  # scale data
   bn.df <- bn.data
-  bn.df[[2]] <- bn.df[[2]] %>% as.factor() %>% as.numeric() # mod
-  bn.df[[4]] <- bn.df[[4]] %>% as.factor() %>% as.numeric() # ref
+  bn.df[[2]] <- bn.df[[2]] %>% as.factor() %>% as.numeric() # form
+  bn.df[[3]] <- bn.df[[3]] %>% as.factor() %>% as.numeric() # mod
+  bn.df[[5]] <- bn.df[[5]] %>% as.factor() %>% as.numeric() # ref
+  bn.df[[7]] <- bn.df[[7]] %>% as.factor() %>% as.numeric() # shape
   bn.df <- scale(bn.df, center = training.mean, scale = training.sd)
 
   # infer keff

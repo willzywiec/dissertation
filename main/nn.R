@@ -31,7 +31,7 @@ NN <- function(ensemble.size, source.directory, training.directory) {
   setwd(paste0(training.directory, '/hdf5'))
   hdf5.files <- list.files(pattern = '\\.h5$')
 
-  # load training data
+  # load data
   setwd(training.directory)
   Tabulate()
     

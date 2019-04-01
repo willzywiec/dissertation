@@ -22,7 +22,7 @@ Generate <- function(deck.size) {
     Build(mass[i], form[i], mod[i], rad[i], ref[i], dim[i], shape[i], ht[i])
   }
 
-  # tabulate output files
+  # tabulate data
   Tabulate()
 
 }

@@ -34,4 +34,4 @@ NN(ensemble.size, source.directory, training.directory)
 # BN()
 
 # assess risk
-# Risk(ensemble.size, sample.size, risk.pool, source.directory, training.directory)
+# Risk(bn, ensemble.size, sample.size, risk.pool, source.directory, training.directory)
