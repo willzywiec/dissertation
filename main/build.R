@@ -7,37 +7,37 @@
 #
 # model parameters
 # ----------------
-# mass:        Pu mass (95% Pu-239, 5% Pu-240)
+# mass:  Pu mass (95% Pu-239, 5% Pu-240)
 #
-# form:        alpha-phase Pu metal
-#              delta-phase Pu metal
-#              Pu oxide
+# form:  alpha-phase Pu metal
+#        delta-phase Pu metal
+#        Pu oxide
 #
-# mod(erator): polyethylene
-#              sepiolite
-#              water
+# mod:   polyethylene
+#        sepiolite
+#        water
 #
-# rad(ius):    radius (cm)
+# rad:   radius (cm)
 #
-# ref(lector): aluminum
-#              beryllium
-#              beryllium oxide
-#              carbon steel
-#              copper
-#              graphite
-#              polyethylene
-#              stainless steel 304
-#              tantalum
-#              vanadium
-#              water
+# ref:   aluminum
+#        beryllium
+#        beryllium oxide
+#        carbon steel
+#        copper
+#        graphite
+#        polyethylene
+#        stainless steel 304
+#        tantalum
+#        vanadium
+#        water
 #
-# dim(ension): reflector thickness (cm)
+# dim:   reflector thickness (cm)
 #
-# shape:       sphere
-#              cylinder
-#              rectangular prism
+# shape: sphere
+#        cylinder
+#        rectangular prism
 #
-# h(eigh)t:    cylinder or rectangular prism height (cm)
+# ht:    cylinder or rectangular prism height (cm)
 
 Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
 
