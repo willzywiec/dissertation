@@ -75,7 +75,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   } else if (form == 'delta') {
     pu.mass <- mass
     pu.density <- 15.9
-  } else if (form == 'oxide') {
+  } else if (form == 'puo2') {
     pu.mass <- mass
     pu.density <- 11.5
   }
@@ -107,21 +107,26 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
     ref <- 'none'
   }
 
-  # set polyethylene and water densities (g/cc)
+  # set densities (g/cc)
+  al2o3.density <- 3.97
+  be.density <- 1.848
+  beo.density <- 3.01
+  graphite.density <- 1.7
+  mgo.density <- 3.58
   ch2.density <- 0.965
   h2o.density <- 0.998207
 
   # set moderator density (g/cc)
   if (mod == 'al2o3') {
-    mod.density <- 3.97
+    mod.density <- al2o3.density
   } else if (mod == 'be') {
-    mod.density <- 1.848
+    mod.density <- be.density
   } else if (mod == 'beo') {
-    mod.density <- 3.01
-  } else if (mod == 'c') {
-    mod.density <- 1.7
+    mod.density <- beo.density
+  } else if (mod == 'graphite') {
+    mod.density <- graphite.density
   } else if (mod == 'mgo') {
-    mod.density <- 3.58
+    mod.density <- mgo.density
   } else if (mod == 'ch2') {
     mod.density <- ch2.density
   } else if (mod == 'sepiolite') {
@@ -138,11 +143,11 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   if (ref == 'al') {
     ref.density <- 2.6989
   } else if (ref == 'al2o3') {
-    ref.density <- 3.97
+    ref.density <- al2o3.density
   } else if (ref == 'be') {
-    ref.density <- 1.848
+    ref.density <- be.density
   } else if (ref == 'beo') {
-    ref.density <- 3.01
+    ref.density <- beo.density
   } else if (ref == 'cs') {
     ref.density <- 7.82
   } else if (ref == 'cu') {
@@ -151,14 +156,14 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
     ref.density <- 19.0
   } else if (ref == 'granite') {
     ref.density <- 2.69
-  } else if (ref == 'c') {
-    ref.density <- 1.7
+  } else if (ref == 'graphite') {
+    ref.density <- graphite.density
   } else if (ref == 'fe') {
     ref.density <- 7.874
   } else if (ref == 'pb') {
     ref.density <- 11.35
   } else if (ref == 'mgo') {
-    ref.density <- 3.58
+    ref.density <- mgo.density
   } else if (ref == 'mo') {
     ref.density <- 10.22
   } else if (ref == 'ni') {
@@ -194,9 +199,9 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   # calculate bulk density (g/cc)
   bulk.density <- (pu.mass + mod.mass) / vol
 
-  # calculate fractional mass (g)
-  pu.frac <- pu.mass / bulk.mass
-  mod.frac <- mod.mass / bulk.mass
+  # calculate weighted mass fraction
+  pu.wt <- pu.mass / bulk.mass
+  mod.wt <- mod.mass / bulk.mass
 
   # calculate reflector dimensions (cm)
   ref.rad <- rad + dim
@@ -258,154 +263,154 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
 
   # build material cards
   # material 1
-  if (form != 'oxide' && mod == 'al2o3') {
+  if (form != 'puo2' && mod == 'al2o3') {
     material.cards <- paste0(
-      '\nm1  8016.80c  ', (-0.470679444984350 * mod.frac) %>% Format(), ' $ O-16',
-      '\n\t  13027.80c ', (-0.529320555015650 * mod.frac) %>% Format(), ' $ Al-27',
-      '\n\t  94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240',
+      '\nm1  8016.80c  ', (-4.70679444984350e-01 * mod.wt) %>% Format(), ' $ O-16',
+      '\n\t  13027.80c ', (-5.29320555015650e-01 * mod.wt) %>% Format(), ' $ Al-27',
+      '\n\t  94239.80c ', (-0.95 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.05 * pu.wt) %>% Format(), ' $ Pu-240',
       '\nmt1 al27.22t')
-  } else if (form != 'oxide' && mod == 'be') {
+  } else if (form != 'puo2' && mod == 'be') {
     material.cards <- paste0(
-      '\nm1  4009.80c  ', (-mod.frac) %>% Format(), ' $ Be-9',
-      '\n\t  94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240',
+      '\nm1  4009.80c  ', (-mod.wt) %>% Format(), ' $ Be-9',
+      '\n\t  94239.80c ', (-0.95 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.05 * pu.wt) %>% Format(), ' $ Pu-240',
       '\nmt1 be.20t')
-  } else if (form != 'oxide' && mod == 'beo') {
+  } else if (form != 'puo2' && mod == 'beo') {
     material.cards <- paste0(
-      '\nm1  4009.80c  ', (-0.360384984537289 * mod.frac) %>% Format(), ' $ Be-9',
-      '\n\t  8016.80c  ', (-0.639615015462711 * mod.frac) %>% Format(), ' $ O-16',
-      '\n\t  94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240',
+      '\nm1  4009.80c  ', (-3.60384984537289e-01 * mod.wt) %>% Format(), ' $ Be-9',
+      '\n\t  8016.80c  ', (-6.39615015462711e-01 * mod.wt) %>% Format(), ' $ O-16',
+      '\n\t  94239.80c ', (-0.95 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.05 * pu.wt) %>% Format(), ' $ Pu-240',
       '\nmt1 be-o.20t',
       '\n\t  o-be.20t')
-  } else if (form != 'oxide' && mod == 'c') {
+  } else if (form != 'puo2' && mod == 'graphite') {
     material.cards <- paste0(
-      '\nm1  6000.80c  ', (-mod.frac) %>% Format(), ' $ C',
-      '\n\t  94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240',
+      '\nm1  6000.80c  ', (-mod.wt) %>% Format(), ' $ C',
+      '\n\t  94239.80c ', (-0.95 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.05 * pu.wt) %>% Format(), ' $ Pu-240',
       '\nmt1 grph.20t')
-  } else if (form != 'oxide' && mod == 'mgo') {
+  } else if (form != 'puo2' && mod == 'mgo') {
     material.cards <- paste0(
-      '\nm1  8016.80c  ', (-0.396896476983704 * mod.frac) %>% Format(), ' $ O-16',
-      '\n\t  12024.80c ', (-0.470119114481253 * mod.frac) %>% Format(), ' $ Mg-24',
-      '\n\t  12025.80c ', (-0.061999647279889 * mod.frac) %>% Format(), ' $ Mg-25',
-      '\n\t  12026.80c ', (-0.070984761255154 * mod.frac) %>% Format(), ' $ Mg-26',
-      '\n\t  94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240')
-  } else if (form != 'oxide' && mod == 'ch2') {
+      '\nm1  8016.80c  ', (-3.96896476983704e-01 * mod.wt) %>% Format(), ' $ O-16',
+      '\n\t  12024.80c ', (-4.70119114481253e-01 * mod.wt) %>% Format(), ' $ Mg-24',
+      '\n\t  12025.80c ', (-6.19996472798894e-02 * mod.wt) %>% Format(), ' $ Mg-25',
+      '\n\t  12026.80c ', (-7.09847612551540e-02 * mod.wt) %>% Format(), ' $ Mg-26',
+      '\n\t  94239.80c ', (-0.95 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.05 * pu.wt) %>% Format(), ' $ Pu-240')
+  } else if (form != 'puo2' && mod == 'ch2') {
     material.cards <- paste0(
-      '\nm1  1001.80c  ', (-0.143701457933504 * mod.frac) %>% Format(), ' $ H-1',
-      '\n\t  6000.80c  ', (-0.856298542066496 * mod.frac) %>% Format(), ' $ C',
-      '\n\t  94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240')
-  } else if (form != 'oxide' && mod == 'sepiolite') {
+      '\nm1  1001.80c  ', (-1.43701457933504e-01 * mod.wt) %>% Format(), ' $ H-1',
+      '\n\t  6000.80c  ', (-8.56298542066496e-01 * mod.wt) %>% Format(), ' $ C',
+      '\n\t  94239.80c ', (-0.95 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.05 * pu.wt) %>% Format(), ' $ Pu-240')
+  } else if (form != 'puo2' && mod == 'sepiolite') {
     material.cards <- paste0(
-      '\nm1  1001.80c  ', (-0.021782911128634 * mod.frac) %>% Format(), ' $ H-1',
-      '\n\t  8016.80c  ', (-0.567953140203876 * mod.frac) %>% Format(), ' $ O-16',
-      '\n\t  12024.80c ', (-0.116997161651148 * mod.frac) %>% Format(), ' $ Mg-24',
-      '\n\t  12025.80c ', (-0.015429669910621 * mod.frac) %>% Format(), ' $ Mg-25',
-      '\n\t  12026.80c ', (-0.017665768805213 * mod.frac) %>% Format(), ' $ Mg-26',
-      '\n\t  14028.80c ', (-0.239030664873055 * mod.frac) %>% Format(), ' $ Si-28',
-      '\n\t  14029.80c ', (-0.012569673547392 * mod.frac) %>% Format(), ' $ Si-29',
-      '\n\t  14030.80c ', (-0.008571009880061 * mod.frac) %>% Format(), ' $ Si-30',
-      '\n\t  94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240')
-  } else if (form != 'oxide' && mod == 'sio2') {
+      '\nm1  1001.80c  ', (-2.17829111286340e-02 * mod.wt) %>% Format(), ' $ H-1',
+      '\n\t  8016.80c  ', (-5.67953140203876e-01 * mod.wt) %>% Format(), ' $ O-16',
+      '\n\t  12024.80c ', (-1.16997161651148e-01 * mod.wt) %>% Format(), ' $ Mg-24',
+      '\n\t  12025.80c ', (-1.54296699106214e-02 * mod.wt) %>% Format(), ' $ Mg-25',
+      '\n\t  12026.80c ', (-1.76657688052133e-02 * mod.wt) %>% Format(), ' $ Mg-26',
+      '\n\t  14028.80c ', (-2.39030664873055e-01 * mod.wt) %>% Format(), ' $ Si-28',
+      '\n\t  14029.80c ', (-1.25696735473918e-02 * mod.wt) %>% Format(), ' $ Si-29',
+      '\n\t  14030.80c ', (-8.57100988006093e-03 * mod.wt) %>% Format(), ' $ Si-30',
+      '\n\t  94239.80c ', (-0.95 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.05 * pu.wt) %>% Format(), ' $ Pu-240')
+  } else if (form != 'puo2' && mod == 'sio2') {
     material.cards <- paste0(
-      '\nm1  8016.80c  ', (-0.532481915390405 * mod.frac) %>% Format(), ' $ O-16',
-      '\n\t  14028.80c ', (-0.429529075105271 * mod.frac) %>% Format(), ' $ Si-28',
-      '\n\t  14029.80c ', (-0.022587228530087 * mod.frac) %>% Format(), ' $ Si-29',
-      '\n\t  14030.80c ', (-0.015401780974236 * mod.frac) %>% Format(), ' $ Si-30',
-      '\n\t  94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240',
+      '\nm1  8016.80c  ', (-5.32481915390405e-01 * mod.wt) %>% Format(), ' $ O-16',
+      '\n\t  14028.80c ', (-4.29529075105271e-01 * mod.wt) %>% Format(), ' $ Si-28',
+      '\n\t  14029.80c ', (-2.25872285300873e-02 * mod.wt) %>% Format(), ' $ Si-29',
+      '\n\t  14030.80c ', (-1.54017809742357e-02 * mod.wt) %>% Format(), ' $ Si-30',
+      '\n\t  94239.80c ', (-0.95 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.05 * pu.wt) %>% Format(), ' $ Pu-240',
       '\nmt1 sio2.30t')
-  } else if (form != 'oxide' && mod == 'h2o') {
+  } else if (form != 'puo2' && mod == 'h2o') {
     material.cards <- paste0(
-      '\nm1  1001.80c  ', (-0.111914873272364 * mod.frac) %>% Format(), ' $ H-1',
-      '\n\t  8016.80c  ', (-0.888085126727636 * mod.frac) %>% Format(), ' $ O-16',
-      '\n\t  94239.80c ', (-0.95 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.05 * pu.frac) %>% Format(), ' $ Pu-240')
-  } else if (form != 'oxide' && mod == 'none') {
+      '\nm1  1001.80c  ', (-1.11914873272364e-01 * mod.wt) %>% Format(), ' $ H-1',
+      '\n\t  8016.80c  ', (-8.88085126727636e-01 * mod.wt) %>% Format(), ' $ O-16',
+      '\n\t  94239.80c ', (-0.95 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-0.05 * pu.wt) %>% Format(), ' $ Pu-240')
+  } else if (form != 'puo2' && mod == 'none') {
     material.cards <- paste0(
-      '\nm1  94239.80c ', -0.95 %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', -0.05 %>% Format(), ' $ Pu-240')
-  } else if (form == 'oxide' && mod == 'al2o3') {
+      '\nm1  94239.80c ', -0.95, ' $ Pu-239',
+      '\n\t  94240.80c ', -0.05, ' $ Pu-240')
+  } else if (form == 'puo2' && mod == 'al2o3') {
     material.cards <- paste0(
-      '\nm1  8016.80c  ', (-0.470679444984350 * mod.frac - 0.118003643801257 * pu.frac) %>% Format(), ' $ O-16',
-      '\n\t  13027.80c ', (-0.529320555015650 * mod.frac) %>% Format(), ' $ Al-27',
-      '\n\t  94239.80c ', (-0.837896538388806 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.044099817809937 * pu.frac) %>% Format(), ' $ Pu-240',
+      '\nm1  8016.80c  ', (-4.70679444984350e-01 * mod.wt - 1.18003643801257e-01 * pu.wt) %>% Format(), ' $ O-16',
+      '\n\t  13027.80c ', (-5.29320555015650e-01 * mod.wt) %>% Format(), ' $ Al-27',
+      '\n\t  94239.80c ', (-8.37896538388806e-01 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-4.40998178099372e-02 * pu.wt) %>% Format(), ' $ Pu-240',
       '\nmt1 al27.22t')
-  } else if (form == 'oxide' && mod == 'be') {
+  } else if (form == 'puo2' && mod == 'be') {
     material.cards <- paste0(
-      '\nm1  4009.80c  ', (-mod.frac) %>% Format(), ' $ Be-9',
-      '\n\t  8016.80c  ', (-0.118003643801257 * pu.frac) %>% Format(), ' $ O-16',
-      '\n\t  94239.80c ', (-0.837896538388806 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.044099817809937 * pu.frac) %>% Format(), ' $ Pu-240',
+      '\nm1  4009.80c  ', (-mod.wt) %>% Format(), ' $ Be-9',
+      '\n\t  8016.80c  ', (-1.18003643801257e-01 * pu.wt) %>% Format(), ' $ O-16',
+      '\n\t  94239.80c ', (-8.37896538388806e-01 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-4.40998178099372e-02 * pu.wt) %>% Format(), ' $ Pu-240',
       '\nmt1 be.20t')
-  } else if (form == 'oxide' && mod == 'beo') {
+  } else if (form == 'puo2' && mod == 'beo') {
     material.cards <- paste0(
-      '\nm1  4009.80c  ', (-0.360384984537289 * mod.frac) %>% Format(), ' $ Be-9',
-      '\n\t  8016.80c  ', (-0.639615015462711 * mod.frac - 0.118003643801257 * pu.frac) %>% Format(), ' $ O-16',
-      '\n\t  94239.80c ', (-0.837896538388806 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.044099817809937 * pu.frac) %>% Format(), ' $ Pu-240',
+      '\nm1  4009.80c  ', (-3.60384984537289e-01 * mod.wt) %>% Format(), ' $ Be-9',
+      '\n\t  8016.80c  ', (-6.39615015462711e-01 * mod.wt - 1.18003643801257e-01 * pu.wt) %>% Format(), ' $ O-16',
+      '\n\t  94239.80c ', (-8.37896538388806e-01 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-4.40998178099372e-02 * pu.wt) %>% Format(), ' $ Pu-240',
       '\nmt1 be-o.20t',
       '\n\t  o-be.20t')
-  } else if (form == 'oxide' && mod == 'c') {
+  } else if (form == 'puo2' && mod == 'graphite') {
     material.cards <- paste0(
-      '\nm1  6000.80c  ', (-mod.frac) %>% Format(), ' $ C',
-      '\n\t  8016.80c  ', (-0.118003643801257 * pu.frac) %>% Format(), ' $ O-16',
-      '\n\t  94239.80c ', (-0.837896538388806 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.044099817809937 * pu.frac) %>% Format(), ' $ Pu-240',
+      '\nm1  6000.80c  ', (-mod.wt) %>% Format(), ' $ C',
+      '\n\t  8016.80c  ', (-1.18003643801257e-01 * pu.wt) %>% Format(), ' $ O-16',
+      '\n\t  94239.80c ', (-8.37896538388806e-01 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-4.40998178099372e-02 * pu.wt) %>% Format(), ' $ Pu-240',
       '\nmt1 grph.20t')
-  } else if (form == 'oxide' && mod == 'mgo') {
+  } else if (form == 'puo2' && mod == 'mgo') {
     material.cards <- paste0(
-      '\nm1  8016.80c  ', (-0.396896476983704 * mod.frac - 0.118003643801257 * pu.frac) %>% Format(), ' $ O-16',
-      '\n\t  12024.80c ', (-0.470119114481253 * mod.frac) %>% Format(), ' $ Mg-24',
-      '\n\t  12025.80c ', (-0.061999647279889 * mod.frac) %>% Format(), ' $ Mg-25',
-      '\n\t  12026.80c ', (-0.070984761255154 * mod.frac) %>% Format(), ' $ Mg-26',
-      '\n\t  94239.80c ', (-0.837896538388806 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.044099817809937 * pu.frac) %>% Format(), ' $ Pu-240')
-  } else if (form == 'oxide' && mod == 'ch2') {
+      '\nm1  8016.80c  ', (-3.96896476983704e-01 * mod.wt - 1.18003643801257e-01 * pu.wt) %>% Format(), ' $ O-16',
+      '\n\t  12024.80c ', (-4.70119114481253e-01 * mod.wt) %>% Format(), ' $ Mg-24',
+      '\n\t  12025.80c ', (-6.19996472798894e-02 * mod.wt) %>% Format(), ' $ Mg-25',
+      '\n\t  12026.80c ', (-7.09847612551540e-02 * mod.wt) %>% Format(), ' $ Mg-26',
+      '\n\t  94239.80c ', (-8.37896538388806e-01 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-4.40998178099372e-02 * pu.wt) %>% Format(), ' $ Pu-240')
+  } else if (form == 'puo2' && mod == 'ch2') {
     material.cards <- paste0(
-      '\nm1  1001.80c  ', (-0.143701457933504 * mod.frac) %>% Format(), ' $ H-1',
-      '\n\t  6000.80c  ', (-0.856298542066496 * mod.frac) %>% Format(), ' $ C',
-      '\n\t  8016.80c  ', (-0.118003643801257 * pu.frac) %>% Format(), ' $ O-16',
-      '\n\t  94239.80c ', (-0.837896538388806 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.044099817809937 * pu.frac) %>% Format(), ' $ Pu-240')
-  } else if (form == 'oxide' && mod == 'sepiolite') {
+      '\nm1  1001.80c  ', (-1.43701457933504e-01 * mod.wt) %>% Format(), ' $ H-1',
+      '\n\t  6000.80c  ', (-8.56298542066496e-01 * mod.wt) %>% Format(), ' $ C',
+      '\n\t  8016.80c  ', (-1.18003643801257e-01 * pu.wt) %>% Format(), ' $ O-16',
+      '\n\t  94239.80c ', (-8.37896538388806e-01 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-4.40998178099372e-02 * pu.wt) %>% Format(), ' $ Pu-240')
+  } else if (form == 'puo2' && mod == 'sepiolite') {
     material.cards <- paste0(
-      '\nm1  1001.80c  ', (-0.021782911128634 * mod.frac) %>% Format(), ' $ H-1',
-      '\n\t  8016.80c  ', (-0.567953140203876 * mod.frac - 0.118003643801257 * pu.frac) %>% Format(), ' $ O-16',
-      '\n\t  12024.80c ', (-0.116997161651148 * mod.frac) %>% Format(), ' $ Mg-24',
-      '\n\t  12025.80c ', (-0.015429669910621 * mod.frac) %>% Format(), ' $ Mg-25',
-      '\n\t  12026.80c ', (-0.017665768805213 * mod.frac) %>% Format(), ' $ Mg-26',
-      '\n\t  14028.80c ', (-0.239030664873055 * mod.frac) %>% Format(), ' $ Si-28',
-      '\n\t  14029.80c ', (-0.012569673547392 * mod.frac) %>% Format(), ' $ Si-29',
-      '\n\t  14030.80c ', (-0.008571009880061 * mod.frac) %>% Format(), ' $ Si-30',
-      '\n\t  94239.80c ', (-0.837896538388806 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.044099817809937 * pu.frac) %>% Format(), ' $ Pu-240')
-  } else if (form == 'oxide' && mod = 'sio2') {
+      '\nm1  1001.80c  ', (-2.17829111286340e-02 * mod.wt) %>% Format(), ' $ H-1',
+      '\n\t  8016.80c  ', (-5.67953140203876e-01 * mod.wt - 1.18003643801257e-01 * pu.wt) %>% Format(), ' $ O-16',
+      '\n\t  12024.80c ', (-1.16997161651148e-01 * mod.wt) %>% Format(), ' $ Mg-24',
+      '\n\t  12025.80c ', (-1.54296699106214e-02 * mod.wt) %>% Format(), ' $ Mg-25',
+      '\n\t  12026.80c ', (-1.76657688052133e-02 * mod.wt) %>% Format(), ' $ Mg-26',
+      '\n\t  14028.80c ', (-2.39030664873055e-01 * mod.wt) %>% Format(), ' $ Si-28',
+      '\n\t  14029.80c ', (-1.25696735473918e-02 * mod.wt) %>% Format(), ' $ Si-29',
+      '\n\t  14030.80c ', (-8.57100988006093e-03 * mod.wt) %>% Format(), ' $ Si-30',
+      '\n\t  94239.80c ', (-8.37896538388806e-01 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-4.40998178099372e-02 * pu.wt) %>% Format(), ' $ Pu-240')
+  } else if (form == 'puo2' && mod == 'sio2') {
     material.cards <- paste0(
-      '\nm1  8016.80c  ', (-0.532481915390405 * mod.frac - 0.118003643801257 * pu.frac) %>% Format(), ' $ O-16',
-      '\n\t  14028.80c ', (-0.429529075105271 * mod.frac) %>% Format(), ' $ Si-28',
-      '\n\t  14029.80c ', (-0.022587228530087 * mod.frac) %>% Format(), ' $ Si-29',
-      '\n\t  14030.80c ', (-0.015401780974236 * mod.frac) %>% Format(), ' $ Si-30',
-      '\n\t  94239.80c ', (-0.837896538388806 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.044099817809937 * pu.frac) %>% Format(), ' $ Pu-240',
+      '\nm1  8016.80c  ', (-5.32481915390405e-01 * mod.wt - 1.18003643801257e-01 * pu.wt) %>% Format(), ' $ O-16',
+      '\n\t  14028.80c ', (-4.29529075105271e-01 * mod.wt) %>% Format(), ' $ Si-28',
+      '\n\t  14029.80c ', (-2.25872285300873e-02 * mod.wt) %>% Format(), ' $ Si-29',
+      '\n\t  14030.80c ', (-1.54017809742357e-02 * mod.wt) %>% Format(), ' $ Si-30',
+      '\n\t  94239.80c ', (-8.37896538388806e-01 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-4.40998178099372e-02 * pu.wt) %>% Format(), ' $ Pu-240',
       '\nmt1 sio2.30t')
-  } else if (form == 'oxide' && mod == 'h2o') {
+  } else if (form == 'puo2' && mod == 'h2o') {
     material.cards <- paste0(
-      '\nm1  1001.80c  ', (-0.111914873272364 * mod.frac) %>% Format(), ' $ H-1',
-      '\n\t  8016.80c  ', (-0.888085126727636 * mod.frac - 0.118003643801257 * pu.frac) %>% Format(), ' $ O-16',
-      '\n\t  94239.80c ', (-0.837896538388806 * pu.frac) %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', (-0.044099817809937 * pu.frac) %>% Format(), ' $ Pu-240')
-  } else if (form == 'oxide' && mod == 'none') {
+      '\nm1  1001.80c  ', (-1.11914873272364e-01 * mod.wt) %>% Format(), ' $ H-1',
+      '\n\t  8016.80c  ', (-8.88085126727636e-01 * mod.wt - 1.18003643801257e-01 * pu.wt) %>% Format(), ' $ O-16',
+      '\n\t  94239.80c ', (-8.37896538388806e-01 * pu.wt) %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', (-4.40998178099372e-02 * pu.wt) %>% Format(), ' $ Pu-240')
+  } else if (form == 'puo2' && mod == 'none') {
     material.cards <- paste0(
-      '\nm1  8016.80c  ', -0.118003643801257 %>% Format(), ' $ O-16',
-      '\n\t  94239.80c ', -0.837896538388806 %>% Format(), ' $ Pu-239',
-      '\n\t  94240.80c ', -0.044099817809937 %>% Format(), ' $ Pu-240')
+      '\nm1  8016.80c  ', -1.18003643801257e-01 %>% Format(), ' $ O-16',
+      '\n\t  94239.80c ', -8.37896538388806e-01 %>% Format(), ' $ Pu-239',
+      '\n\t  94240.80c ', -4.40998178099372e-02 %>% Format(), ' $ Pu-240')
   }
   # materials 2 and 3
   if (ref == 'al') {
@@ -437,11 +442,11 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   } else if (ref == 'cs') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  6000.80c  ', -0.005 %>% Format(), ' $ C',
-      '\n\t  26054.80c ', -0.056173304750445 %>% Format(), ' $ Fe-54',
-      '\n\t  26056.80c ', -0.914420210917578 %>% Format(), ' $ Fe-56',
-      '\n\t  26057.80c ', -0.021495667713236 %>% Format(), ' $ Fe-57',
-      '\n\t  26058.80c ', -0.002910816618742 %>% Format(), ' $ Fe-58',
+      '\nm2  6000.80c  ', -0.005000 %>% Format(), ' $ C',
+      '\n\t  26054.80c ', -5.61733047504445e-02 %>% Format(), ' $ Fe-54',
+      '\n\t  26056.80c ', -9.14420210917578e-01 %>% Format(), ' $ Fe-56',
+      '\n\t  26057.80c ', -2.14956677132355e-02 %>% Format(), ' $ Fe-57',
+      '\n\t  26058.80c ', -2.91081661874234e-03 %>% Format(), ' $ Fe-58',
       '\nmt2 fe56.22t',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
@@ -449,8 +454,8 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   } else if (ref == 'cu') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  29063.80c ', -0.684994320997273 %>% Format(), ' $ Cu-63',
-      '\n\t  29065.80c ', -0.315005679002727 %>% Format(), ' $ Cu-65',
+      '\nm2  29063.80c ', -6.84994320997273e-01 %>% Format(), ' $ Cu-63',
+      '\n\t  29065.80c ', -3.15005679002727e-01 %>% Format(), ' $ Cu-65',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
@@ -468,43 +473,43 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       material.cards,
       '\nm2  8016.80c  ', -0.484170 %>% Format(), ' $ O-16',
       '\n\t  11023.80c ', -0.027328 %>% Format(), ' $ Na-23',
-      '\n\t  12024.80c ', -0.003331582420948 %>% Format(), ' $ Mg-24',
-      '\n\t  12025.80c ', -0.000439371488246 %>% Format(), ' $ Mg-25',
-      '\n\t  12026.80c ', -0.000503046090806 %>% Format(), ' $ Mg-26',
+      '\n\t  12024.80c ', -3.33158242094796e-03 %>% Format(), ' $ Mg-24',
+      '\n\t  12025.80c ', -4.39371488246284e-04 %>% Format(), ' $ Mg-25',
+      '\n\t  12026.80c ', -5.03046090805758e-04 %>% Format(), ' $ Mg-26',
       '\n\t  13027.80c ', -0.076188 %>% Format(), ' $ Al-27',
-      '\n\t  14028.80c ', -0.308852992862601 %>% Format(), ' $ Si-28',
-      '\n\t  14029.80c ', -0.016241352533072 %>% Format(), ' $ Si-29',
-      '\n\t  14030.80c ', -0.011074654604327 %>% Format(), ' $ Si-30',
-      '\n\t  19039.80c ', -0.031732430608360 %>% Format(), ' $ K-39',
-      '\n\t  19040.80c ', -0.000004083300164 %>% Format(), ' $ K-40',
-      '\n\t  19041.80c ', -0.002407486091477 %>% Format(), ' $ K-41',
-      '\n\t  20040.80c ', -0.012550978892157 %>% Format(), ' $ Ca-40',
-      '\n\t  20042.80c ', -0.000087952138170 %>% Format(), ' $ Ca-42',
-      '\n\t  20043.80c ', -0.000018789123381 %>% Format(), ' $ Ca-43',
-      '\n\t  20044.80c ', -0.000297632447849 %>% Format(), ' $ Ca-44',
-      '\n\t  20046.80c ', -0.000000595526857 %>% Format(), ' $ Ca-46',
-      '\n\t  20048.80c ', -0.000029051871586 %>% Format(), ' $ Ca-48',
-      '\n\t  22046.80c ', -0.000142165708671 %>% Format(), ' $ Ti-46',
-      '\n\t  22047.80c ', -0.000130995193080 %>% Format(), ' $ Ti-47',
-      '\n\t  22048.80c ', -0.001325518688734 %>% Format(), ' $ Ti-48',
-      '\n\t  22049.80c ', -0.000099302819952 %>% Format(), ' $ Ti-49',
-      '\n\t  22050.80c ', -0.000097017589562 %>% Format(), ' $ Ti-50',
+      '\n\t  14028.80c ', -3.08852992862601e-01 %>% Format(), ' $ Si-28',
+      '\n\t  14029.80c ', -1.62413525330718e-02 %>% Format(), ' $ Si-29',
+      '\n\t  14030.80c ', -1.10746546043271e-02 %>% Format(), ' $ Si-30',
+      '\n\t  19039.80c ', -3.17324306083595e-02 %>% Format(), ' $ K-39',
+      '\n\t  19040.80c ', -4.08330016373087e-06 %>% Format(), ' $ K-40',
+      '\n\t  19041.80c ', -2.40748609147673e-03 %>% Format(), ' $ K-41',
+      '\n\t  20040.80c ', -1.25509788921567e-02 %>% Format(), ' $ Ca-40',
+      '\n\t  20042.80c ', -8.79521381703543e-05 %>% Format(), ' $ Ca-42',
+      '\n\t  20043.80c ', -1.87891233810042e-05 %>% Format(), ' $ Ca-43',
+      '\n\t  20044.80c ', -2.97632447849203e-04 %>% Format(), ' $ Ca-44',
+      '\n\t  20046.80c ', -5.95526856619387e-07 %>% Format(), ' $ Ca-46',
+      '\n\t  20048.80c ', -2.90518715861230e-05 %>% Format(), ' $ Ca-48',
+      '\n\t  22046.80c ', -1.42165708671302e-04 %>% Format(), ' $ Ti-46',
+      '\n\t  22047.80c ', -1.30995193080019e-04 %>% Format(), ' $ Ti-47',
+      '\n\t  22048.80c ', -1.32551868873429e-03 %>% Format(), ' $ Ti-48',
+      '\n\t  22049.80c ', -9.93028199522752e-05 %>% Format(), ' $ Ti-49',
+      '\n\t  22050.80c ', -9.70175895621157e-05 %>% Format(), ' $ Ti-50',
       '\n\t  25055.80c ', -0.000387 %>% Format(), ' $ Mn-55',
-      '\n\t  26054.80c ', -0.001216900084317 %>% Format(), ' $ Fe-54',
-      '\n\t  26056.80c ', -0.019809374518923 %>% Format(), ' $ Fe-56',
-      '\n\t  26057.80c ', -0.000465667454833 %>% Format(), ' $ Fe-57',
-      '\n\t  26058.80c ', -0.000063057941927 %>% Format(), ' $ Fe-58',
-      '\n\t  82204.80c ', -0.000013835961232 %>% Format(), ' $ Pb-204',
-      '\n\t  82206.80c ', -0.000240513219140 %>% Format(), ' $ Pb-206',
-      '\n\t  82207.80c ', -0.000221625930181 %>% Format(), ' $ Pb-207',
-      '\n\t  82208.80c ', -0.000528024889447 %>% Format(), ' $ Pb-208',
+      '\n\t  26054.80c ', -1.21690008431742e-03 %>% Format(), ' $ Fe-54',
+      '\n\t  26056.80c ', -1.98093745189230e-02 %>% Format(), ' $ Fe-56',
+      '\n\t  26057.80c ', -4.65667454832955e-04 %>% Format(), ' $ Fe-57',
+      '\n\t  26058.80c ', -6.30579419266243e-05 %>% Format(), ' $ Fe-58',
+      '\n\t  82204.80c ', -1.38359612318662e-05 %>% Format(), ' $ Pb-204',
+      '\n\t  82206.80c ', -2.40513219139613e-04 %>% Format(), ' $ Pb-206',
+      '\n\t  82207.80c ', -2.21625930181222e-04 %>% Format(), ' $ Pb-207',
+      '\n\t  82208.80c ', -5.28024889447298e-04 %>% Format(), ' $ Pb-208',
       '\nmt2 al27.22t',
       '\n\t  sio2.30t',
       '\n\t  fe56.22t',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
-  } else if (ref == 'c') {
+  } else if (ref == 'graphite') {
     material.cards <- paste0(
       material.cards,
       '\nm2  6000.80c  +1 $ C',
@@ -515,54 +520,54 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   } else if (ref == 'fe') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  26054.80c ', -0.056455582663763 %>% Format(), ' $ Fe-54',
-      '\n\t  26056.80c ', -0.919015287354349 %>% Format(), ' $ Fe-56',
-      '\n\t  26057.80c ', -0.021603686143955 %>% Format(), ' $ Fe-57',
-      '\n\t  26058.80c ', -0.002925443837932 %>% Format(), ' $ Fe-58',
+      '\nm2  26054.80c ', -5.64555826637633e-02 %>% Format(), ' $ Fe-54',
+      '\n\t  26056.80c ', -9.19015287354349e-01 %>% Format(), ' $ Fe-56',
+      '\n\t  26057.80c ', -2.16036861439553e-02 %>% Format(), ' $ Fe-57',
+      '\n\t  26058.80c ', -2.92544383793200e-03 %>% Format(), ' $ Fe-58',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'pb') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  82204.80c ', -0.013780837880345 %>% Format(), ' $ Pb-204',
-      '\n\t  82206.80c ', -0.239554999143041 %>% Format(), ' $ Pb-206',
-      '\n\t  82207.80c ', -0.220742958347831 %>% Format(), ' $ Pb-207',
-      '\n\t  82208.80c ', -0.525921204628783 %>% Format(), ' $ Pb-208',
+      '\nm2  82204.80c ', -1.37808378803449e-02 %>% Format(), ' $ Pb-204',
+      '\n\t  82206.80c ', -2.39554999143041e-01 %>% Format(), ' $ Pb-206',
+      '\n\t  82207.80c ', -2.20742958347831e-01 %>% Format(), ' $ Pb-207',
+      '\n\t  82208.80c ', -5.25921204628783e-01 %>% Format(), ' $ Pb-208',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'mgo') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  8016.80c  ', -0.396896476983704 %>% Format(), ' $ O-16',
-      '\n\t  12024.80c ', -0.470119114481253 %>% Format(), ' $ Mg-24',
-      '\n\t  12025.80c ', -0.061999647279889 %>% Format(), ' $ Mg-25',
-      '\n\t  12026.80c ', -0.070984761255154 %>% Format(), ' $ Mg-26',
+      '\nm2  8016.80c  ', -3.96896476983704e-01 %>% Format(), ' $ O-16',
+      '\n\t  12024.80c ', -4.70119114481253e-01 %>% Format(), ' $ Mg-24',
+      '\n\t  12025.80c ', -6.19996472798894e-02 %>% Format(), ' $ Mg-25',
+      '\n\t  12026.80c ', -7.09847612551540e-02 %>% Format(), ' $ Mg-26',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'mo') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  42092.80c ', -0.142174367179782 %>% Format(), ' $ Mo-92',
-      '\n\t  42094.80c ', -0.090546269858174 %>% Format(), ' $ Mo-94',
-      '\n\t  42095.80c ', -0.157498244126087 %>% Format(), ' $ Mo-95',
-      '\n\t  42096.80c ', -0.166753727400932 %>% Format(), ' $ Mo-96',
-      '\n\t  42097.80c ', -0.096470347105727 %>% Format(), ' $ Mo-97',
-      '\n\t  42098.80c ', -0.246265576821488 %>% Format(), ' $ Mo-98',
-      '\n\t  42100.80c ', -0.100291467507811 %>% Format(), ' $ Mo-100',
+      '\nm2  42092.80c ', -1.42174367179782e-01 %>% Format(), ' $ Mo-92',
+      '\n\t  42094.80c ', -9.05462698581737e-02 %>% Format(), ' $ Mo-94',
+      '\n\t  42095.80c ', -1.57498244126087e-01 %>% Format(), ' $ Mo-95',
+      '\n\t  42096.80c ', -1.66753727400932e-01 %>% Format(), ' $ Mo-96',
+      '\n\t  42097.80c ', -9.64703471057269e-02 %>% Format(), ' $ Mo-97',
+      '\n\t  42098.80c ', -2.46265576821488e-01 %>% Format(), ' $ Mo-98',
+      '\n\t  42100.80c ', -1.00291467507811e-01 %>% Format(), ' $ Mo-100',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'ni') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  28058.80c ', -0.671977983510585 %>% Format(), ' $ Ni-58',
-      '\n\t  28060.80c ', -0.267758585123918 %>% Format(), ' $ Ni-60',
-      '\n\t  28061.80c ', -0.011834627961568 %>% Format(), ' $ Ni-61',
-      '\n\t  28062.80c ', -0.038342943616493 %>% Format(), ' $ Ni-62',
-      '\n\t  28064.80c ', -0.010085859787437 %>% Format(), ' $ Ni-64',
+      '\nm2  28058.80c ', -6.71977983510585e-01 %>% Format(), ' $ Ni-58',
+      '\n\t  28060.80c ', -2.67758585123918e-01 %>% Format(), ' $ Ni-60',
+      '\n\t  28061.80c ', -1.18346279615680e-02 %>% Format(), ' $ Ni-61',
+      '\n\t  28062.80c ', -3.83429436164925e-02 %>% Format(), ' $ Ni-62',
+      '\n\t  28064.80c ', -1.00858597874365e-02 %>% Format(), ' $ Ni-64',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
@@ -576,12 +581,12 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   } else if (ref == 'pt') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  78190.80c ', -0.000136327092879 %>% Format(), ' $ Pt-190',
-      '\n\t  78192.80c ', -0.007695059389973 %>% Format(), ' $ Pt-192',
-      '\n\t  78194.80c ', -0.327785500043873 %>% Format(), ' $ Pt-194',
-      '\n\t  78195.80c ', -0.338123997074903 %>% Format(), ' $ Pt-195',
-      '\n\t  78196.80c ', -0.253567915304668 %>% Format(), ' $ Pt-196',
-      '\n\t  78198.80c ', -0.072691201093703 %>% Format(), ' $ Pt-198',
+      '\nm2  78190.80c ', -1.36327092879217e-04 %>% Format(), ' $ Pt-190',
+      '\n\t  78192.80c ', -7.69505938997349e-03 %>% Format(), ' $ Pt-192',
+      '\n\t  78194.80c ', -3.27785500043873e-01 %>% Format(), ' $ Pt-194',
+      '\n\t  78195.80c ', -3.38123997074903e-01 %>% Format(), ' $ Pt-195',
+      '\n\t  78196.80c ', -2.53567915304668e-01 %>% Format(), ' $ Pt-196',
+      '\n\t  78198.80c ', -7.26912010937033e-02 %>% Format(), ' $ Pt-198',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
@@ -597,29 +602,29 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   } else if (ref == 'ss304') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  6000.80c  ', -0.0004 %>% Format(), ' $ C',
-      '\n\t  14028.80c ', -0.004593716149654 %>% Format(), ' $ Si-28',
-      '\n\t  14029.80c ', -0.000241565292057 %>% Format(), ' $ Si-29',
-      '\n\t  14030.80c ', -0.000164718558290 %>% Format(), ' $ Si-30',
-      '\n\t  15031.80c ', -0.00023 %>% Format(), ' $ P',
-      '\n\t  16032.80c ', -0.000142151263010 %>% Format(), ' $ S-32',
-      '\n\t  16033.80c ', -0.000001157082575 %>% Format(), ' $ S-33',
-      '\n\t  16034.80c ', -0.000006691373913 %>% Format(), ' $ S-34',
-      '\n\t  16036.80c ', -0.000000000280502 %>% Format(), ' $ S-36',
-      '\n\t  24050.80c ', -0.007930004478798 %>% Format(), ' $ Cr-50',
-      '\n\t  24052.80c ', -0.159028788463595 %>% Format(), ' $ Cr-52',
-      '\n\t  24053.80c ', -0.018379815049073 %>% Format(), ' $ Cr-53',
-      '\n\t  24054.80c ', -0.004661392008534 %>% Format(), ' $ Cr-54',
-      '\n\t  25055.80c ', -0.01 %>% Format(), ' $ Mn',
-      '\n\t  26054.80c ', -0.039616576022643 %>% Format(), ' $ Fe-54',
-      '\n\t  26056.80c ', -0.644900597595167 %>% Format(), ' $ Fe-56',
-      '\n\t  26057.80c ', -0.015159954677798 %>% Format(), ' $ Fe-57',
-      '\n\t  26058.80c ', -0.002052871704392 %>% Format(), ' $ Fe-58',
-      '\n\t  28058.80c ', -0.062157963474729 %>% Format(), ' $ Ni-58',
-      '\n\t  28060.80c ', -0.024767669123962 %>% Format(), ' $ Ni-60',
-      '\n\t  28061.80c ', -0.001094703086445 %>% Format(), ' $ Ni-61',
-      '\n\t  28062.80c ', -0.003546722284526 %>% Format(), ' $ Ni-62',
-      '\n\t  28064.80c ', -0.000932942030338 %>% Format(), ' $ Ni-64',
+      '\nm2  6000.80c  ', -0.000400 %>% Format(), ' $ C',
+      '\n\t  14028.80c ', -4.59371614965391e-03 %>% Format(), ' $ Si-28',
+      '\n\t  14029.80c ', -2.41565292056552e-04 %>% Format(), ' $ Si-29',
+      '\n\t  14030.80c ', -1.64718558289537e-04 %>% Format(), ' $ Si-30',
+      '\n\t  15031.80c ', -0.000230 %>% Format(), ' $ P-31',
+      '\n\t  16032.80c ', -1.42151263009614e-04 %>% Format(), ' $ S-32',
+      '\n\t  16033.80c ', -1.15708257503575e-06 %>% Format(), ' $ S-33',
+      '\n\t  16034.80c ', -6.69137391313452e-06 %>% Format(), ' $ S-34',
+      '\n\t  16036.80c ', -2.80502215984187e-10 %>% Format(), ' $ S-36',
+      '\n\t  24050.80c ', -7.93000447879800e-03 %>% Format(), ' $ Cr-50',
+      '\n\t  24052.80c ', -1.59028788463595e-01 %>% Format(), ' $ Cr-52',
+      '\n\t  24053.80c ', -1.83798150490731e-02 %>% Format(), ' $ Cr-53',
+      '\n\t  24054.80c ', -4.66139200853358e-03 %>% Format(), ' $ Cr-54',
+      '\n\t  25055.80c ', -0.010000 %>% Format(), ' $ Mn-55',
+      '\n\t  26054.80c ', -3.96165760226426e-02 %>% Format(), ' $ Fe-54',
+      '\n\t  26056.80c ', -6.44900597595167e-01 %>% Format(), ' $ Fe-56',
+      '\n\t  26057.80c ', -1.51599546777977e-02 %>% Format(), ' $ Fe-57',
+      '\n\t  26058.80c ', -2.05287170439202e-03 %>% Format(), ' $ Fe-58',
+      '\n\t  28058.80c ', -6.21579634747292e-02 %>% Format(), ' $ Ni-58',
+      '\n\t  28060.80c ', -2.47676691239624e-02 %>% Format(), ' $ Ni-60',
+      '\n\t  28061.80c ', -1.09470308644504e-03 %>% Format(), ' $ Ni-61',
+      '\n\t  28062.80c ', -3.54672228452556e-03 %>% Format(), ' $ Ni-62',
+      '\n\t  28064.80c ', -9.32942030337874e-04 %>% Format(), ' $ Ni-64',
       '\nmt2 fe56.22t',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
@@ -627,29 +632,29 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   } else if (ref == 'ss304L') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  6000.80c  ', -0.00015 %>% Format(), ' $ C',
-      '\n\t  14028.80c ', -0.004593716149654 %>% Format(), ' $ Si-28',
-      '\n\t  14029.80c ', -0.000241565292057 %>% Format(), ' $ Si-29',
-      '\n\t  14030.80c ', -0.000164718558290 %>% Format(), ' $ Si-30',
-      '\n\t  15031.80c ', -0.00023 %>% Format(), ' $ P',
-      '\n\t  16032.80c ', -0.000142151263010 %>% Format(), ' $ S-32',
-      '\n\t  16033.80c ', -0.000001157082575 %>% Format(), ' $ S-33',
-      '\n\t  16034.80c ', -0.000006691373913 %>% Format(), ' $ S-34',
-      '\n\t  16036.80c ', -0.000000000280502 %>% Format(), ' $ S-36',
-      '\n\t  24050.80c ', -0.007930004478798 %>% Format(), ' $ Cr-50',
-      '\n\t  24052.80c ', -0.159028788463595 %>% Format(), ' $ Cr-52',
-      '\n\t  24053.80c ', -0.018379815049073 %>% Format(), ' $ Cr-53',
-      '\n\t  24054.80c ', -0.004661392008534 %>% Format(), ' $ Cr-54',
-      '\n\t  25055.80c ', -0.01 %>% Format(), ' $ Mn',
-      '\n\t  26054.80c ', -0.039616576022643 %>% Format(), ' $ Fe-54',
-      '\n\t  26056.80c ', -0.644900597595167 %>% Format(), ' $ Fe-56',
-      '\n\t  26057.80c ', -0.015159954677798 %>% Format(), ' $ Fe-57',
-      '\n\t  26058.80c ', -0.002052871704392 %>% Format(), ' $ Fe-58',
-      '\n\t  28058.80c ', -0.067197798351059 %>% Format(), ' $ Ni-58',
-      '\n\t  28060.80c ', -0.026775858512392 %>% Format(), ' $ Ni-60',
-      '\n\t  28061.80c ', -0.001183462796157 %>% Format(), ' $ Ni-61',
-      '\n\t  28062.80c ', -0.003834294361649 %>% Format(), ' $ Ni-62',
-      '\n\t  28064.80c ', -0.001008585978744 %>% Format(), ' $ Ni-64',
+      '\nm2  6000.80c  ', -0.000150 %>% Format(), ' $ C',
+      '\n\t  14028.80c ', -4.59371614965391e-03 %>% Format(), ' $ Si-28',
+      '\n\t  14029.80c ', -2.41565292056552e-04 %>% Format(), ' $ Si-29',
+      '\n\t  14030.80c ', -1.64718558289537e-04 %>% Format(), ' $ Si-30',
+      '\n\t  15031.80c ', -0.000230 %>% Format(), ' $ P-31',
+      '\n\t  16032.80c ', -1.42151263009614e-04 %>% Format(), ' $ S-32',
+      '\n\t  16033.80c ', -1.15708257503575e-06 %>% Format(), ' $ S-33',
+      '\n\t  16034.80c ', -6.69137391313452e-06 %>% Format(), ' $ S-34',
+      '\n\t  16036.80c ', -2.80502215984187e-10 %>% Format(), ' $ S-36',
+      '\n\t  24050.80c ', -7.93000447879800e-03 %>% Format(), ' $ Cr-50',
+      '\n\t  24052.80c ', -1.59028788463595e-01 %>% Format(), ' $ Cr-52',
+      '\n\t  24053.80c ', -1.83798150490731e-02 %>% Format(), ' $ Cr-53',
+      '\n\t  24054.80c ', -4.66139200853358e-03 %>% Format(), ' $ Cr-54',
+      '\n\t  25055.80c ', -0.010000 %>% Format(), ' $ Mn-55',
+      '\n\t  26054.80c ', -3.92072730483303e-02 %>% Format(), ' $ Fe-54',
+      '\n\t  26056.80c ', -6.38237736761848e-01 %>% Format(), ' $ Fe-56',
+      '\n\t  26057.80c ', -1.50033279532540e-02 %>% Format(), ' $ Fe-57',
+      '\n\t  26058.80c ', -2.03166223656702e-03 %>% Format(), ' $ Fe-58',
+      '\n\t  28058.80c ', -6.71977983510585e-02 %>% Format(), ' $ Ni-58',
+      '\n\t  28060.80c ', -2.67758585123918e-02 %>% Format(), ' $ Ni-60',
+      '\n\t  28061.80c ', -1.18346279615680e-03 %>% Format(), ' $ Ni-61',
+      '\n\t  28062.80c ', -3.83429436164925e-03 %>% Format(), ' $ Ni-62',
+      '\n\t  28064.80c ', -1.00858597874365e-03 %>% Format(), ' $ Ni-64',
       '\nmt2 fe56.22t',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
@@ -657,36 +662,36 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   } else if (ref == 'ss316') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  6000.80c  ', -0.00041 %>% Format(), ' $ C',
-      '\n\t  14028.80c ', -0.004658028175749 %>% Format(), ' $ Si-28',
-      '\n\t  14029.80c ', -0.000244947206145 %>% Format(), ' $ Si-29',
-      '\n\t  14030.80c ', -0.000167024618106 %>% Format(), ' $ Si-30',
-      '\n\t  15031.80c ', -0.00023 %>% Format(), ' $ P',
-      '\n\t  16032.80c ', -0.000142151263010 %>% Format(), ' $ S-32',
-      '\n\t  16033.80c ', -0.000001157082575 %>% Format(), ' $ S-33',
-      '\n\t  16034.80c ', -0.000006691373913 %>% Format(), ' $ S-34',
-      '\n\t  16036.80c ', -0.000000000280502 %>% Format(), ' $ S-36',
-      '\n\t  24050.80c ', -0.007095267165240 %>% Format(), ' $ Cr-50',
-      '\n\t  24052.80c ', -0.142288915993743 %>% Format(), ' $ Cr-52',
-      '\n\t  24053.80c ', -0.016445097675486 %>% Format(), ' $ Cr-53',
-      '\n\t  24054.80c ', -0.004170719165530 %>% Format(), ' $ Cr-54',
-      '\n\t  25055.80c ', -0.01014 %>% Format(), ' $ Mn',
-      '\n\t  26054.80c ', -0.037768784802058 %>% Format(), ' $ Fe-54',
-      '\n\t  26056.80c ', -0.614821227240060 %>% Format(), ' $ Fe-56',
-      '\n\t  26057.80c ', -0.014452866030306 %>% Format(), ' $ Fe-57',
-      '\n\t  26058.80c ', -0.001957121927577 %>% Format(), ' $ Fe-58',
-      '\n\t  28058.80c ', -0.080637358021270 %>% Format(), ' $ Ni-58',
-      '\n\t  28060.80c ', -0.032131030214870 %>% Format(), ' $ Ni-60',
-      '\n\t  28061.80c ', -0.001420155355388 %>% Format(), ' $ Ni-61',
-      '\n\t  28062.80c ', -0.004601153233979 %>% Format(), ' $ Ni-62',
-      '\n\t  28064.80c ', -0.001210303174492 %>% Format(), ' $ Ni-64',
-      '\n\t  42092.80c ', -0.003554359179495 %>% Format(), ' $ Mo-92',
-      '\n\t  42094.80c ', -0.002263656746454 %>% Format(), ' $ Mo-94',
-      '\n\t  42095.80c ', -0.003937456103152 %>% Format(), ' $ Mo-95',
-      '\n\t  42096.80c ', -0.004168843185023 %>% Format(), ' $ Mo-96',
-      '\n\t  42097.80c ', -0.002411758677643 %>% Format(), ' $ Mo-97',
-      '\n\t  42098.80c ', -0.006156639420537 %>% Format(), ' $ Mo-98',
-      '\n\t  42100.80c ', -0.002507286687695 %>% Format(), ' $ Mo-100',
+      '\nm2  6000.80c  ', -0.000410 %>% Format(), ' $ C',
+      '\n\t  14028.80c ', -4.65802817574907e-03 %>% Format(), ' $ Si-28',
+      '\n\t  14029.80c ', -2.44947206145344e-04 %>% Format(), ' $ Si-29',
+      '\n\t  14030.80c ', -1.67024618105591e-04 %>% Format(), ' $ Si-30',
+      '\n\t  15031.80c ', -0.000230 %>% Format(), ' $ P-31',
+      '\n\t  16032.80c ', -1.42151263009614e-04 %>% Format(), ' $ S-32',
+      '\n\t  16033.80c ', -1.15708257503575e-06 %>% Format(), ' $ S-33',
+      '\n\t  16034.80c ', -6.69137391313452e-06 %>% Format(), ' $ S-34',
+      '\n\t  16036.80c ', -2.80502215984187e-10 %>% Format(), ' $ S-36',
+      '\n\t  24050.80c ', -7.09526716524032e-03 %>% Format(), ' $ Cr-50',
+      '\n\t  24052.80c ', -1.42288915993743e-01 %>% Format(), ' $ Cr-52',
+      '\n\t  24053.80c ', -1.64450976754864e-02 %>% Format(), ' $ Cr-53',
+      '\n\t  24054.80c ', -4.17071916553004e-03 %>% Format(), ' $ Cr-54',
+      '\n\t  25055.80c ', -0.010140 %>% Format(), ' $ Mn-55',
+      '\n\t  26054.80c ', -3.77687848020577e-02 %>% Format(), ' $ Fe-54',
+      '\n\t  26056.80c ', -6.14821227240060e-01 %>% Format(), ' $ Fe-56',
+      '\n\t  26057.80c ', -1.44528660303061e-02 %>% Format(), ' $ Fe-57',
+      '\n\t  26058.80c ', -1.95712192757651e-03 %>% Format(), ' $ Fe-58',
+      '\n\t  28058.80c ', -8.06373580212703e-02 %>% Format(), ' $ Ni-58',
+      '\n\t  28060.80c ', -3.21310302148701e-02 %>% Format(), ' $ Ni-60',
+      '\n\t  28061.80c ', -1.42015535538816e-03 %>% Format(), ' $ Ni-61',
+      '\n\t  28062.80c ', -4.60115323397910e-03 %>% Format(), ' $ Ni-62',
+      '\n\t  28064.80c ', -1.21030317449238e-03 %>% Format(), ' $ Ni-64',
+      '\n\t  42092.80c ', -3.55435917949455e-03 %>% Format(), ' $ Mo-92',
+      '\n\t  42094.80c ', -2.26365674645434e-03 %>% Format(), ' $ Mo-94',
+      '\n\t  42095.80c ', -3.93745610315217e-03 %>% Format(), ' $ Mo-95',
+      '\n\t  42096.80c ', -4.16884318502330e-03 %>% Format(), ' $ Mo-96',
+      '\n\t  42097.80c ', -2.41175867764317e-03 %>% Format(), ' $ Mo-97',
+      '\n\t  42098.80c ', -6.15663942053720e-03 %>% Format(), ' $ Mo-98',
+      '\n\t  42100.80c ', -2.50728668769527e-03 %>% Format(), ' $ Mo-100',
       '\nmt2 fe56.22t',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
@@ -694,36 +699,36 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   } else if (ref == 'ss316L') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  6000.80c  ', -0.0003 %>% Format(), ' $ C',
-      '\n\t  14028.80c ', -0.009187432299308 %>% Format(), ' $ Si-28',
-      '\n\t  14029.80c ', -0.000483130584113 %>% Format(), ' $ Si-29',
-      '\n\t  14030.80c ', -0.000329437116579 %>% Format(), ' $ Si-30',
-      '\n\t  15031.80c ', -0.00045 %>% Format(), ' $ P',
-      '\n\t  16032.80c ', -0.000284302526019 %>% Format(), ' $ S-32',
-      '\n\t  16033.80c ', -0.000002314165150 %>% Format(), ' $ S-33',
-      '\n\t  16034.80c ', -0.000013382747826 %>% Format(), ' $ S-34',
-      '\n\t  16036.80c ', -0.000000000561004 %>% Format(), ' $ S-36',
-      '\n\t  24050.80c ', -0.007095267165240 %>% Format(), ' $ Cr-50',
-      '\n\t  24052.80c ', -0.142288915993743 %>% Format(), ' $ Cr-52',
-      '\n\t  24053.80c ', -0.016445097675486 %>% Format(), ' $ Cr-53',
-      '\n\t  24054.80c ', -0.004170719165530 %>% Format(), ' $ Cr-54',
-      '\n\t  25055.80c ', -0.02 %>% Format(), ' $ Mn',
-      '\n\t  26054.80c ', -0.036919128282968 %>% Format(), ' $ Fe-54',
-      '\n\t  26056.80c ', -0.600990047165377 %>% Format(), ' $ Fe-56',
-      '\n\t  26057.80c ', -0.014127730553840 %>% Format(), ' $ Fe-57',
-      '\n\t  26058.80c ', -0.001913093997816 %>% Format(), ' $ Fe-58',
-      '\n\t  28058.80c ', -0.080637358021270 %>% Format(), ' $ Ni-58',
-      '\n\t  28060.80c ', -0.032131030214870 %>% Format(), ' $ Ni-60',
-      '\n\t  28061.80c ', -0.001420155355388 %>% Format(), ' $ Ni-61',
-      '\n\t  28062.80c ', -0.004601153233979 %>% Format(), ' $ Ni-62',
-      '\n\t  28064.80c ', -0.001210303174492 %>% Format(), ' $ Ni-64',
-      '\n\t  42092.80c ', -0.003554359179495 %>% Format(), ' $ Mo-92',
-      '\n\t  42094.80c ', -0.002263656746454 %>% Format(), ' $ Mo-94',
-      '\n\t  42095.80c ', -0.003937456103152 %>% Format(), ' $ Mo-95',
-      '\n\t  42096.80c ', -0.004168843185023 %>% Format(), ' $ Mo-96',
-      '\n\t  42097.80c ', -0.002411758677643 %>% Format(), ' $ Mo-97',
-      '\n\t  42098.80c ', -0.006156639420537 %>% Format(), ' $ Mo-98',
-      '\n\t  42100.80c ', -0.002507286687695 %>% Format(), ' $ Mo-100',
+      '\nm2  6000.80c  ', -0.000300 %>% Format(), ' $ C',
+      '\n\t  14028.80c ', -9.18743229930782e-03 %>% Format(), ' $ Si-28',
+      '\n\t  14029.80c ', -4.83130584113104e-04 %>% Format(), ' $ Si-29',
+      '\n\t  14030.80c ', -3.29437116579075e-04 %>% Format(), ' $ Si-30',
+      '\n\t  15031.80c ', -0.000450 %>% Format(), ' $ P-31',
+      '\n\t  16032.80c ', -2.84302526019227e-04 %>% Format(), ' $ S-32',
+      '\n\t  16033.80c ', -2.31416515007149e-06 %>% Format(), ' $ S-33',
+      '\n\t  16034.80c ', -1.33827478262690e-05 %>% Format(), ' $ S-34',
+      '\n\t  16036.80c ', -5.61004431968375e-10 %>% Format(), ' $ S-36',
+      '\n\t  24050.80c ', -7.09526716524032e-03 %>% Format(), ' $ Cr-50',
+      '\n\t  24052.80c ', -1.42288915993743e-01 %>% Format(), ' $ Cr-52',
+      '\n\t  24053.80c ', -1.64450976754864e-02 %>% Format(), ' $ Cr-53',
+      '\n\t  24054.80c ', -4.17071916553004e-03 %>% Format(), ' $ Cr-54',
+      '\n\t  25055.80c ', -0.020000 %>% Format(), ' $ Mn-55',
+      '\n\t  26054.80c ', -3.69191282829680e-02 %>% Format(), ' $ Fe-54',
+      '\n\t  26056.80c ', -6.00990047165377e-01 %>% Format(), ' $ Fe-56',
+      '\n\t  26057.80c ', -1.41277305538395e-02 %>% Format(), ' $ Fe-57',
+      '\n\t  26058.80c ', -1.91309399781563e-03 %>% Format(), ' $ Fe-58',
+      '\n\t  28058.80c ', -8.06373580212703e-02 %>% Format(), ' $ Ni-58',
+      '\n\t  28060.80c ', -3.21310302148701e-02 %>% Format(), ' $ Ni-60',
+      '\n\t  28061.80c ', -1.42015535538816e-03 %>% Format(), ' $ Ni-61',
+      '\n\t  28062.80c ', -4.60115323397910e-03 %>% Format(), ' $ Ni-62',
+      '\n\t  28064.80c ', -1.21030317449238e-03 %>% Format(), ' $ Ni-64',
+      '\n\t  42092.80c ', -3.55435917949455e-03 %>% Format(), ' $ Mo-92',
+      '\n\t  42094.80c ', -2.26365674645434e-03 %>% Format(), ' $ Mo-94',
+      '\n\t  42095.80c ', -3.93745610315217e-03 %>% Format(), ' $ Mo-95',
+      '\n\t  42096.80c ', -4.16884318502330e-03 %>% Format(), ' $ Mo-96',
+      '\n\t  42097.80c ', -2.41175867764317e-03 %>% Format(), ' $ Mo-97',
+      '\n\t  42098.80c ', -6.15663942053720e-03 %>% Format(), ' $ Mo-98',
+      '\n\t  42100.80c ', -2.50728668769527e-03 %>% Format(), ' $ Mo-100',
       '\nmt2 fe56.22t',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
@@ -731,37 +736,37 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   } else if (ref == 'ta') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  73181.80c +1 $ Ta',
+      '\nm2  73181.80c +1 $ Ta-181',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'ti') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  22046.80c ', -0.079200951906018 %>% Format(), ' $ Ti-46',
-      '\n\t  22047.80c ', -0.072977823442908 %>% Format(), ' $ Ti-47',
-      '\n\t  22048.80c ', -0.738450522971748 %>% Format(), ' $ Ti-48',
-      '\n\t  22049.80c ', -0.055321905265892 %>% Format(), ' $ Ti-49',
-      '\n\t  22050.80c ', -0.054048796413435 %>% Format(), ' $ Ti-50',
+      '\nm2  22046.80c ', -7.92009519060180e-02 %>% Format(), ' $ Ti-46',
+      '\n\t  22047.80c ', -7.29778234429076e-02 %>% Format(), ' $ Ti-47',
+      '\n\t  22048.80c ', -7.38450522971748e-01 %>% Format(), ' $ Ti-48',
+      '\n\t  22049.80c ', -5.53219052658915e-02 %>% Format(), ' $ Ti-49',
+      '\n\t  22050.80c ', -5.40487964134349e-02 %>% Format(), ' $ Ti-50',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'w') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  74180.80c ', -0.001174575483311 %>% Format(), ' $ W-180',
-      '\n\t  74182.80c ', -0.262270494784839 %>% Format(), ' $ W-182',
-      '\n\t  74183.80c ', -0.142406025314416 %>% Format(), ' $ W-183',
-      '\n\t  74184.80c ', -0.306581920073334 %>% Format(), ' $ W-184',
-      '\n\t  74186.80c ', -0.287566984344099 %>% Format(), ' $ W-186',
+      '\nm2  74180.80c ', -1.17457548331097e-03 %>% Format(), ' $ W-180',
+      '\n\t  74182.80c ', -2.62270494784839e-01 %>% Format(), ' $ W-182',
+      '\n\t  74183.80c ', -1.42406025314416e-01 %>% Format(), ' $ W-183',
+      '\n\t  74184.80c ', -3.06581920073334e-01 %>% Format(), ' $ W-184',
+      '\n\t  74186.80c ', -2.87566984344099e-01 %>% Format(), ' $ W-186',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
   } else if (ref == 'v') {
     material.cards <- paste0(
       material.cards,
-      '\nm2  23050.80c ', -0.002451203358082 %>% Format(), ' $ V-50',
-      '\n\t  23051.80c ', -0.997548796641918 %>% Format(), ' $ V-51',
+      '\nm2  23050.80c ', -2.45120335808159e-03 %>% Format(), ' $ V-50',
+      '\n\t  23051.80c ', -9.97548796641918e-01 %>% Format(), ' $ V-51',
       '\nm3  1001.80c  +2 $ H-1',
       '\n\t  8016.80c  +1 $ O-16',
       '\nmt3 lwtr.20t')
@@ -810,9 +815,17 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       '\n\t    0 0 ', (ht / 6) %>% round(2))
   }
 
+  # build f4 tally and stop card
+  f4.tally <- paste0(
+    'f4:n 1',
+    '\nfm4 -1 1 -6 -7',
+    '\nsd4 1',
+    '\ne4 6.25e-07 0.1 20',
+    '\nstop f4 5e-04')
+
   # write input to file
   file.name <- paste(gsub(' ', '_', title.card)) 
-  input.deck <- paste(title.card, 'c', cell.cards, surface.cards, material.cards, 'c', source.cards, 'print', sep = '\n')
+  input.deck <- paste(title.card, 'c', cell.cards, surface.cards, material.cards, 'c', source.cards, 'c', f4.tally, 'c\nprint', sep = '\n')
   write(input.deck, file = paste0(file.name, '.i'))
 
   # run MCNP

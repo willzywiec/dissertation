@@ -41,7 +41,7 @@ BN <- function() {
   form <- c('alpha', 'oxide', 'none')
   mod <- c('ch2', 'sepiolite', 'h2o', 'none')
   rad <- c(seq(0.2, 18, 0.2) * 2.54, 0) # 90 + 1 bins
-  ref <- c('al', 'be', 'beo', 'cs', 'cu', 'c', 'ch2', 'ss304', 'ta', 'v', 'h2o', 'none')
+  ref <- c('al', 'be', 'beo', 'cs', 'cu', 'graphite', 'ch2', 'ss304', 'ta', 'v', 'h2o', 'none')
   dim <- c(seq(0.2, 18, 0.2) * 2.54, 0) # 90 + 1 bins
   shape <- c('sph', 'rcc', 'rpp', 'none')
   ht <- c(seq(0.2, 36, 0.2) * 2.54, 0) # 180 + 1 bins

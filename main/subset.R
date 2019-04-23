@@ -15,7 +15,7 @@ Subset <- function(data.set) {
   if (nrow(data.set) > 1) {
 
     # one-hot encode categorical variables
-    dummy <- dummyVars(~., data = data.set)
+    dummy <- dummyVars(~ ., data = data.set) # extra space between '~ .,'
     training.data <- data.frame(predict(dummy, newdata = data.set))
 
     # partition data
