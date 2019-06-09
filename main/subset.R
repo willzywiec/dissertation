@@ -15,20 +15,20 @@ Subset <- function(data.set) {
   if (nrow(data.set) > 1) {
 
     # one-hot encode categorical variables
-    dummy <- dummyVars(~ ., data = data.set) # extra space between '~ .,'
+    dummy <- dummyVars(~ ., data = data.set)
     training.data <- data.frame(predict(dummy, newdata = data.set))
 
     # partition data
-    training.partition <- createDataPartition(training.data$keff, p = 0.8, list = FALSE)
-    test.data <- training.data[-training.partition, ]
-    training.data <- training.data[training.partition, ]
+    partition <- createDataPartition(training.data$keff, p = 0.8, list = FALSE)
+    test.data <- training.data[-partition, ]
+    training.data <- training.data[partition, ]
 
     test.data <<- test.data
     training.data <<- training.data
 
     # subset data
-    test.df <- test.data[c(-29, -30)]
-    training.df <- training.data[c(-29, -30)]
+    test.df <- test.data[-c(29, 30)]
+    training.df <- training.data[-c(29, 30)]
 
     # scale data
     num <- c(1, 8, 21, 25:28)
@@ -38,18 +38,14 @@ Subset <- function(data.set) {
     i <- 1 # counter
 
     while (i < length(num)) {
+    	test.df[num[i]] <- scale(test.df[num[i]], center = training.mean[i], scale = training.sd[i])
       training.df[num[i]] <- scale(training.df[num[i]], center = training.mean[i], scale = training.sd[i])
-      test.df[num[i]] <- scale(test.df[num[i]], center = training.mean[i], scale = training.sd[i])
       i = i + 1
     }
 
     # convert data frames to matrices (Keras requirement)
     test.df <<- as.matrix(test.df)
     training.df <<- as.matrix(training.df)
-
-  } else {
-
-    training.data <<- training.data
 
   }
 

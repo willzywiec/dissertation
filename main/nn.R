@@ -37,7 +37,7 @@ NN <- function(ensemble.size, source.directory, training.directory) {
     
   if (length(hdf5.files) < ensemble.size) {
 
-    # build and train models
+    # generate data
     if (length(hdf5.files) == 0) {
       if (file.exists('data_set.csv')) {
         if (nrow(data.set) < deck.size) {
@@ -48,8 +48,8 @@ NN <- function(ensemble.size, source.directory, training.directory) {
       }
       model <- Model(neurons)
       history <- Fit(model, batch.size, epochs, validation.split)
-      if (min(history$metrics$mean_absolute_error) > 0.5) {
-        while (min(history$metrics$mean_absolute_error) > 0.5) {
+      if (min(history$metrics$mean_absolute_error) > 0.001) {
+        while (min(history$metrics$mean_absolute_error) > 0.001) {
           Generate(0.1 * deck.size)
           model <- Model(neurons)
           history <- Fit(model, batch.size, epochs, validation.split)
@@ -59,7 +59,7 @@ NN <- function(ensemble.size, source.directory, training.directory) {
       }
     }
 
-    # rebuild and test models
+    # build and train models
     setwd(paste0(training.directory, '/hdf5'))
     ensemble.model <- ensemble.history <- rep(list(0), length(hdf5.files))
 
@@ -70,35 +70,39 @@ NN <- function(ensemble.size, source.directory, training.directory) {
       ensemble.history[[i]] <- Fit(ensemble.model[[i]], batch.size, 5 * epochs, validation.split)
       results <- ensemble.model[[i]] %>% evaluate(test.df, test.data$keff, verbose = FALSE)
       svg(filename = paste0('model_', i, '.svg')) # save plot
-      Plot(ensemble.history[[i]], paste('Model', i))
+      Plot(ensemble.history[[i]], paste0('model_', i))
       dev.off()
       save_model_hdf5(ensemble.model[[i]], paste0('model_', i, '.h5')) # save model
-      cat('Test MAE = ', min(results$mean_absolute_error) %>% signif(2), '\n', sep = '')
       hdf5.files <- list.files(pattern = '\\.h5$')
       i = i + 1
     }
 
   }
 
-  # rebuild models
+  # rebuild and test models
   setwd(paste0(training.directory, '/hdf5'))
   ensemble.model <- ensemble.history <- list()
 
-  for (i in 1:ensemble.size) {
-    ensemble.model[[i]] <- load_model_hdf5(hdf5.files[i])
-    ensemble.history[[i]] <- Fit(ensemble.model[[i]], batch.size, 100, validation.split, i)
-    svg(filename = paste0('model_', i, '_1.svg')) # save plot
-    Plot(ensemble.history[[i]], paste('Model', i))
-    dev.off()
-  } 
-
-  ensemble.model <- list()
-
-  for (i in 1:ensemble.size) {
-    ensemble.model[[i]] <- load_model_hdf5(paste0('model_', i, '_', which.min(ensemble.history[[i]]$metrics$mean_absolute_error), '.h5'))
+  if (length(hdf5.files) >= ensemble.size * epochs + ensemble.size) {
+    for (i in 1:ensemble.size) {
+      test.metrics <- read.csv(paste0('model_', i, '_test.csv'))
+      ensemble.model[[i]] <- load_model_hdf5(paste0('model_', i, '_', test.metrics$epoch[which.min(test.metrics$val.mae)], '.h5'))
+    }
+  } else {
+    for (i in 1:ensemble.size) {
+      ensemble.model[[i]] <- load_model_hdf5(hdf5.files[i])
+      ensemble.history[[i]] <- Fit(ensemble.model[[i]], batch.size, epochs / 2, validation.split)
+      svg(filename = paste0('model_', i, '_test.svg')) # save plot
+      Plot(ensemble.history[[i]], paste0('model_', i, '_test'))
+      dev.off()
+    } 
+    ensemble.model <- list()
+    for (i in 1:ensemble.size) {
+      ensemble.model[[i]] <- load_model_hdf5(paste0('model_', i, '_', which.min(ensemble.history[[i]]$metrics$val_mean_absolute_error), '.h5'))
+      cat('Test MAE = ', min(ensemble.history[[i]]$metrics$val_mean_absolute_error) %>% signif(2), '\n', sep = '')
+    }
   }
 
   ensemble.model <<- ensemble.model
-  ensemble.history <<- ensemble.history
 
 }
