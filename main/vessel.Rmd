@@ -1,9 +1,16 @@
+---
+title : 'vessel'
+output : html_document
+---
+
 # vessel.R
 #
 # William John Zywiec
 # The George Washington University
 #
 # ...
+
+```{r}
 
 # initialize environment
 if (!is.null(dev.list())) dev.off()
@@ -24,14 +31,28 @@ risk.pool <- 5
 
 # load functions
 source(paste0(source.directory, '/nn.R'))
-# source(paste0(source.directory, '/bn.R'))
-# source(paste0(source.directory, '/risk.R'))
+source(paste0(source.directory, '/bn.R'))
+source(paste0(source.directory, '/risk.R'))
+
+```
+
+```{r}
 
 # build neural network
 NN(ensemble.size, source.directory, training.directory)
 
+```
+
+```{r}
+
 # build Bayesian network
 # BN()
 
+```
+
+```{r}
+
 # assess risk
 # Risk(bn, ensemble.size, sample.size, risk.pool, source.directory, training.directory)
+
+```

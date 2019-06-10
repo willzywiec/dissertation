@@ -15,7 +15,7 @@ NN <- function(ensemble.size, source.directory, training.directory) {
   batch.size <- 512
   epochs <- 1000
   neurons <- 512
-  validation.split <- 0.2
+  val.split <- 0.2
 
   # load functions
   source(paste0(source.directory, '/tabulate.R'))
@@ -26,14 +26,14 @@ NN <- function(ensemble.size, source.directory, training.directory) {
   source(paste0(source.directory, '/fit.R'))
   source(paste0(source.directory, '/plot.R'))
 
+  # load data
+  setwd(training.directory)
+  Tabulate()
+
   # load models
   dir.create(paste0(training.directory, '/hdf5'), showWarnings = FALSE)
   setwd(paste0(training.directory, '/hdf5'))
   hdf5.files <- list.files(pattern = '\\.h5$')
-
-  # load data
-  setwd(training.directory)
-  Tabulate()
     
   if (length(hdf5.files) < ensemble.size) {
 
@@ -47,12 +47,12 @@ NN <- function(ensemble.size, source.directory, training.directory) {
         Generate(deck.size)
       }
       model <- Model(neurons)
-      history <- Fit(model, batch.size, epochs, validation.split)
-      if (min(history$metrics$mean_absolute_error) > 0.001) {
-        while (min(history$metrics$mean_absolute_error) > 0.001) {
+      history <- Fit(model, batch.size, epochs, val.split)
+      if (min(history$metrics$mean_absolute_error) > 0.005) {
+        while (min(history$metrics$mean_absolute_error) > 0.005) {
           Generate(0.1 * deck.size)
           model <- Model(neurons)
-          history <- Fit(model, batch.size, epochs, validation.split)
+          history <- Fit(model, batch.size, epochs, val.split)
         }
       } else {
         cat('Training MAE = ', min(history$metrics$mean_absolute_error) %>% signif(2), '\n', sep = '')
@@ -67,7 +67,7 @@ NN <- function(ensemble.size, source.directory, training.directory) {
 
     while (length(hdf5.files) < ensemble.size) {
       ensemble.model[[i]] <- Model(neurons)
-      ensemble.history[[i]] <- Fit(ensemble.model[[i]], batch.size, 5 * epochs, validation.split)
+      ensemble.history[[i]] <- Fit(ensemble.model[[i]], batch.size, 5 * epochs, val.split)
       results <- ensemble.model[[i]] %>% evaluate(test.df, test.data$keff, verbose = FALSE)
       svg(filename = paste0('model_', i, '.svg')) # save plot
       Plot(ensemble.history[[i]], paste0('model_', i))
@@ -79,28 +79,41 @@ NN <- function(ensemble.size, source.directory, training.directory) {
 
   }
 
-  # rebuild and test models
+  # rebuild and validate models
   setwd(paste0(training.directory, '/hdf5'))
   ensemble.model <- ensemble.history <- list()
 
-  if (length(hdf5.files) >= ensemble.size * epochs + ensemble.size) {
+  if (length(hdf5.files) >= ensemble.size * epochs / 2 + ensemble.size) {
     for (i in 1:ensemble.size) {
-      test.metrics <- read.csv(paste0('model_', i, '_test.csv'))
-      ensemble.model[[i]] <- load_model_hdf5(paste0('model_', i, '_', test.metrics$epoch[which.min(test.metrics$val.mae)], '.h5'))
+      metrics <- read.csv(paste0('model_', i, '_val.csv'))
+      ensemble.model[[i]] <- load_model_hdf5(paste0('model_', i, '_', metrics$epoch[which.min(metrics$val.mae)], '.h5'))
+      cat('Model ', i,
+        ': Validation MAE = ', min(metrics$val.mae) %>% signif(2),
+        ' (Epoch ', which.min(metrics$val.mae), ')\n', sep = '')
     }
   } else {
     for (i in 1:ensemble.size) {
       ensemble.model[[i]] <- load_model_hdf5(hdf5.files[i])
-      ensemble.history[[i]] <- Fit(ensemble.model[[i]], batch.size, epochs / 2, validation.split)
-      svg(filename = paste0('model_', i, '_test.svg')) # save plot
-      Plot(ensemble.history[[i]], paste0('model_', i, '_test'))
+      ensemble.history[[i]] <- Fit(ensemble.model[[i]], batch.size, epochs / 2, val.split, i)
+      svg(filename = paste0('model_', i, '_val.svg')) # save plot
+      Plot(ensemble.history[[i]], paste0('model_', i, '_val'))
       dev.off()
     } 
     ensemble.model <- list()
     for (i in 1:ensemble.size) {
       ensemble.model[[i]] <- load_model_hdf5(paste0('model_', i, '_', which.min(ensemble.history[[i]]$metrics$val_mean_absolute_error), '.h5'))
-      cat('Test MAE = ', min(ensemble.history[[i]]$metrics$val_mean_absolute_error) %>% signif(2), '\n', sep = '')
+      cat('Model ', i,
+        ': Validation MAE = ', min(ensemble.history[[i]]$metrics$val_mean_absolute_error) %>% signif(2),
+        ' (Epoch ', which.min(ensemble.history[[i]]$metrics$val_mean_absolute_error), ')\n', sep = '')
     }
+  }
+
+  # test models
+  for (i in 1:ensemble.size) {
+    predictions <- ensemble.model[[i]] %>% predict(test.df)
+    test.mae <- mean(abs(predictions - test.data$keff))
+    cat('Model ', i,
+      ': Test MAE = ', test.mae %>% signif(2), '\n', sep = '')
   }
 
   ensemble.model <<- ensemble.model

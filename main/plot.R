@@ -21,7 +21,7 @@ Plot <- function(history, title) {
 
   theme_set(new.theme)
 
-  history.plot <- ggplot(history.df, aes(x = epochs)) +
+  history.plot <- ggplot(history.df, aes(x = epoch)) +
     geom_line(aes(y = mae)) +
     geom_line(aes(y = val.mae), color = 'deepskyblue') +
     ylab('mean absolute error') +
