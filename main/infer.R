@@ -5,7 +5,7 @@
 #
 # ...
 
-Infer <- function(bn, ensemble.size, sample.size, training.directory) {
+Infer <- function(bn, ensemble.size, sample.size, training.dir) {
 
   # generate data
   bn.data <- cpdist(bn, nodes = c('mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht'), evidence = TRUE, n = sample.size) %>% na.omit()
@@ -60,7 +60,7 @@ Infer <- function(bn, ensemble.size, sample.size, training.directory) {
   bn.df <- scale(bn.df, center = training.mean, scale = training.sd)
 
   # infer keff
-  setwd(paste0(training.directory, '/hdf5'))
+  setwd(paste0(training.dir, '/hdf5'))
   keff <- data.frame(matrix(ncol = ensemble.size, nrow = sample.size))
 
   for (i in 1:ensemble.size) {

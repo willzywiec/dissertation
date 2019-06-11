@@ -18,7 +18,7 @@ Fit <- function(model, batch.size, epochs, val.split, i) {
       verbose = FALSE,
       callbacks = early.stop)
   } else {
-    checkpoint <- callback_model_checkpoint(paste0(training.directory, '/hdf5/model_', i, '_{epoch:1d}.h5'), monitor = 'mean_absolute_error')
+    checkpoint <- callback_model_checkpoint(paste0(training.dir, '/hdf5/model_', i, '_{epoch:1d}.h5'), monitor = 'mean_absolute_error')
     model %>% fit(
       training.df,
       training.data$keff,

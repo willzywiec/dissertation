@@ -27,8 +27,8 @@ cat('\014')
 library(parallel)
 
 # set source and training directories
-source.directory <- 'C:/Users/Will/Dropbox/Dissertation/R/main'
-training.directory <- 'C:/Users/Will/Desktop/test'
+source.dir <- 'C:/Users/Will/Dropbox/Dissertation/R/main'
+training.dir <- 'C:/Users/Will/Desktop/test'
 
 # set variables
 ensemble.size <- 1
@@ -36,16 +36,16 @@ sample.size <- 1e+06
 risk.pool <- 5
 
 # load functions
-source(paste0(source.directory, '/nn.R'))
-source(paste0(source.directory, '/bn.R'))
-source(paste0(source.directory, '/risk.R'))
+source(paste0(source.dir, '/nn.R'))
+source(paste0(source.dir, '/bn.R'))
+source(paste0(source.dir, '/risk.R'))
 
 ```
 
 ```{r}
 
 # build neural network
-NN(ensemble.size, source.directory, training.directory)
+NN(ensemble.size, source.dir, training.dir)
 
 ```
 
@@ -59,6 +59,6 @@ NN(ensemble.size, source.directory, training.directory)
 ```{r}
 
 # assess risk
-# Risk(bn, ensemble.size, sample.size, risk.pool, source.directory, training.directory)
+# Risk(bn, ensemble.size, sample.size, risk.pool, source.dir, training.dir)
 
 ```

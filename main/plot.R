@@ -5,7 +5,7 @@
 #
 # ...
 
-Plot <- function(history, title) {
+Plot <- function(history, file.name) {
 
   # load packages
   library(scales)
@@ -17,7 +17,7 @@ Plot <- function(history, title) {
     loss = history$metrics$loss,
     mae = history$metrics$mean_absolute_error)
 
-  new.theme <- theme_bw() + theme(text = element_text(family = 'serif'))
+  new.theme <- theme_gray() + theme(text = element_text(family = 'serif'))
 
   theme_set(new.theme)
 
@@ -30,6 +30,6 @@ Plot <- function(history, title) {
 
   print(history.plot)
 
-  write.csv(history.df, file = paste0(title, '.csv'), row.names = FALSE)
+  write.csv(history.df, file = paste0(file.name, '.csv'), row.names = FALSE)
 
 }

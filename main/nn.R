@@ -5,7 +5,7 @@
 #
 # ...
 
-NN <- function(ensemble.size, source.directory, training.directory) {
+NN <- function(ensemble.size, source.dir, training.dir) {
 
   # load packages
   library(keras)
@@ -18,21 +18,21 @@ NN <- function(ensemble.size, source.directory, training.directory) {
   val.split <- 0.2
 
   # load functions
-  source(paste0(source.directory, '/tabulate.R'))
-  source(paste0(source.directory, '/subset.R'))
-  source(paste0(source.directory, '/generate.R'))
-  source(paste0(source.directory, '/build.R'))
-  source(paste0(source.directory, '/model.R'))
-  source(paste0(source.directory, '/fit.R'))
-  source(paste0(source.directory, '/plot.R'))
+  source(paste0(source.dir, '/tabulate.R'))
+  source(paste0(source.dir, '/subset.R'))
+  source(paste0(source.dir, '/generate.R'))
+  source(paste0(source.dir, '/build.R'))
+  source(paste0(source.dir, '/model.R'))
+  source(paste0(source.dir, '/fit.R'))
+  source(paste0(source.dir, '/plot.R'))
 
   # load models
-  dir.create(paste0(training.directory, '/hdf5'), showWarnings = FALSE)
-  setwd(paste0(training.directory, '/hdf5'))
+  dir.create(paste0(training.dir, '/hdf5'), showWarnings = FALSE)
+  setwd(paste0(training.dir, '/hdf5'))
   hdf5.files <- list.files(pattern = '\\.h5$')
 
   # load data
-  setwd(training.directory)
+  setwd(training.dir)
   Tabulate()
     
   if (length(hdf5.files) < ensemble.size) {
@@ -48,19 +48,25 @@ NN <- function(ensemble.size, source.directory, training.directory) {
       }
       model <- Model(neurons)
       history <- Fit(model, batch.size, epochs, val.split)
-      if (min(history$metrics$mean_absolute_error) > 0.005) {
-        while (min(history$metrics$mean_absolute_error) > 0.005) {
+      svg(filename = 'model_0.svg') # save plot
+      Plot(history, 'model_0')
+      dev.off()
+      if (min(history$metrics$mean_absolute_error) > 0.05) {
+        cat('Training MAE = ', min(history$metrics$mean_absolute_error) %>% signif(2), '\n', sep = '')
+        while (min(history$metrics$mean_absolute_error) > 0.05) {
           Generate(0.1 * deck.size)
           model <- Model(neurons)
           history <- Fit(model, batch.size, epochs, val.split)
+          svg(filename = 'model_0.svg') # save plot
+      		Plot(history, 'model_0')
+      		dev.off()
         }
-      } else {
-        cat('Training MAE = ', min(history$metrics$mean_absolute_error) %>% signif(2), '\n', sep = '')
       }
     }
 
     # build and train models
-    setwd(paste0(training.directory, '/hdf5'))
+    cat('Training MAE = ', min(history$metrics$mean_absolute_error) %>% signif(2), '\n', sep = '')
+    setwd(paste0(training.dir, '/hdf5'))
     ensemble.model <- ensemble.history <- rep(list(0), length(hdf5.files))
 
     i <- length(hdf5.files) + 1 # counter
@@ -80,7 +86,7 @@ NN <- function(ensemble.size, source.directory, training.directory) {
   }
 
   # rebuild and validate models
-  setwd(paste0(training.directory, '/hdf5'))
+  setwd(paste0(training.dir, '/hdf5'))
   ensemble.model <- ensemble.history <- list()
 
   if (length(hdf5.files) >= ensemble.size * epochs / 2 + ensemble.size) {

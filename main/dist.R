@@ -14,8 +14,8 @@ cat('\014')
 options(digits = 15)
 
 # set training directory
-training.directory <- 'C:/Users/Will/Desktop/test'
-setwd(training.directory)
+training.dir <- 'C:/Users/Will/Desktop/test'
+setwd(training.dir)
 
 # 1 = large sample
 # 2 = machining
