@@ -26,14 +26,14 @@ NN <- function(ensemble.size, source.directory, training.directory) {
   source(paste0(source.directory, '/fit.R'))
   source(paste0(source.directory, '/plot.R'))
 
-  # load data
-  setwd(training.directory)
-  Tabulate()
-
   # load models
   dir.create(paste0(training.directory, '/hdf5'), showWarnings = FALSE)
   setwd(paste0(training.directory, '/hdf5'))
   hdf5.files <- list.files(pattern = '\\.h5$')
+
+  # load data
+  setwd(training.directory)
+  Tabulate()
     
   if (length(hdf5.files) < ensemble.size) {
 
