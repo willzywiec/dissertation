@@ -23,7 +23,7 @@ Plot <- function(history, file.name) {
 
   history.plot <- ggplot(history.df, aes(x = epoch)) +
     geom_line(aes(y = mae)) +
-    geom_line(aes(y = val.mae), color = 'deepskyblue') +
+    geom_line(aes(y = val.mae), color = '#FC4E07') +
     ylab('mean absolute error') +
     scale_x_continuous(breaks = pretty_breaks()) +
     ggtitle(title)
