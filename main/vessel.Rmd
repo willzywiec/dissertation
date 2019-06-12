@@ -31,21 +31,14 @@ source.dir <- 'C:/Users/Will/Dropbox/Dissertation/R/main'
 training.dir <- 'C:/Users/Will/Desktop/test'
 
 # set variables
-ensemble.size <- 1
+ensemble.size <- 5
 sample.size <- 1e+06
 risk.pool <- 5
 
 # load functions
-source(paste0(source.dir, '/nn.R'))
 source(paste0(source.dir, '/bn.R'))
+source(paste0(source.dir, '/nn.R'))
 source(paste0(source.dir, '/risk.R'))
-
-```
-
-```{r}
-
-# build neural network
-NN(ensemble.size, source.dir, training.dir)
 
 ```
 
@@ -53,6 +46,13 @@ NN(ensemble.size, source.dir, training.dir)
 
 # build Bayesian network
 # BN()
+
+```
+
+```{r}
+
+# build neural network
+NN(ensemble.size, source.dir, training.dir)
 
 ```
 

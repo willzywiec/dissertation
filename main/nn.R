@@ -12,7 +12,7 @@ NN <- function(ensemble.size, source.dir, training.dir) {
 
   # set variables
   deck.size <- 1e+04
-  batch.size <- 512
+  batch.size <- 1024
   epochs <- 1000
   neurons <- 512
   val.split <- 0.2
@@ -34,10 +34,10 @@ NN <- function(ensemble.size, source.dir, training.dir) {
   # load data
   setwd(training.dir)
   Tabulate()
-    
+
   if (length(hdf5.files) < ensemble.size) {
 
-    # generate data
+  	# generate data
     if (length(hdf5.files) == 0) {
       if (file.exists('data_set.csv')) {
         if (nrow(data.set) < deck.size) {
@@ -46,38 +46,35 @@ NN <- function(ensemble.size, source.dir, training.dir) {
       } else {
         Generate(deck.size)
       }
+      setwd(paste0(training.dir, '/hdf5'))
       model <- Model(neurons)
       history <- Fit(model, batch.size, epochs, val.split)
-      svg(filename = 'model_0.svg') # save plot
       Plot(history, 'model_0')
-      dev.off()
       if (min(history$metrics$mean_absolute_error) > 0.05) {
         cat('Training MAE = ', min(history$metrics$mean_absolute_error) %>% signif(2), '\n', sep = '')
         while (min(history$metrics$mean_absolute_error) > 0.05) {
+        	setwd(training.dir)
           Generate(0.1 * deck.size)
+          setwd(paste0(training.dir, '/hdf5'))
           model <- Model(neurons)
           history <- Fit(model, batch.size, epochs, val.split)
-          svg(filename = 'model_0.svg') # save plot
       		Plot(history, 'model_0')
-      		dev.off()
         }
       }
     }
 
     # build and train models
     cat('Training MAE = ', min(history$metrics$mean_absolute_error) %>% signif(2), '\n', sep = '')
-    setwd(paste0(training.dir, '/hdf5'))
     ensemble.model <- ensemble.history <- rep(list(0), length(hdf5.files))
 
     i <- length(hdf5.files) + 1 # counter
 
     while (length(hdf5.files) < ensemble.size) {
+    	setwd(paste0(training.dir, '/hdf5'))
       ensemble.model[[i]] <- Model(neurons)
       ensemble.history[[i]] <- Fit(ensemble.model[[i]], batch.size, 5 * epochs, val.split)
       results <- ensemble.model[[i]] %>% evaluate(test.df, test.data$keff, verbose = FALSE)
-      svg(filename = paste0('model_', i, '.svg')) # save plot
       Plot(ensemble.history[[i]], paste0('model_', i))
-      dev.off()
       save_model_hdf5(ensemble.model[[i]], paste0('model_', i, '.h5')) # save model
       hdf5.files <- list.files(pattern = '\\.h5$')
       i = i + 1
@@ -101,9 +98,7 @@ NN <- function(ensemble.size, source.dir, training.dir) {
     for (i in 1:ensemble.size) {
       ensemble.model[[i]] <- load_model_hdf5(hdf5.files[i])
       ensemble.history[[i]] <- Fit(ensemble.model[[i]], batch.size, epochs / 2, val.split, i)
-      svg(filename = paste0('model_', i, '_val.svg')) # save plot
       Plot(ensemble.history[[i]], paste0('model_', i, '_val'))
-      dev.off()
     } 
     ensemble.model <- list()
     for (i in 1:ensemble.size) {

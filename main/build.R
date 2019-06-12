@@ -13,42 +13,42 @@
 #        delta-phase Pu metal
 #        Pu oxide
 #
-# mod:   aluminum oxide *
-#        beryllium *
-#        beryllium oxide *
-#        graphite *
-#        magnesium oxide *
+# mod:   aluminum oxide
+#        beryllium
+#        beryllium oxide
+#        graphite
+#        magnesium oxide
 #        polyethylene
 #        sepiolite
-#        silicon dioxide *
+#        silicon dioxide
 #        water
 #
 # rad:   radius (cm)
 #
 # ref:   aluminum
-#        aluminum oxide *
+#        aluminum oxide
 #        beryllium
 #        beryllium oxide
 #        carbon steel
 #        copper
-#        depleted uranium *
-#        granite *
+#        depleted uranium
+#        granite
 #        graphite
-#        iron *
-#        lead *
-#        magnesium oxide *
-#        molybdenum *
-#        nickel *
-#        niobium *
-#        platinum *
+#        iron
+#        lead
+#        magnesium oxide
+#        molybdenum
+#        nickel
+#        niobium
+#        platinum
 #        polyethylene
 #        stainless steel 304
-#        stainless steel 304L *
-#        stainless steel 316 *
-#        stainless steel 316L *
+#        stainless steel 304L
+#        stainless steel 316
+#        stainless steel 316L
 #        tantalum
-#        titanium *
-#        tungsten *
+#        titanium
+#        tungsten
 #        vanadium
 #        water
 #
@@ -56,7 +56,6 @@
 #
 # shape: sphere
 #        right circular cylinder
-#        right parallelipiped
 #
 # ht:    height (cm)
 
@@ -85,8 +84,6 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
     vol <- 4/3 * pi * rad^3
   } else if (shape == 'rcc') {
     vol <- pi * rad^2 * ht
-  } else if (shape == 'rpp') {
-    vol <- (2 * rad)^2 * ht
   }
 
   # reset moderator, volume (cc), and radius (cm)
@@ -97,8 +94,6 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       rad <- (3/4 * vol / pi)^(1/3)
     } else if (shape == 'rcc') {
       rad <- (vol / ht / pi)^(1/2)
-    } else if (shape == 'rpp') {
-      rad <- ((vol / ht)^(1/2) / 2)
     }
   }
 
@@ -182,10 +177,6 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       surface.cards <- paste0(
         '\n1  rcc  0 0 0 0 0 ', ht, ' ', rad,
         '\n2  rcc  0 0 -2.54 0 0 ', ht + 2.54, ' ', h2o.rad)
-    } else if (shape == 'rpp') {
-      surface.cards <- paste0(
-        '\n1  rpp  ', -rad, ' ', rad, ' ', -rad, ' ', rad, ' 0 ', ht,
-        '\n2  rpp  ', -h2o.rad, ' ', h2o.rad, ' ', -h2o.rad, ' ', h2o.rad, ' ', -2.54, ' ', ht + 2.54)
     }
   } else {
     cell.cards <- paste0(
@@ -203,11 +194,6 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
         '\n1  rcc  0 0 0 0 0 ', ht, ' ', rad,
         '\n2  rcc  0 0 ', -dim, ' 0 0 ', ht + 2 * dim, ' ', ref.rad,
         '\n3  rcc  0 0 ', -dim - 2.54, ' 0 0 ', ht + 2 * dim + 5.08, ' ', h2o.rad)
-    } else if (shape == 'rpp') {
-      surface.cards <- paste0(
-        '\n1  rpp  ', -rad, ' ', rad, ' ', -rad, ' ', rad, ' 0 ', ht,
-        '\n2  rpp  ', -ref.rad, ' ', ref.rad, ' ', -ref.rad, ' ', ref.rad, ' ', -dim, ' ', ht + dim,
-        '\n3  rpp  ', -h2o.rad, ' ', h2o.rad, ' ', -h2o.rad, ' ', h2o.rad, ' ', -dim - 2.54, ' ', ht + dim + 2.54)
     }
   }
 
@@ -764,7 +750,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       '\n\t    ', -source, ' 0 0',
       '\n\t    0 ', -source, ' 0',
       '\n\t    0 0 ', -source)
-  } else if (shape == 'rcc' || shape == 'rpp') {
+  } else if (shape == 'rcc') {
     data.cards <- paste0(
       imp,
       '\n',

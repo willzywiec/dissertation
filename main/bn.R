@@ -43,7 +43,7 @@ BN <- function() {
   rad <- c(seq(0.2, 18, 0.2) * 2.54, 0) # 90 + 1 bins
   ref <- c('al', 'be', 'beo', 'cs', 'cu', 'graphite', 'ch2', 'ss304', 'ta', 'v', 'h2o', 'none')
   dim <- c(seq(0.2, 18, 0.2) * 2.54, 0) # 90 + 1 bins
-  shape <- c('sph', 'rcc', 'rpp', 'none')
+  shape <- c('sph', 'rcc', 'none')
   ht <- c(seq(0.2, 36, 0.2) * 2.54, 0) # 180 + 1 bins
 
   operation.cpt <- matrix(c(
@@ -244,55 +244,55 @@ BN <- function() {
 
   shape.cpt <- c(
   # large sample
-    0           , 0           , 0           , 0           , # A
-    0           , 0           , 0           , 0           , # B
-    0           , 0           , 0           , 0           , # C
-    0           , 0           , 0           , 0           , # D
-    0           , 0           , 0           , 0           , # E
-    0           , 0           , 0           , 0           , # M
-    0           , 0           , 0           , 1           , # P (NULL)
+    0           , 0           , 0           , # A
+    0           , 0           , 0           , # B
+    0           , 0           , 0           , # C
+    0           , 0           , 0           , # D
+    0           , 0           , 0           , # E
+    0           , 0           , 0           , # M
+    0           , 0           , 1           , # P (NULL)
   # machining
-    0           , 0           , 0           , 0           , # A
-    0           , 0           , 0           , 1           , # B (NULL)
-    0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 1           , # E (NULL)
-    0           , 0           , 0           , 0           , # M
-    0           , 0           , 0           , 1           , # P (NULL)
+    0           , 0           , 0           , # A
+    0           , 0           , 1           , # B (NULL)
+    0           , 0           , 1           , # C (NULL)
+    0           , 0           , 1           , # D (NULL)
+    0           , 0           , 1           , # E (NULL)
+    0           , 0           , 0           , # M
+    0           , 0           , 1           , # P (NULL)
   # metallurgy
-    0           , 0           , 0           , 0           , # A
-    0           , 0           , 0           , 0           , # B
-    0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 0           , # E
-    0           , 0           , 0           , 1           , # M (NULL)
-    0           , 0           , 0           , 1           , # P (NULL)
+    0           , 0           , 0           , # A
+    0           , 0           , 0           , # B
+    0           , 0           , 1           , # C (NULL)
+    0           , 0           , 1           , # D (NULL)
+    0           , 0           , 0           , # E
+    0           , 0           , 1           , # M (NULL)
+    0           , 0           , 1           , # P (NULL)
   # small sample
-    0           , 0           , 0           , 0           , # A
-    0           , 0           , 0           , 0           , # B
-    0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 1           , # E (NULL)
-    0           , 0           , 0           , 1           , # M (NULL)
-    0           , 0           , 0           , 1           , # P (NULL)
+    0           , 0           , 0           , # A
+    0           , 0           , 0           , # B
+    0           , 0           , 1           , # C (NULL)
+    0           , 0           , 1           , # D (NULL)
+    0           , 0           , 1           , # E (NULL)
+    0           , 0           , 1           , # M (NULL)
+    0           , 0           , 1           , # P (NULL)
   # solution
-    0           , 0           , 0           , 0           , # A
-    0           , 0           , 0           , 1           , # B (NULL)
-    0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 1           , # E (NULL)
-    0           , 0           , 0           , 1           , # M (NULL)
-    0           , 0           , 0           , 1           , # P (NULL)
+    0           , 0           , 0           , # A
+    0           , 0           , 1           , # B (NULL)
+    0           , 0           , 1           , # C (NULL)
+    0           , 0           , 1           , # D (NULL)
+    0           , 0           , 1           , # E (NULL)
+    0           , 0           , 1           , # M (NULL)
+    0           , 0           , 1           , # P (NULL)
   # waste
-    0           , 0           , 0           , 1           , # A (NULL)
-    0           , 0           , 0           , 1           , # B (NULL)
-    0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 1           , # E (NULL)
-    0           , 0           , 0           , 1           , # M (NULL)
-    0           , 0           , 0           , 0           ) # P
+    0           , 0           , 1           , # A (NULL)
+    0           , 0           , 1           , # B (NULL)
+    0           , 0           , 1           , # C (NULL)
+    0           , 0           , 1           , # D (NULL)
+    0           , 0           , 1           , # E (NULL)
+    0           , 0           , 1           , # M (NULL)
+    0           , 0           , 0           ) # P
 
-  dim(shape.cpt) <- c(4, 7, 6)
+  dim(shape.cpt) <- c(3, 7, 6)
   dimnames(shape.cpt) <- list('shape' = shape, 'condition' = condition, 'operation' = operation)
 
   graphviz.plot(dag)

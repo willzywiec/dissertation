@@ -14,7 +14,7 @@ Generate <- function(deck.size) {
   rad <- sample(seq(0.5, 18, 0.5) * 2.54, deck.size, replace = TRUE) # 18 in = 45.72 cm
   ref <- sample(c('al', 'al2o3', 'be', 'beo', 'cs', 'cu', 'du', 'granite', 'graphite', 'fe', 'pb', 'mgo', 'mo', 'ni', 'nb', 'pt', 'ch2', 'ss304', 'ss304L', 'ss316', 'ss316L', 'ta', 'ti', 'w', 'v', 'h2o', 'none'), deck.size, replace = TRUE)
   dim <- sample(seq(0.5, 18, 0.5) * 2.54, deck.size, replace = TRUE) # 18 in = 45.72 cm
-  shape <- sample(c('sph', 'rcc', 'rpp'), deck.size, replace = TRUE)
+  shape <- sample(c('sph', 'rcc'), deck.size, replace = TRUE)
   ht <- sample(seq(0.5, 36, 0.5) * 2.54, deck.size, replace = TRUE) # 36 in = 91.44 cm
 
   # build input decks and run MCNP
