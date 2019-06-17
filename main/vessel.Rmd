@@ -37,6 +37,7 @@ risk.pool <- 5
 
 # load functions
 source(paste0(source.dir, '/bn.R'))
+source(paste0(source.dir, '/generate.R'))
 source(paste0(source.dir, '/nn.R'))
 source(paste0(source.dir, '/risk.R'))
 
@@ -45,7 +46,14 @@ source(paste0(source.dir, '/risk.R'))
 ```{r}
 
 # build Bayesian network
-# BN()
+BN()
+
+```
+
+```{r}
+
+# generate data
+Generate(source.dir, training.dir)
 
 ```
 
@@ -59,6 +67,6 @@ NN(ensemble.size, source.dir, training.dir)
 ```{r}
 
 # assess risk
-# Risk(bn, ensemble.size, sample.size, risk.pool, source.dir, training.dir)
+Risk(bn, ensemble.size, sample.size, risk.pool, source.dir, training.dir)
 
 ```

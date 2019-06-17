@@ -20,7 +20,6 @@ NN <- function(ensemble.size, source.dir, training.dir) {
   # load functions
   source(paste0(source.dir, '/tabulate.R'))
   source(paste0(source.dir, '/subset.R'))
-  source(paste0(source.dir, '/generate.R'))
   source(paste0(source.dir, '/build.R'))
   source(paste0(source.dir, '/model.R'))
   source(paste0(source.dir, '/fit.R'))
@@ -31,55 +30,32 @@ NN <- function(ensemble.size, source.dir, training.dir) {
   setwd(paste0(training.dir, '/hdf5'))
   hdf5.files <- list.files(pattern = '\\.h5$')
 
-  # load data
+  # tabulate data
   setwd(training.dir)
   Tabulate()
 
+  # build and train models
   if (length(hdf5.files) < ensemble.size) {
-
-  	# generate data
-    if (length(hdf5.files) == 0) {
-      if (file.exists('data_set.csv')) {
-        if (nrow(data.set) < deck.size) {
-          Generate(deck.size - nrow(data.set))
-        }
-      } else {
-        Generate(deck.size)
-      }
-      setwd(paste0(training.dir, '/hdf5'))
-      model <- Model(neurons)
-      history <- Fit(model, batch.size, epochs, val.split)
-      Plot(history, 'model_0')
-      if (min(history$metrics$mean_absolute_error) > 0.05) {
-        cat('Training MAE = ', min(history$metrics$mean_absolute_error) %>% signif(2), '\n', sep = '')
-        while (min(history$metrics$mean_absolute_error) > 0.05) {
-        	setwd(training.dir)
-          Generate(0.1 * deck.size)
-          setwd(paste0(training.dir, '/hdf5'))
-          model <- Model(neurons)
-          history <- Fit(model, batch.size, epochs, val.split)
-      		Plot(history, 'model_0')
-        }
-      }
-    }
-
-    # build and train models
+    model <- Model(neurons)
+    history <- Fit(model, batch.size, epochs, val.split)
+    Plot(history, 'model_0')
     cat('Training MAE = ', min(history$metrics$mean_absolute_error) %>% signif(2), '\n', sep = '')
-    ensemble.model <- ensemble.history <- rep(list(0), length(hdf5.files))
-
-    i <- length(hdf5.files) + 1 # counter
-
-    while (length(hdf5.files) < ensemble.size) {
-    	setwd(paste0(training.dir, '/hdf5'))
-      ensemble.model[[i]] <- Model(neurons)
-      ensemble.history[[i]] <- Fit(ensemble.model[[i]], batch.size, 5 * epochs, val.split)
-      results <- ensemble.model[[i]] %>% evaluate(test.df, test.data$keff, verbose = FALSE)
-      Plot(ensemble.history[[i]], paste0('model_', i))
-      save_model_hdf5(ensemble.model[[i]], paste0('model_', i, '.h5')) # save model
-      hdf5.files <- list.files(pattern = '\\.h5$')
-      i = i + 1
+    if (min(history$metrics$mean_absolute_error) %>% signif(2) < 0.05) {
+      ensemble.model <- ensemble.history <- rep(list(0), length(hdf5.files))
+      i <- length(hdf5.files) + 1 # counter
+      while (length(hdf5.files) < ensemble.size) {
+        setwd(paste0(training.dir, '/hdf5'))
+        ensemble.model[[i]] <- Model(neurons)
+        ensemble.history[[i]] <- Fit(ensemble.model[[i]], batch.size, 5 * epochs, val.split)
+        results <- ensemble.model[[i]] %>% evaluate(test.df, test.data$keff, verbose = FALSE)
+        Plot(ensemble.history[[i]], paste0('model_', i))
+        save_model_hdf5(ensemble.model[[i]], paste0('model_', i, '.h5')) # save model
+        hdf5.files <- list.files(pattern = '\\.h5$')
+        i = i + 1
+      }
+    } else {
+      cat('Stopped (Training MAE > 0.05)', '\n')
     }
-
   }
 
   # rebuild and validate models

@@ -28,7 +28,7 @@ Plot <- function(history, file.name) {
     ylab('mean absolute error') +
     ggtitle(file.name)
 
-  ggsave(paste0(file.name, '.png'))
+  suppressMessages(ggsave(paste0(file.name, '.png')))
 
   ggplot(history.df, aes(x = epoch)) +
     geom_line(aes(y = mae)) +
@@ -38,7 +38,7 @@ Plot <- function(history, file.name) {
     ylab('mean absolute error') +
     ggtitle(file.name)
 
-  ggsave(paste0(file.name, '_1.png'))
+  suppressMessages(ggsave(paste0(file.name, '_1.png')))
 
   write.csv(history.df, file = paste0(file.name, '.csv'), row.names = FALSE)
 

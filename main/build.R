@@ -62,6 +62,7 @@
 Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
 
   # load packages
+  library(magrittr)
   library(parallel)
 
   # format numbers
@@ -761,20 +762,12 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       '\n\t    0 0 ', (5/6 * ht) %>% round(2),
       '\n\t    ', -source, ' 0 ', (ht / 2) %>% round(2),
       '\n\t    0 ', -source, ' ', (ht / 2) %>% round(2),
-      '\n\t    0 0 ', (ht / 6) %>% round(2))
+      '\n\t    0 0 ', (ht / 6) %>% round(2)) 
   }
-
-  # build f4 tally and stop card
-  f4.tally <- paste0(
-    'f4:n 1',
-    '\nfm4 -1 1 -6 -7',
-    '\nsd4 1',
-    '\ne4 6.25e-07 0.1 20',
-    '\nstop f4 5e-04')
 
   # write input to file
   file.name <- paste(gsub(' ', '_', title.card)) 
-  input.deck <- paste(title.card, 'c', cell.cards, surface.cards, matl.cards, 'c', data.cards, 'c', f4.tally, 'c\nprint', sep = '\n')
+  input.deck <- paste(title.card, 'c', cell.cards, surface.cards, matl.cards, 'c', data.cards, 'c\nprint', sep = '\n')
   write(input.deck, file = paste0(file.name, '.i'))
 
   # run MCNP
