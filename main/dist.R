@@ -117,7 +117,7 @@ for (i in 1:6) {
   rate.p <- 1 / mean(mass.p[[i]])
   # sd.p <- sd(mass.p[[i]])
 
-  exp.a[[i]] <- dexp(seq(0, 1000, 1), rate = rate.a)
+  exp.a[[i]] <- dexp(seq(0, 1000, 1), rate = 1 / mean(mass.a[[i]]))
   exp.b[[i]] <- dexp(seq(0, 1000, 1), rate = rate.b)
   exp.c[[i]] <- dexp(seq(0, 1000, 1), rate = rate.c)
   exp.d[[i]] <- dexp(seq(0, 1000, 1), rate = rate.d)
@@ -228,7 +228,7 @@ for (i in 1:6) {
 }
 
 rad <- unlist(rad)
-save(rad, file = 'mass.RData')
+save(rad, file = 'rad.RData')
 
 # dim
 exp.a <- exp.b <- exp.c <- exp.d <- exp.e <- exp.m <- exp.p <- list()

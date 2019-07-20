@@ -10,13 +10,13 @@ Tabulate <- function() {
   output.files <- list.files(pattern = '\\.o$')
 
   # load data
-  if (file.exists('data_set.csv')) {
+  if (file.exists('data-set.csv')) {
 
-    data.set <- read.csv('data_set.csv', header = TRUE)
+    data.set <- read.csv('data-set.csv', header = TRUE)
 
     if (nrow(data.set) >= length(output.files)) {
       Subset(na.omit(data.set))
-      return(cat('Loaded data_set.csv\n'))
+      return(cat('Loaded data-set.csv\n'))
     }
 
   } 
@@ -31,7 +31,7 @@ Tabulate <- function() {
 
       if (any(readLines(output.files[i]) %>% grep('final result', .))) {
 
-        file.name <- gsub('\\.o', '', output.files[i]) %>% strsplit('_') %>% unlist()
+        file.name <- gsub('\\.o', '', output.files[i]) %>% strsplit('-') %>% unlist()
 
         mass[i] <- as.numeric(file.name[1])
         form[i] <- file.name[2]
@@ -94,9 +94,9 @@ Tabulate <- function() {
       sd = sd)
 
     # write data to file
-    write.csv(data.set, file = 'data_set.csv', row.names = FALSE)
+    write.csv(data.set, file = 'data-set.csv', row.names = FALSE)
     Subset(na.omit(data.set))
-    return(cat('Saved data_set.csv\n'))
+    return(cat('Saved data-set.csv\n'))
 
   }
 

@@ -17,7 +17,7 @@ Plot <- function(history, file.name) {
     loss = history$metrics$loss,
     mae = history$metrics$mean_absolute_error)
 
-  new.theme <- theme_gray() + theme(text = element_text(family = 'serif'))
+  new.theme <- theme_gray() + theme(axis.text = element_text(color = 'black', size = 10), text = element_text(color = 'black', family = 'serif', size = 10))
 
   theme_set(new.theme)
 
@@ -25,8 +25,7 @@ Plot <- function(history, file.name) {
     geom_line(aes(y = mae)) +
     geom_line(aes(y = val.mae), color = '#FC4E07') +
     scale_x_continuous(breaks = pretty_breaks()) +
-    ylab('mean absolute error') +
-    ggtitle(file.name)
+    ylab('mean absolute error')
 
   suppressMessages(ggsave(paste0(file.name, '.png')))
 
@@ -35,10 +34,9 @@ Plot <- function(history, file.name) {
     geom_line(aes(y = val.mae), color = '#FC4E07') +
     scale_x_continuous(breaks = pretty_breaks(), limits = c(max(history.df$epoch) / 2, NA)) +
     scale_y_continuous(breaks = pretty_breaks(), limits = c(0, max(tail(history.df$val.mae, max(history.df$epoch) / 2)))) +
-    ylab('mean absolute error') +
-    ggtitle(file.name)
+    ylab('mean absolute error')
 
-  suppressMessages(ggsave(paste0(file.name, '_1.png')))
+  suppressMessages(ggsave(paste0(file.name, '-tail.png')))
 
   write.csv(history.df, file = paste0(file.name, '.csv'), row.names = FALSE)
 

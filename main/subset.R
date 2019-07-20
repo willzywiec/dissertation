@@ -14,6 +14,9 @@ Subset <- function(data.set) {
 
   if (nrow(data.set) > 1) {
 
+    # test spherical models only
+    data.set$shape <- NULL
+
     # one-hot encode categorical variables
     dummy <- dummyVars(~ ., data = data.set)
     training.data <- data.frame(predict(dummy, newdata = data.set))
@@ -27,11 +30,11 @@ Subset <- function(data.set) {
     training.data <<- training.data
 
     # subset data
-    test.df <- test.data[-c(29, 30)]
-    training.df <- training.data[-c(29, 30)]
+    test.df <- test.data[-c(25, 26)] # -c(27, 28)
+    training.df <- training.data[-c(25, 26)] # -c(27, 28)
 
     # scale data
-    num <- c(1, 8, 21, 25:28)
+    num <- c(1, 9, 20, 21:24) # 23:26
     training.mean <<- apply(training.df[num], 2, mean)
     training.sd <<- apply(training.df[num], 2, sd)
 

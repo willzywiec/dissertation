@@ -9,30 +9,51 @@ BN <- function() {
 
   # load packages
   library(bnlearn)
-  library(graph)
   library(igraph)
 
-  # set arcs
+  # plot graph
+  nodes <- data.frame(
+    id = seq(1, 10),
+    label = c('operation', 'condition', 'mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht'))
+  
+  edges <- data.frame(
+    from = c(rep(1, 9), rep(2, 8)),
+    to = c(seq(2, 10), seq(3, 10)))
+
+  dag <- graph_from_data_frame(d = edges, vertices = nodes)
+
+  plot(
+    dag,
+    edge.arrow.size = 0.3,
+    edge.color = '#FC4E07',
+    layout = layout_with_dh,
+    vertex.color = '#FD9268',
+    vertex.frame.color = '#FC4E07',
+    vertex.label.color = 'black',
+    vertex.label.family = 'serif',
+    vertex.size = (degree(dag, mode = 'all') + 12) * 1.6) # set width to 700 pixels
+
+  # build graph
   dag <- empty.graph(nodes = c('operation', 'condition', 'mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht'))
 
-  dag <- set.arc(dag, from = 'operation', to = 'condition')
-  dag <- set.arc(dag, from = 'operation', to = 'mass')
-  dag <- set.arc(dag, from = 'operation', to = 'form')
-  dag <- set.arc(dag, from = 'operation', to = 'mod')
-  dag <- set.arc(dag, from = 'operation', to = 'rad')
-  dag <- set.arc(dag, from = 'operation', to = 'ref')
-  dag <- set.arc(dag, from = 'operation', to = 'dim')
-  dag <- set.arc(dag, from = 'operation', to = 'shape')
-  dag <- set.arc(dag, from = 'operation', to = 'ht')
+  dag <- set.arc(dag, 'operation', 'condition')
+  dag <- set.arc(dag, 'operation', 'mass')
+  dag <- set.arc(dag, 'operation', 'form')
+  dag <- set.arc(dag, 'operation', 'mod')
+  dag <- set.arc(dag, 'operation', 'rad')
+  dag <- set.arc(dag, 'operation', 'ref')
+  dag <- set.arc(dag, 'operation', 'dim')
+  dag <- set.arc(dag, 'operation', 'shape')
+  dag <- set.arc(dag, 'operation', 'ht')
 
-  dag <- set.arc(dag, from = 'condition', to = 'mass')
-  dag <- set.arc(dag, from = 'condition', to = 'form')
-  dag <- set.arc(dag, from = 'condition', to = 'mod')
-  dag <- set.arc(dag, from = 'condition', to = 'rad')
-  dag <- set.arc(dag, from = 'condition', to = 'ref')
-  dag <- set.arc(dag, from = 'condition', to = 'dim')
-  dag <- set.arc(dag, from = 'condition', to = 'shape')
-  dag <- set.arc(dag, from = 'condition', to = 'ht')
+  dag <- set.arc(dag, 'condition', 'mass')
+  dag <- set.arc(dag, 'condition', 'form')
+  dag <- set.arc(dag, 'condition', 'mod')
+  dag <- set.arc(dag, 'condition', 'rad')
+  dag <- set.arc(dag, 'condition', 'ref')
+  dag <- set.arc(dag, 'condition', 'dim')
+  dag <- set.arc(dag, 'condition', 'shape')
+  dag <- set.arc(dag, 'condition', 'ht')
 
   # build conditional probability tables
   operation <- c('large sample', 'machining', 'metallurgy', 'small sample', 'solution', 'waste')
@@ -67,49 +88,49 @@ BN <- function() {
   dim(condition.cpt) <- c(7, 6)
   dimnames(condition.cpt) <- list('condition' = condition, 'operation' = operation)
 
-  mass.cpt <- load('mass_cpt.RData')
+  mass.cpt <- load('mass.RData')
   dim(mass.cpt) <- c(1001, 7, 6)
   dimnames(mass.cpt) <- list('mass' = mass, 'condition' = condition, 'operation' = operation)
 
-  rad.cpt <- load('rad_cpt.RData')
+  rad.cpt <- load('rad.RData')
   dim(rad.cpt) <- c(181, 7, 6)
   dimnames(rad.cpt) <- list('rad' = rad, 'condition' = condition, 'operation' = operation)
 
-  dim.cpt <- load('dim_cpt.RData')
+  dim.cpt <- load('dim.RData')
   dim(dim.cpt) <- c(181, 7, 6)
   dimnames(dim.cpt) <- list('dim' = dim, 'condition' = condition, 'operation' = operation)
 
-  ht.cpt <- load('ht_cpt.RData')
+  ht.cpt <- load('ht.RData')
   dim(ht.cpt) <- c(361, 7, 6)
   dimnames(ht.cpt) <- list('ht' = ht, 'condition' = condition, 'operation' = operation)
 
   form.cpt <- c(
   # large sample
-    5.60000e-01 , 4.40000e-01 , 0           , # A
-    1           , 0           , 0           , # B
+    0           , 4.40000e-01 , 0           , # A
+    0           , 0           , 0           , # B
     0           , 1           , 0           , # C
-    1           , 0           , 0           , # D
-    1           , 0           , 0           , # E
-    1           , 0           , 0           , # M
+    0           , 0           , 0           , # D
+    0           , 0           , 0           , # E
+    0           , 0           , 0           , # M
     0           , 0           , 1           , # P (NULL)
   # machining
-    1           , 0           , 0           , # A
+    0           , 0           , 0           , # A
     0           , 0           , 1           , # B (NULL)
     0           , 0           , 1           , # C (NULL)
     0           , 0           , 1           , # D (NULL)
     0           , 0           , 1           , # E (NULL)
-    1           , 0           , 0           , # M
+    0           , 0           , 0           , # M
     0           , 0           , 1           , # P (NULL)
   # metallurgy
-    7.50000e-01 , 2.50000e-01 , 0           , # A
-    1           , 0           , 0           , # B
+    0           , 2.50000e-01 , 0           , # A
+    0           , 0           , 0           , # B
     0           , 0           , 1           , # C (NULL)
     0           , 0           , 1           , # D (NULL)
-    5.00000e-01 , 5.00000e-01 , 0           , # E
+    0           , 5.00000e-01 , 0           , # E
     0           , 0           , 1           , # M (NULL)
     0           , 0           , 1           , # P (NULL)
   # small sample
-    1           , 0           , 0           , # A
+    0           , 0           , 0           , # A
     0           , 1           , 0           , # B
     0           , 0           , 1           , # C (NULL)
     0           , 0           , 1           , # D (NULL)
@@ -117,7 +138,7 @@ BN <- function() {
     0           , 0           , 1           , # M (NULL)
     0           , 0           , 1           , # P (NULL)
   # solution
-    7.50000e-01 , 2.50000e-01 , 0           , # A
+    0           , 2.50000e-01 , 0           , # A
     0           , 0           , 1           , # B (NULL)
     0           , 0           , 1           , # C (NULL)
     0           , 0           , 1           , # D (NULL)
@@ -138,165 +159,162 @@ BN <- function() {
 
   mod.cpt <- c(
   # large sample
-    2.38095e-02 , 3.57143e-02 , 2.38095e-02 , 9.16667e-01 , # A
-    0           , 0           , 0           , 1           , # B
-    6.25000e-02 , 9.37500e-02 , 6.25000e-02 , 7.81250e-01 , # C
-    3.12500e-02 , 4.68750e-02 , 3.12500e-02 , 8.90625e-01 , # D
-    0           , 0           , 0           , 1           , # E
-    0           , 0           , 0           , 1           , # M
-    0           , 0           , 0           , 1           , # P (NULL)
+    0           , 2.38095e-02 , 3.57143e-02 , 2.38095e-02 , 9.16667e-01 , # A
+    0           , 0           , 0           , 0           , 1           , # B
+    0           , 6.25000e-02 , 9.37500e-02 , 6.25000e-02 , 7.81250e-01 , # C
+    0           , 3.12500e-02 , 4.68750e-02 , 3.12500e-02 , 8.90625e-01 , # D
+    0           , 0           , 0           , 0           , 1           , # E
+    0           , 0           , 0           , 0           , 1           , # M
+    0           , 0           , 0           , 0           , 1           , # P (NULL)
   # machining
-    0           , 0           , 5.00000e-02 , 9.50000e-01 , # A
-    0           , 0           , 0           , 1           , # B (NULL)
-    0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 1           , # E (NULL)
-    2.50000e-02 , 0           , 2.50000e-02 , 9.50000e-01 , # M
-    0           , 0           , 0           , 1           , # P (NULL)
+    0           , 0           , 0           , 5.00000e-02 , 9.50000e-01 , # A
+    0           , 0           , 0           , 0           , 1           , # B (NULL)
+    0           , 0           , 0           , 0           , 1           , # C (NULL)
+    0           , 0           , 0           , 0           , 1           , # D (NULL)
+    0           , 0           , 0           , 0           , 1           , # E (NULL)
+    0           , 2.50000e-02 , 0           , 2.50000e-02 , 9.50000e-01 , # M
+    0           , 0           , 0           , 0           , 1           , # P (NULL)
   # metallurgy
-    0           , 0           , 0           , 1           , # A
-    0           , 0           , 0           , 1           , # B
-    0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 1           , # E
-    0           , 0           , 0           , 1           , # M (NULL)
-    0           , 0           , 0           , 1           , # P (NULL)
+    0           , 0           , 0           , 0           , 1           , # A
+    0           , 0           , 0           , 0           , 1           , # B
+    0           , 0           , 0           , 0           , 1           , # C (NULL)
+    0           , 0           , 0           , 0           , 1           , # D (NULL)
+    0           , 0           , 0           , 0           , 1           , # E
+    0           , 0           , 0           , 0           , 1           , # M (NULL)
+    0           , 0           , 0           , 0           , 1           , # P (NULL)
   # small sample
-    2.50000e-02 , 0           , 2.50000e-02 , 9.25000e-01 , # A
-    2.50000e-02 , 0           , 2.50000e-02 , 9.25000e-01 , # B
-    0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 1           , # E (NULL)
-    0           , 0           , 0           , 1           , # M (NULL)
-    0           , 0           , 0           , 1           , # P (NULL)
+    0           , 2.50000e-02 , 0           , 2.50000e-02 , 9.25000e-01 , # A
+    0           , 2.50000e-02 , 0           , 2.50000e-02 , 9.25000e-01 , # B
+    0           , 0           , 0           , 0           , 1           , # C (NULL)
+    0           , 0           , 0           , 0           , 1           , # D (NULL)
+    0           , 0           , 0           , 0           , 1           , # E (NULL)
+    0           , 0           , 0           , 0           , 1           , # M (NULL)
+    0           , 0           , 0           , 0           , 1           , # P (NULL)
   # solution
-    0           , 0           , 1           , 0           , # A
-    0           , 0           , 0           , 1           , # B (NULL)
-    0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 1           , # E (NULL)
-    0           , 0           , 0           , 1           , # M (NULL)
-    0           , 0           , 0           , 1           , # P (NULL)
+    0           , 0           , 0           , 1           , 0           , # A
+    0           , 0           , 0           , 0           , 1           , # B (NULL)
+    0           , 0           , 0           , 0           , 1           , # C (NULL)
+    0           , 0           , 0           , 0           , 1           , # D (NULL)
+    0           , 0           , 0           , 0           , 1           , # E (NULL)
+    0           , 0           , 0           , 0           , 1           , # M (NULL)
+    0           , 0           , 0           , 0           , 1           , # P (NULL)
   # waste
-    0           , 0           , 0           , 1           , # A (NULL)
-    0           , 0           , 0           , 1           , # B (NULL)
-    0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 1           , # E (NULL)
-    0           , 0           , 0           , 1           , # M (NULL)
-    2.50000e-01 , 5.00000e-01 , 0           , 2.50000e-01 ) # P
+    0           , 0           , 0           , 0           , 1           , # A (NULL)
+    0           , 0           , 0           , 0           , 1           , # B (NULL)
+    0           , 0           , 0           , 0           , 1           , # C (NULL)
+    0           , 0           , 0           , 0           , 1           , # D (NULL)
+    0           , 0           , 0           , 0           , 1           , # E (NULL)
+    0           , 0           , 0           , 0           , 1           , # M (NULL)
+    0           , 2.50000e-01 , 5.00000e-01 , 0           , 2.50000e-01 ) # P
 
-  dim(mod.cpt) <- c(4, 7, 6)
+  dim(mod.cpt) <- c(5, 7, 6)
   dimnames(mod.cpt) <- list('mod' = mod, 'condition' = condition, 'operation' = operation)
 
   ref.cpt <- c(
   # large sample
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # A
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # B
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # C
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # D
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # E
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # M
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # P (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # A
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # B
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # C
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # D
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # E
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # M
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # P (NULL)
   # machining
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # A
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # B (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # E (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # M
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # P (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # A
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # B (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # C (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # D (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # E (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # M
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # P (NULL)
   # metallurgy
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # A
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # B
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # E
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # M (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # P (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # A
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # B
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # C (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # D (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # E
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # M (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # P (NULL)
   # small sample
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # A
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # B
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # E (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # M (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # P (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # A
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # B
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # C (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # D (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # E (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # M (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # P (NULL)
   # solution
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # A
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # B (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # E (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # M (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # P (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , # A
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # B (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # C (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # D (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # E (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # M (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # P (NULL)
   # waste
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # A (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # B (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # C (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # E (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # M (NULL)
-    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           ) # P
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # A (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # B (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # C (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # D (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # E (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           , # M (NULL)
+    0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           ) # P
 
-  dim(ref.cpt) <- c(12, 7, 6)
+  dim(ref.cpt) <- c(10, 7, 6)
   dimnames(ref.cpt) <- list('ref' = ref, 'condition' = condition, 'operation' = operation)
 
   shape.cpt <- c(
   # large sample
-    0           , 0           , 0           , # A
-    0           , 0           , 0           , # B
-    0           , 0           , 0           , # C
-    0           , 0           , 0           , # D
-    0           , 0           , 0           , # E
-    0           , 0           , 0           , # M
-    0           , 0           , 1           , # P (NULL)
+    0           , 0           , # A
+    0           , 0           , # B
+    0           , 0           , # C
+    0           , 0           , # D
+    0           , 0           , # E
+    0           , 0           , # M
+    0           , 1           , # P (NULL)
   # machining
-    0           , 0           , 0           , # A
-    0           , 0           , 1           , # B (NULL)
-    0           , 0           , 1           , # C (NULL)
-    0           , 0           , 1           , # D (NULL)
-    0           , 0           , 1           , # E (NULL)
-    0           , 0           , 0           , # M
-    0           , 0           , 1           , # P (NULL)
+    0           , 0           , # A
+    0           , 1           , # B (NULL)
+    0           , 1           , # C (NULL)
+    0           , 1           , # D (NULL)
+    0           , 1           , # E (NULL)
+    0           , 0           , # M
+    0           , 1           , # P (NULL)
   # metallurgy
-    0           , 0           , 0           , # A
-    0           , 0           , 0           , # B
-    0           , 0           , 1           , # C (NULL)
-    0           , 0           , 1           , # D (NULL)
-    0           , 0           , 0           , # E
-    0           , 0           , 1           , # M (NULL)
-    0           , 0           , 1           , # P (NULL)
+    0           , 0           , # A
+    0           , 0           , # B
+    0           , 1           , # C (NULL)
+    0           , 1           , # D (NULL)
+    0           , 0           , # E
+    0           , 1           , # M (NULL)
+    0           , 1           , # P (NULL)
   # small sample
-    0           , 0           , 0           , # A
-    0           , 0           , 0           , # B
-    0           , 0           , 1           , # C (NULL)
-    0           , 0           , 1           , # D (NULL)
-    0           , 0           , 1           , # E (NULL)
-    0           , 0           , 1           , # M (NULL)
-    0           , 0           , 1           , # P (NULL)
+    0           , 0           , # A
+    0           , 0           , # B
+    0           , 1           , # C (NULL)
+    0           , 1           , # D (NULL)
+    0           , 1           , # E (NULL)
+    0           , 1           , # M (NULL)
+    0           , 1           , # P (NULL)
   # solution
-    0           , 0           , 0           , # A
-    0           , 0           , 1           , # B (NULL)
-    0           , 0           , 1           , # C (NULL)
-    0           , 0           , 1           , # D (NULL)
-    0           , 0           , 1           , # E (NULL)
-    0           , 0           , 1           , # M (NULL)
-    0           , 0           , 1           , # P (NULL)
+    0           , 0           , # A
+    0           , 1           , # B (NULL)
+    0           , 1           , # C (NULL)
+    0           , 1           , # D (NULL)
+    0           , 1           , # E (NULL)
+    0           , 1           , # M (NULL)
+    0           , 1           , # P (NULL)
   # waste
-    0           , 0           , 1           , # A (NULL)
-    0           , 0           , 1           , # B (NULL)
-    0           , 0           , 1           , # C (NULL)
-    0           , 0           , 1           , # D (NULL)
-    0           , 0           , 1           , # E (NULL)
-    0           , 0           , 1           , # M (NULL)
-    0           , 0           , 0           ) # P
+    0           , 1           , # A (NULL)
+    0           , 1           , # B (NULL)
+    0           , 1           , # C (NULL)
+    0           , 1           , # D (NULL)
+    0           , 1           , # E (NULL)
+    0           , 1           , # M (NULL)
+    0           , 0           ) # P
 
-  dim(shape.cpt) <- c(3, 7, 6)
+  dim(shape.cpt) <- c(2, 7, 6)
   dimnames(shape.cpt) <- list('shape' = shape, 'condition' = condition, 'operation' = operation)
-
-  graphviz.plot(dag)
-  dag
 
   # bn <- list(
   #   operation = operation.cpt,

@@ -65,7 +65,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   library(magrittr)
   library(parallel)
 
-  # format numbers
+  # set format and precision
   Format <- function(x) formatC(x, format = 'e', digits = 14)
 
   # set Pu mass (g) and density (g/cc)
@@ -766,7 +766,7 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   }
 
   # write input to file
-  file.name <- paste(gsub(' ', '_', title.card)) 
+  file.name <- paste(gsub(' ', '-', title.card)) 
   input.deck <- paste(title.card, 'c', cell.cards, surface.cards, matl.cards, 'c', data.cards, 'c\nprint', sep = '\n')
   write(input.deck, file = paste0(file.name, '.i'))
 

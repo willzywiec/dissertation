@@ -29,7 +29,7 @@ Generate <- function(source.dir, training.dir) {
   ht <- sample(seq(0.5, 36, 0.5) * 2.54, deck.size, replace = TRUE) # 36 in = 91.44 cm
 
   # reset deck size
-  if (file.exists('data_set.csv')) {
+  if (file.exists('data-set.csv')) {
     if (nrow(data.set) < deck.size) {
       deck.size <- deck.size - nrow(data.set)
     }

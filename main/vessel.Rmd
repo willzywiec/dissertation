@@ -5,11 +5,11 @@ output : html_document
 
 ```{r setup, include = FALSE}
 
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 ```
 
-# vessel.R
+# vessel.Rmd
 #
 # William John Zywiec
 # The George Washington University
@@ -36,17 +36,10 @@ sample.size <- 1e+06
 risk.pool <- 5
 
 # load functions
-source(paste0(source.dir, '/bn.R'))
 source(paste0(source.dir, '/generate.R'))
 source(paste0(source.dir, '/nn.R'))
+source(paste0(source.dir, '/bn.R'))
 source(paste0(source.dir, '/risk.R'))
-
-```
-
-```{r}
-
-# build Bayesian network
-BN()
 
 ```
 
@@ -61,6 +54,13 @@ Generate(source.dir, training.dir)
 
 # build neural network
 NN(ensemble.size, source.dir, training.dir)
+
+```
+
+```{r}
+
+# build Bayesian network
+BN()
 
 ```
 

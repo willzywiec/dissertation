@@ -26,9 +26,9 @@ Risk <- function(bn, ensemble.size, sample.size, risk.pool, source.dir, training
       bn.data[[i]] <- Infer(bn, ensemble.size, sample.size, training.dir)
       risk[nrow(risk) + 1, ] <- mean(bn.data[[i]]$keff > 1.0)
       if (file.exists('risk.csv')) {
-        write.csv(bn.data[[i]], file = paste0('bn_', nrow(risk) + i, '.csv'), row.names = FALSE)
+        write.csv(bn.data[[i]], file = paste0('bn-', nrow(risk) + i, '.csv'), row.names = FALSE)
       } else {
-        write.csv(bn.data[[i]], file = paste0('bn_', i, '.csv', row.names = FALSE))
+        write.csv(bn.data[[i]], file = paste0('bn-', i, '.csv', row.names = FALSE))
       }
     }
 

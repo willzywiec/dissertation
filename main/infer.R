@@ -65,7 +65,7 @@ Infer <- function(bn, ensemble.size, sample.size, training.dir) {
 
   for (i in 1:ensemble.size) {
     keff[ , i] <- ensemble.model[[i]] %>% predict(bn.df)
-    colnames(keff)[i] <- paste0('model_', i, '_', which.min(ensemble.history[[i]]$metrics$mean_absolute_error), '.h5')
+    colnames(keff)[i] <- paste0('model-', i, '-', which.min(ensemble.history[[i]]$metrics$mean_absolute_error), '.h5')
   }
 
   keff.mean <- rowMeans(keff) %>% round(5)
