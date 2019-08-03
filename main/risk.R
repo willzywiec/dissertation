@@ -5,40 +5,38 @@
 #
 # ...
 
-Risk <- function(bn, ensemble.size, sample.size, risk.pool, source.dir, training.dir) {
+Risk <- function(bn, ensemble.size, sample.size, risk.pool) {
 
   # load functions
-  source(paste0(source.dir, '/infer.R'))
+  source(paste0(source.dir, '/predict.R'))
 
-  setwd(training.dir)
+  setwd(test.dir)
 
+  # load data
   if (file.exists('risk.csv')) {
     risk <- read.csv('risk.csv')
   } else {
     risk <- data.frame(risk = numeric())
   }
 
-  if (risk.pool > 0) {
+  # predict keff
+  bn.data <- list()
 
-    bn.data <- list()
-
-    for (i in 1:risk.pool) {
-      bn.data[[i]] <- Infer(bn, ensemble.size, sample.size, training.dir)
-      risk[nrow(risk) + 1, ] <- mean(bn.data[[i]]$keff > 1.0)
-      if (file.exists('risk.csv')) {
-        write.csv(bn.data[[i]], file = paste0('bn-', nrow(risk) + i, '.csv'), row.names = FALSE)
-      } else {
-        write.csv(bn.data[[i]], file = paste0('bn-', i, '.csv', row.names = FALSE))
-      }
+  for (i in 1:risk.pool) {
+    bn.data[[i]] <- Predict(bn, ensemble.size, sample.size)
+    risk[nrow(risk) + 1, ] <- mean(bn.data[[i]]$keff > 1.0)
+    if (file.exists('risk.csv')) {
+      write.csv(bn.data[[i]], file = paste0('bn-', nrow(risk) + i, '.csv'), row.names = FALSE)
+    } else {
+      write.csv(bn.data[[i]], file = paste0('bn-', i, '.csv', row.names = FALSE))
     }
-
-    setwd(training.dir)
-    write.csv(risk, file = 'risk.csv', row.names = FALSE)
-    cat('Saved risk.csv\n')
-
-    bn.data <<- bn.data
-
   }
+
+  setwd(test.dir)
+  write.csv(risk, file = 'risk.csv', row.names = FALSE)
+  cat('Saved risk.csv\n')
+
+  bn.data <<- bn.data
 
   # write risk to file
   if ((file.exists('risk.csv')) || (risk.pool > 0)) { 

@@ -5,7 +5,7 @@ output : html_document
 
 ```{r setup, include = FALSE}
 
-knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(message = FALSE, root.dir = 'C:/Users/Will/Desktop/test', warning = FALSE)
 
 ```
 
@@ -26,12 +26,13 @@ cat('\014')
 # load packages
 library(parallel)
 
-# set source and training directories
+# set source and test directories
 source.dir <- 'C:/Users/Will/Dropbox/Dissertation/R/main'
-training.dir <- 'C:/Users/Will/Desktop/test'
+test.dir <- 'C:/Users/Will/Desktop/test'
 
 # set variables
-ensemble.size <- 5
+ensemble.size <- 9
+
 sample.size <- 1e+06
 risk.pool <- 5
 
@@ -46,14 +47,15 @@ source(paste0(source.dir, '/risk.R'))
 ```{r}
 
 # generate data
-Generate(source.dir, training.dir)
+Generate()
 
 ```
+
 
 ```{r}
 
 # build neural network
-NN(ensemble.size, source.dir, training.dir)
+NN(ensemble.size)
 
 ```
 
@@ -67,6 +69,6 @@ BN()
 ```{r}
 
 # assess risk
-Risk(bn, ensemble.size, sample.size, risk.pool, source.dir, training.dir)
+Risk(bn, ensemble.size, sample.size, risk.pool)
 
 ```

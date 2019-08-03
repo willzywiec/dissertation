@@ -10,12 +10,12 @@ if (!is.null(dev.list())) dev.off()
 rm(list = ls())
 cat('\014')
 
-# set options
+# set precision
 options(digits = 15)
 
-# set training directory
-training.dir <- 'C:/Users/Will/Desktop/test'
-setwd(training.dir)
+# set test directory
+test.dir <- 'C:/Users/Will/Desktop/test'
+setwd(test.dir)
 
 # 1 = large sample
 # 2 = machining

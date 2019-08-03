@@ -5,17 +5,23 @@
 #
 # ...
 
-Generate <- function(source.dir, training.dir) {
+Generate <- function() {
 
-  # set variables
+	# set deck size
   deck.size <- 1e+04
+  
+  if (file.exists('data-set.csv')) {
+    if (nrow(data.set) < deck.size) {
+      deck.size <- deck.size - nrow(data.set)
+    }
+  }
 
   # load functions
   source(paste0(source.dir, '/build.R'))
   source(paste0(source.dir, '/tabulate.R'))
 
   # tabulate data
-  setwd(training.dir)
+  setwd(test.dir)
   Tabulate()
 
   # generate random uniform data
@@ -27,13 +33,6 @@ Generate <- function(source.dir, training.dir) {
   dim <- sample(seq(0.5, 18, 0.5) * 2.54, deck.size, replace = TRUE) # 18 in = 45.72 cm
   shape <- sample(c('sph', 'rcc'), deck.size, replace = TRUE)
   ht <- sample(seq(0.5, 36, 0.5) * 2.54, deck.size, replace = TRUE) # 36 in = 91.44 cm
-
-  # reset deck size
-  if (file.exists('data-set.csv')) {
-    if (nrow(data.set) < deck.size) {
-      deck.size <- deck.size - nrow(data.set)
-    }
-  }
 
   # build input decks and run MCNP
   for (i in 1:deck.size) {
