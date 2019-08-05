@@ -21,12 +21,14 @@ BN <- function() {
     to = c(seq(2, 10), seq(3, 10)))
 
   dag <- graph_from_data_frame(d = edges, vertices = nodes)
+  
+  dag.layout <- matrix(data = c(0, 0, -8, -6, -4, -2, 2, 4, 6, 8, 2, 0, rep(1, 8)), nrow = 10, ncol = 2)
 
   plot(
     dag,
     edge.arrow.size = 0.3,
     edge.color = '#FC4E07',
-    layout = layout_with_dh,
+    layout = dag.layout,
     vertex.color = '#FD9268',
     vertex.frame.color = '#FC4E07',
     vertex.label.color = 'black',

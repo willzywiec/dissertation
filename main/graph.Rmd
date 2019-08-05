@@ -1,0 +1,182 @@
+---
+title : 'graph'
+output : html_document
+---
+
+```{r setup, include = FALSE}
+
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+
+```
+
+# graph.Rmd
+#
+# William John Zywiec
+# The George Washington University
+#
+# ...
+
+```{r}
+
+# initialize environment
+if (!is.null(dev.list())) dev.off()
+rm(list = ls())
+cat('\014')
+
+# load packages
+library(ggplot2)
+
+year <- c(
+	1945, 1945, 1945, 1946, 1949, 1950, 1951, 1951, 1952, 1952,
+	1952, 1953, 1953, 1954, 1954, 1954, 1955, 1956, 1956, 1957,
+	1957, 1958, 1958, 1958, 1958, 1958, 1959, 1960, 1960, 1960,
+	1961, 1961, 1962, 1962, 1961, 1961, 1962, 1962, 1963, 1963,
+	1963, 1963, 1964, 1965, 1965, 1965, 1965, 1968, 1968, 1968,
+	1968, 1970, 1971, 1971, 1978, 1978, 1983, 1997, 1997, 1999)
+
+accident <- c(
+	'reactor', 'reactor', 'reactor', 'reactor', 'reactor', 'reactor', 'reactor', 'reactor', 'reactor', 'reactor',
+	'reactor', 'reactor', 'process', 'reactor', 'reactor', 'reactor', 'reactor', 'reactor', 'reactor', 'reactor',
+	'process', 'reactor', 'reactor', 'process', 'process', 'process', 'process', 'reactor', 'reactor', 'process',
+	'reactor', 'reactor', 'reactor', 'reactor', 'process', 'process', 'process', 'process', 'reactor', 'reactor',
+	'process', 'process', 'process', 'reactor', 'reactor', 'process', 'process', 'reactor', 'reactor', 'reactor',
+	'process', 'process', 'reactor', 'reactor', 'process', 'process', 'reactor', 'reactor', 'process', 'process')
+
+country <- c(
+	'US', 'US', 'US', 'US', 'US', '--', 'US', 'US', 'US', 'US',
+	'--', '--', '--', 'US', 'US', 'US', 'US', 'US', 'US', 'US',
+	'--', 'US', '--', 'US', 'US', '--', 'US', 'US', '--', '--',
+	'US', 'US', 'US', 'US', 'US', '--', 'US', '--', 'US', '--',
+	'--', '--', 'US', 'US', '--', '--', '--', 'US', 'US', '--',
+	'--', '--', '--', '--', 'US', '--', '--', '--', '--', '--')
+
+df <- data.frame(year, accident, country)
+
+new.theme <- theme_gray() + theme(axis.text = element_text(color = 'black', size = 10), text = element_text(color = 'black', family = 'serif', size = 10))
+
+theme_set(new.theme)
+
+ggplot(df, aes(x = year)) +
+  geom_bar(aes(fill = country)) +
+  scale_fill_manual(labels = c('outside the United States', 'inside the United States'), values = c('#C0C0C0', '#FC4E07')) +
+  scale_x_continuous(breaks = c(1940, 1950, 1960, 1970, 1980, 1990, 2000), limits = c(1940, 2000)) +
+  ylab(NULL) +
+  theme(legend.position = 'bottom',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.text = element_text(size = 10),
+    legend.title = element_blank())
+
+ggsave('accident_1.png', dpi = 320, height = 3, width = 6.5)
+
+ggplot(df, aes(x = year)) +
+  geom_bar(aes(fill = forcats::fct_rev(accident))) +
+  scale_fill_manual(labels = c('critical experiments and research reactors', 'production facilities'), values = c('#C0C0C0', '#FC4E07')) +
+  scale_x_continuous(breaks = c(1940, 1950, 1960, 1970, 1980, 1990, 2000), limits = c(1940, 2000)) +
+  ylab(NULL) +
+  theme(legend.position = 'bottom',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.text = element_text(size = 10),
+    legend.title = element_blank())
+
+ggsave('accident_2.png', dpi = 320, height = 3, width = 6.5)
+
+df <- df[which(df$accident == 'process'), ]
+
+ggplot(df, aes(x = year)) +
+  geom_bar(aes(fill = country)) +
+  scale_fill_manual(labels = c('outside the United States', 'inside the United States'), values = c('#C0C0C0', '#FC4E07')) +
+  scale_x_continuous(breaks = c(1940, 1950, 1960, 1970, 1980, 1990, 2000), limits = c(1940, 2000)) +
+  ylab(NULL) +
+  ylim(0, 5) +
+  theme(legend.position = 'bottom',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.text = element_text(size = 10),
+    legend.title = element_blank())
+
+ggsave('accident_3.png', dpi = 320, height = 3, width = 6.5)
+
+
+```
+
+```{r}
+
+# initialize environment
+if (!is.null(dev.list())) dev.off()
+rm(list = ls())
+cat('\014')
+
+# load packages
+library(ggplot2)
+
+keff <- c(seq(0.05, 0.95, 0.05), 0.99, 0.999)
+M <- sapply(keff, function(x) 1/(1-x))
+
+df <- data.frame(keff, M)
+
+new.theme <- theme_gray() + theme(axis.text = element_text(color = 'black', size = 10), text = element_text(color = 'black', family = 'serif', size = 10))
+
+theme_set(new.theme)
+
+ggplot(df, aes(x = keff)) +
+  geom_line(aes(y = M), size = 0.5) +
+  geom_point(aes(y = M), size = 0.9) +
+  scale_y_log10() +
+  xlab(bquote(k[eff]))
+
+ggsave('keff.png', dpi = 320, height = 3.2, width = 6.5)
+
+```
+
+```{r}
+
+# initialize environment
+if (!is.null(dev.list())) dev.off()
+rm(list = ls())
+cat('\014')
+
+# load packages
+library(ggplot2)
+
+df <- read.csv('uncertainty.csv', fileEncoding = 'UTF-8-BOM', header = TRUE)
+
+new.theme <- theme_gray() + theme(axis.text = element_text(color = 'black', size = 10), text = element_text(color = 'black', family = 'serif', size = 10))
+
+theme_set(new.theme)
+
+ggplot(df, aes(x = EALF, y = keff, ymin = keff - sd, ymax = keff + sd)) +
+  geom_point(size = 0.7) +
+  geom_linerange(size = 0.2) +
+  geom_smooth(color = '#FC4E07', se = FALSE, size = 0.7, span = 0.11) +
+  scale_x_log10(breaks = c(1e-07, 1e-06, 1e-05, 1e-04, 1e-03, 1e-02, 1e-01, 1e+00)) +
+  xlab('energy of average lethargy causing fission (MeV)') +
+  ylab(bquote(k[eff]))
+
+ggsave('uncertainty.png', dpi = 320, height = 3.6, width = 6.5)
+expression
+```
+
+```{r}
+
+# initialize environment
+if (!is.null(dev.list())) dev.off()
+rm(list = ls())
+cat('\014')
+
+# load packages
+library(ggplot2)
+
+df <- read.csv('fixed.csv', fileEncoding = 'UTF-8-BOM', header = TRUE)
+
+new.theme <- theme_gray() + theme(axis.text = element_text(color = 'black', size = 10), text = element_text(color = 'black', family = 'serif', size = 10))
+
+theme_set(new.theme)
+
+ggplot(df, aes(x = radius, y = mass, z = keff)) +
+  geom_contour(color = '#A9A9A9', size = 0.5) +
+  geom_text_contour(aes(z = keff), family = 'serif', size = 3.5, stroke = 0.1) +
+  xlab('radius (cm)') +
+  ylab('mass (g)')
+
+ggsave('interpolation.png', dpi = 320, height = 3.6, width = 6.5)
+
+```
