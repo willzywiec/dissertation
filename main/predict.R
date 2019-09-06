@@ -20,7 +20,7 @@ Predict <- function(bn, ensemble.size, sample.size) {
 
   vol <- conc <- hd <- numeric()
 
-  # fix parameters and calculate vol, conc, and h:d
+  # fix parameters and calculate vol, conc, and h/d
   for (i in 1:nrow(bn.data)) {
 
   	# dim (cm)
@@ -39,7 +39,7 @@ Predict <- function(bn, ensemble.size, sample.size) {
     }
 
     conc[i] <- (bn.data$mass[i] / vol[i]) # conc (g/cc)
-    hd[i] <- (bn.data$ht[i] / (2 * bn.data$rad[i])) # h:d
+    hd[i] <- (bn.data$ht[i] / (2 * bn.data$rad[i])) # h/d
 
   }
 

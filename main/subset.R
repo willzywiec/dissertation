@@ -15,7 +15,7 @@ Subset <- function(data.set) {
   if (nrow(data.set) > 1) {
 
     # test sph only
-    # data.set$shape <- NULL
+    data.set$shape <- NULL
 
     # one-hot encode categorical variables
     dummy <- dummyVars(~ ., data = data.set)
@@ -30,14 +30,14 @@ Subset <- function(data.set) {
     training.data <<- training.data
 
     # subset data
-    # test.df <- test.data[-c(25, 26)]
-    test.df <- test.data[-c(27, 28)]
-    # training.df <- training.data[-c(25, 26)]
-    training.df <- training.data[-c(27, 28)]
+    test.df <- test.data[-c(25, 26)]
+    # test.df <- test.data[-c(27, 28)]
+    training.df <- training.data[-c(25, 26)]
+    # training.df <- training.data[-c(27, 28)]
 
     # scale data
-    # num <- c(1, 9, 20, 21:24)
-    num <- c(1, 9, 20, 23:26)
+    num <- c(1, 9, 20, 21:24)
+    # num <- c(1, 9, 20, 23:26)
     training.mean <<- apply(training.df[num], 2, mean)
     training.sd <<- apply(training.df[num], 2, sd)
 

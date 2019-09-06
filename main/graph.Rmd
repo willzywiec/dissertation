@@ -26,6 +26,10 @@ cat('\014')
 # load packages
 library(ggplot2)
 
+path <- 'C:/Users/Will/Dropbox/Dissertation/Journal Paper/'
+
+setwd(path)
+
 year <- c(
 	1945, 1945, 1945, 1946, 1949, 1950, 1951, 1951, 1952, 1952,
 	1952, 1953, 1953, 1954, 1954, 1954, 1955, 1956, 1956, 1957,
@@ -66,7 +70,7 @@ ggplot(df, aes(x = year)) +
     legend.text = element_text(size = 10),
     legend.title = element_blank())
 
-ggsave('accident_1.png', dpi = 320, height = 3, width = 6.5)
+ggsave('accident-1.png', dpi = 320, height = 3, width = 6.5)
 
 ggplot(df, aes(x = year)) +
   geom_bar(aes(fill = forcats::fct_rev(accident))) +
@@ -78,7 +82,7 @@ ggplot(df, aes(x = year)) +
     legend.text = element_text(size = 10),
     legend.title = element_blank())
 
-ggsave('accident_2.png', dpi = 320, height = 3, width = 6.5)
+ggsave('accident-2.png', dpi = 320, height = 3, width = 6.5)
 
 df <- df[which(df$accident == 'process'), ]
 
@@ -93,7 +97,7 @@ ggplot(df, aes(x = year)) +
     legend.text = element_text(size = 10),
     legend.title = element_blank())
 
-ggsave('accident_3.png', dpi = 320, height = 3, width = 6.5)
+ggsave('accident-3.png', dpi = 320, height = 3, width = 6.5)
 
 
 ```
@@ -108,6 +112,10 @@ cat('\014')
 # load packages
 library(ggplot2)
 
+path <- 'C:/Users/Will/Dropbox/Dissertation/Journal Paper/'
+
+setwd(path)
+
 keff <- c(seq(0.05, 0.95, 0.05), 0.99, 0.999)
 M <- sapply(keff, function(x) 1/(1-x))
 
@@ -117,11 +125,11 @@ new.theme <- theme_gray() + theme(axis.text = element_text(color = 'black', size
 
 theme_set(new.theme)
 
-ggplot(df, aes(x = keff)) +
-  geom_line(aes(y = M), size = 0.5) +
-  geom_point(aes(y = M), size = 0.9) +
+ggplot(df, aes(x = keff, y = M)) +
+  geom_line(size = 0.5) +
+  geom_point(size = 0.9) +
+  xlab(bquote(k[eff])) +
   scale_y_log10() +
-  xlab(bquote(k[eff]))
 
 ggsave('keff.png', dpi = 320, height = 3.2, width = 6.5)
 
@@ -137,7 +145,9 @@ cat('\014')
 # load packages
 library(ggplot2)
 
-df <- read.csv('uncertainty.csv', fileEncoding = 'UTF-8-BOM', header = TRUE)
+path <- 'C:/Users/Will/Dropbox/Dissertation/Journal Paper/'
+
+df <- read.csv(paste0(path, 'uncertainty.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
 
 new.theme <- theme_gray() + theme(axis.text = element_text(color = 'black', size = 10), text = element_text(color = 'black', family = 'serif', size = 10))
 
@@ -164,19 +174,54 @@ cat('\014')
 
 # load packages
 library(ggplot2)
+library(metR)
 
-df <- read.csv('fixed.csv', fileEncoding = 'UTF-8-BOM', header = TRUE)
+path <- 'C:/Users/Will/Dropbox/Dissertation/Journal Paper/'
+
+df <- read.csv(paste0(path, 'fixed.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
 
 new.theme <- theme_gray() + theme(axis.text = element_text(color = 'black', size = 10), text = element_text(color = 'black', family = 'serif', size = 10))
 
 theme_set(new.theme)
 
-ggplot(df, aes(x = radius, y = mass, z = keff)) +
+ggplot(df, aes(x = rad, y = mass, z = keff)) +
   geom_contour(color = '#A9A9A9', size = 0.5) +
   geom_text_contour(aes(z = keff), family = 'serif', size = 3.5, stroke = 0.1) +
   xlab('radius (cm)') +
-  ylab('mass (g)')
+  ylab('plutonium mass (g)')
 
 ggsave('interpolation.png', dpi = 320, height = 3.6, width = 6.5)
+
+```
+
+```{r}
+
+# initialize environment
+if (!is.null(dev.list())) dev.off()
+rm(list = ls())
+cat('\014')
+
+# load packages
+library(ggplot2)
+
+path <- 'C:/Users/Will/Dropbox/Dissertation/Journal Paper/'
+
+df1 <- read.csv(paste0(path, 'nn-1.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+df2 <- read.csv(paste0(path, 'nn-2.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+
+new.theme <- theme_gray() + theme(axis.text = element_text(color = 'black', size = 10), text = element_text(color = 'black', family = 'serif', size = 10))
+
+theme_set(new.theme)
+
+ggplot(df1, aes(x = layers, y = val.mae)) +
+  geom_point(size = 0.9) +
+  geom_line(data = df2, aes(x = layers, y = val.mae), color = '#FC4E07', size = 0.5) +
+  geom_point(data = df2, aes(x = layers, y = val.mae), color = '#FC4E07', size = 0.9) +
+  xlab('hidden layers') +
+  ylab(bquote(mean ~ absolute ~ error ~ (k[eff]))) +
+  scale_x_continuous(breaks = 1:6, minor_breaks = 1:6) +
+  scale_y_log10() +
+
+ggsave('nn.png', dpi = 320, height = 3.6, width = 6.5)
 
 ```

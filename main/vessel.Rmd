@@ -28,13 +28,12 @@ library(parallel)
 
 # set source and test directories
 source.dir <- 'C:/Users/Will/Dropbox/Dissertation/R/main'
-test.dir <- 'C:/Users/Will/Desktop/test'
+test.dir <- 'C:/Users/Will/Desktop/test-sph'
 
 # set variables
-ensemble.size <- 9
-
+ensemble.size <- 10
 sample.size <- 1e+06
-risk.pool <- 5
+risk.pool <- 10
 
 # load functions
 source(paste0(source.dir, '/generate.R'))

@@ -66,7 +66,7 @@ Tabulate <- function() {
           vol[i] <- ((2 * rad[i])^2 * ht[i])
         }
 
-        # conc (g/cc) and h:d
+        # conc (g/cc) and h/d
         conc[i] <- (mass[i] / vol[i])
         hd[i] <- (ht[i] / (2 * rad[i]))
 

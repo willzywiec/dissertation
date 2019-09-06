@@ -23,12 +23,20 @@ NN <- function(ensemble.size) {
   source(paste0(source.dir, '/subset.R'))
 
   # load models
-  dir.create(paste0(test.dir, '/hdf5'), showWarnings = FALSE)
   setwd(test.dir)
+
+  unlink(paste0(test.dir, '/hdf5'), recursive = TRUE)
+  files <- list.files()
+  for (i in 1:length(files)) {
+    if (files[i] != 'data-set.csv') {
+      file.remove(files[i])
+    }
+  }
+
+  dir.create(paste0(test.dir, '/hdf5'), showWarnings = FALSE)
   hdf5.files <- list.files(pattern = '\\.h5$')
 
   # tabulate data
-  setwd(test.dir)
   Tabulate()
 
   # build and train models
