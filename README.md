@@ -1,18 +1,19 @@
 # Dissertation
 
-These scripts combine a Bayesian network with a deep feedforward neural network for the purpose of assessing the risk and consequences of a criticality accident occurring in a (Category III) nuclear facility.
+These scripts combine a discrete Bayesian network with an ensemble metamodel, comprised of several densely connected, feedforward neural networks, for the purpose of formulating estimates of process criticality accident risk.
 
-Everything is run from **vessel.R**.
+Everything is run from **vessel.Rmd**.
 
 ## Prerequisites
 MCNP6.2  
-FREYA
+ENDF/B-VII.1 Nuclear Data
 
 ## R Packages
 bnlearn  
 caret  
-graph  
+ggplot2  
 igraph  
 keras  
+magrittr  
 parallel  
-scales
+scales  

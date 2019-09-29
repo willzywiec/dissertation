@@ -25,12 +25,15 @@ Model <- function() {
       units = 32,
       activation = 'relu') %>%
     layer_dense(
+      units = 16,
+      activation = 'relu') %>%
+    layer_dense(
       units = 1,
       activation = 'linear')
 
   model %>% compile(
     loss = 'mean_squared_error',
-    optimizer = optimizer_adamax(),
+    optimizer = optimizer_adamax(lr = 0.00075),
     metrics = c('mean_absolute_error'))
 
 }

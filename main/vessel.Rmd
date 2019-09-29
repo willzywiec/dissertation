@@ -5,7 +5,7 @@ output : html_document
 
 ```{r setup, include = FALSE}
 
-knitr::opts_chunk$set(message = FALSE, root.dir = 'C:/Users/Will/Desktop/test', warning = FALSE)
+knitr::opts_chunk$set(message = FALSE, root.dir = 'D:/test-sph5', warning = FALSE)
 
 ```
 
@@ -15,6 +15,7 @@ knitr::opts_chunk$set(message = FALSE, root.dir = 'C:/Users/Will/Desktop/test', 
 # The George Washington University
 #
 # ...
+
 
 ```{r}
 
@@ -28,28 +29,20 @@ library(parallel)
 
 # set source and test directories
 source.dir <- 'C:/Users/Will/Dropbox/Dissertation/R/main'
-test.dir <- 'C:/Users/Will/Desktop/test-sph'
+test.dir <- 'D:/test-sph5'
 
 # set variables
-ensemble.size <- 10
+ensemble.size <- 50
 sample.size <- 1e+06
 risk.pool <- 10
 
 # load functions
-source(paste0(source.dir, '/generate.R'))
+
 source(paste0(source.dir, '/nn.R'))
 source(paste0(source.dir, '/bn.R'))
 source(paste0(source.dir, '/risk.R'))
 
 ```
-
-```{r}
-
-# generate data
-Generate()
-
-```
-
 
 ```{r}
 

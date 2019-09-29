@@ -11,55 +11,49 @@ BN <- function() {
   library(bnlearn)
   library(igraph)
 
-  # plot graph
-  nodes <- data.frame(
-    id = seq(1, 10),
-    label = c('operation', 'condition', 'mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht'))
-  
-  edges <- data.frame(
-    from = c(rep(1, 9), rep(2, 8)),
-    to = c(seq(2, 10), seq(3, 10)))
+  nodes <- c('op', 'ctrl', 'mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht')
 
-  dag <- graph_from_data_frame(d = edges, vertices = nodes)
+  # plot graph
+  dag <- graph_from_data_frame(
+    d = data.frame(
+      from = c(rep(1, 9), rep(2, 8)),
+      to = c(seq(2, 10), seq(3, 10))),
+    vertices = data.frame(
+      from = c(rep(1, 9), rep(2, 8)),
+      to = c(seq(2, 10), seq(3, 10))))
   
-  dag.layout <- matrix(data = c(0, 0, -8, -6, -4, -2, 2, 4, 6, 8, 2, 0, rep(1, 8)), nrow = 10, ncol = 2)
+  dag.layout <- matrix(
+    data = c(0, 0, -3, -2.25, -1.5, -0.75, 0.75, 1.5, 2.25, 3, 3, 1.5, rep(0, 8)),
+    nrow = 10,
+    ncol = 2)
 
   plot(
     dag,
     edge.arrow.size = 0.3,
     edge.color = '#FC4E07',
     layout = dag.layout,
+    rescale = FALSE,
     vertex.color = '#FD9268',
     vertex.frame.color = '#FC4E07',
     vertex.label.color = 'black',
     vertex.label.family = 'serif',
-    vertex.size = (degree(dag, mode = 'all') + 12) * 1.6) # set width to 700 pixels
+    vertex.size = 60,
+    xlim = range(dag.layout[]),
+    ylim = range(dag.layout[]))
 
   # build graph
-  dag <- empty.graph(nodes = c('operation', 'condition', 'mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht'))
+  dag <- empty.graph(nodes = nodes)
 
-  dag <- set.arc(dag, 'operation', 'condition')
-  dag <- set.arc(dag, 'operation', 'mass')
-  dag <- set.arc(dag, 'operation', 'form')
-  dag <- set.arc(dag, 'operation', 'mod')
-  dag <- set.arc(dag, 'operation', 'rad')
-  dag <- set.arc(dag, 'operation', 'ref')
-  dag <- set.arc(dag, 'operation', 'dim')
-  dag <- set.arc(dag, 'operation', 'shape')
-  dag <- set.arc(dag, 'operation', 'ht')
-
-  dag <- set.arc(dag, 'condition', 'mass')
-  dag <- set.arc(dag, 'condition', 'form')
-  dag <- set.arc(dag, 'condition', 'mod')
-  dag <- set.arc(dag, 'condition', 'rad')
-  dag <- set.arc(dag, 'condition', 'ref')
-  dag <- set.arc(dag, 'condition', 'dim')
-  dag <- set.arc(dag, 'condition', 'shape')
-  dag <- set.arc(dag, 'condition', 'ht')
+  for (i in 2:length(nodes)) {
+    dag <- set.arc(dag, 'operation', nodes[i])
+    if (i > 2) {
+      dag <- set.arc(dag, 'control', nodes[i])
+    }
+  }
 
   # build conditional probability tables
-  operation <- c('large sample', 'machining', 'metallurgy', 'small sample', 'solution', 'waste')
-  condition <- c('A', 'B', 'C', 'D', 'E', 'M', 'P')
+  op <- c('large sample', 'machining', 'metallurgy', 'small sample', 'solution', 'waste')
+  ctrl <- c('A', 'B', 'C', 'D', 'E', 'M', 'P')
   mass <- c(seq(10, 1000, 10), 0) # 100 + 1 bins
   form <- c('alpha', 'oxide', 'none')
   mod <- c('ch2', 'sepiolite', 'h2o', 'none')
@@ -69,7 +63,7 @@ BN <- function() {
   shape <- c('sph', 'rcc', 'none')
   ht <- c(seq(0.2, 36, 0.2) * 2.54, 0) # 180 + 1 bins
 
-  operation.cpt <- matrix(c(
+  op.cpt <- matrix(c(
     3.61111e-01 ,  # large sample
     8.33333e-02 ,  # machining
     1.38889e-01 ,  # metallurgy
@@ -78,7 +72,7 @@ BN <- function() {
     2.77778e-02 ), # waste
     ncol = 1, dimnames = list(operation, NULL))
 
-  condition.cpt <- c(
+  ctrl.cpt <- c(
   # A             B             C             D             E             M             P
     5.71420e-01 , 2.85714e-02 , 2.85714e-02 , 1.71429e-01 , 8.57143e-02 , 1.14286e-01 , 0           , # large sample
     8.33333e-02 , 0           , 0           , 0           , 0           , 9.16667e-01 , 0           , # machining
@@ -87,24 +81,24 @@ BN <- function() {
     1           , 0           , 0           , 0           , 0           , 0           , 0           , # solution
     0           , 0           , 0           , 0           , 0           , 0           , 1           ) # waste
 
-  dim(condition.cpt) <- c(7, 6)
-  dimnames(condition.cpt) <- list('condition' = condition, 'operation' = operation)
+  dim(control.cpt) <- c(7, 6)
+  dimnames(control.cpt) <- list('control' = control, 'operation' = operation)
 
   mass.cpt <- load('mass.RData')
   dim(mass.cpt) <- c(1001, 7, 6)
-  dimnames(mass.cpt) <- list('mass' = mass, 'condition' = condition, 'operation' = operation)
+  dimnames(mass.cpt) <- list('mass' = mass, 'control' = control, 'operation' = operation)
 
   rad.cpt <- load('rad.RData')
   dim(rad.cpt) <- c(181, 7, 6)
-  dimnames(rad.cpt) <- list('rad' = rad, 'condition' = condition, 'operation' = operation)
+  dimnames(rad.cpt) <- list('rad' = rad, 'control' = control, 'operation' = operation)
 
   dim.cpt <- load('dim.RData')
   dim(dim.cpt) <- c(181, 7, 6)
-  dimnames(dim.cpt) <- list('dim' = dim, 'condition' = condition, 'operation' = operation)
+  dimnames(dim.cpt) <- list('dim' = dim, 'control' = control, 'operation' = operation)
 
   ht.cpt <- load('ht.RData')
   dim(ht.cpt) <- c(361, 7, 6)
-  dimnames(ht.cpt) <- list('ht' = ht, 'condition' = condition, 'operation' = operation)
+  dimnames(ht.cpt) <- list('ht' = ht, 'control' = control, 'operation' = operation)
 
   form.cpt <- c(
   # large sample
@@ -157,7 +151,7 @@ BN <- function() {
     0           , 1           , 0           ) # P
 
   dim(form.cpt) <- c(3, 7, 6)
-  dimnames(form.cpt) <- list('form' = form, 'condition' = condition, 'operation' = operation)
+  dimnames(form.cpt) <- list('form' = form, 'control' = control, 'operation' = operation)
 
   mod.cpt <- c(
   # large sample
@@ -210,7 +204,7 @@ BN <- function() {
     0           , 2.50000e-01 , 5.00000e-01 , 0           , 2.50000e-01 ) # P
 
   dim(mod.cpt) <- c(5, 7, 6)
-  dimnames(mod.cpt) <- list('mod' = mod, 'condition' = condition, 'operation' = operation)
+  dimnames(mod.cpt) <- list('mod' = mod, 'control' = control, 'operation' = operation)
 
   ref.cpt <- c(
   # large sample
@@ -263,7 +257,7 @@ BN <- function() {
     0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           ) # P
 
   dim(ref.cpt) <- c(10, 7, 6)
-  dimnames(ref.cpt) <- list('ref' = ref, 'condition' = condition, 'operation' = operation)
+  dimnames(ref.cpt) <- list('ref' = ref, 'control' = control, 'operation' = operation)
 
   shape.cpt <- c(
   # large sample
@@ -316,11 +310,11 @@ BN <- function() {
     0           , 0           ) # P
 
   dim(shape.cpt) <- c(2, 7, 6)
-  dimnames(shape.cpt) <- list('shape' = shape, 'condition' = condition, 'operation' = operation)
+  dimnames(shape.cpt) <- list('shape' = shape, 'control' = control, 'operation' = operation)
 
   # bn <- list(
   #   operation = operation.cpt,
-  #   condition = condition.cpt,
+  #   control = control.cpt,
   #   mass = mass.cpt,
   #   form = form.cpt,
   #   mod = mod.cpt,
@@ -341,18 +335,18 @@ BN <- function() {
     ht = ht.cpt)
 
   # check for errors
-	for (i in 1:length(bn)) {
-		for (j in 1:dim(bn[[i]])[2]) {
-			for (k in 1:dim(bn[[i]])[3]) {
-				if (sum(bn[[i]][ , j, k]) != 1) {
-					cat(names(bn[i]), ' sum(bn[[', i, ']][ , ', j, ', ', k, ']) = ', sum(bn[[i]][ , j, k]), '\n', sep = '')
-				}
-			}
-		}
-	}
+  for (i in 1:length(bn)) {
+    for (j in 1:dim(bn[[i]])[2]) {
+      for (k in 1:dim(bn[[i]])[3]) {
+        if (sum(bn[[i]][ , j, k]) != 1) {
+          cat(names(bn[i]), ' sum(bn[[', i, ']][ , ', j, ', ', k, ']) = ', sum(bn[[i]][ , j, k]), '\n', sep = '')
+        }
+      }
+    }
+  }
 
   # bn <<- custom.fit(dag, dist = bn)
 
-  bn <<- custom.fit(dag, dist = c(list(operation = operation.cpt, condition = condition.cpt), bn))
+  bn <<- custom.fit(dag, dist = c(list(operation = operation.cpt, control = control.cpt), bn))
 
 }

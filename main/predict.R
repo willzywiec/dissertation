@@ -20,22 +20,41 @@ Predict <- function(bn, ensemble.size, sample.size) {
 
   vol <- conc <- hd <- numeric()
 
-  # fix parameters and calculate vol, conc, and h/d
+  # set parameters and calculate vol, conc, and h/d
   for (i in 1:nrow(bn.data)) {
 
-  	# dim (cm)
-    if (bn.data$ref[i] == 'none') {
-      bn.data$dim[i] <- 0
+    # set density (g/cc)
+    if (bn.data$form[i] == 'alpha') {
+      density <- 19.86
+    } else if (form == 'delta') {
+      density <- 15.9
+    } else if (form == 'puo2') {
+      density <- 11.5
     }
 
-    # ht (cm) and vol (cc)
+    # calculate ht (cm) and vol (cc)
     if (bn.data$shape[i] == 'sph') {
       bn.data$ht[i] <- 2 * bn.data$rad[i]
       vol[i] <- (4/3 * pi * bn.data$rad[i]^3)
     } else if (bn.data$shape[i] == 'rcc') {
       vol[i] <- (pi * bn.data$rad[i]^2 * bn.data$ht[i])
-    } else if (bn.data$shape[i] == 'rpp') {
-      vol[i] <- ((2 * bn.data$rad[i])^2 * bn.data$ht[i])
+    }
+
+    # fix mod, vol (cc), and rad (cm)
+    if (vol[i] <= bn.data$mass / density) {
+      bn.data$mod[i] <- 'none'
+      vol[i] <- bn.data$mass[i] / density
+      if (bn.data$shape[i] == 'sph') {
+        bn.data$rad[i] <- (3/4 * vol[i] / pi)^(1/3)
+      } else if (bn.data$shape[i] == 'rcc') {
+        bn.data$rad[i] <- (vol / bn.data$ht[i] / pi)^(1/2)
+      }
+    }
+
+    # fix ref and dim (cm)
+    if (bn.data$ref[i] == 'none' || dim == 0) {
+      bn.data$ref[i] <- 'none'
+      bn.data$dim[i] <- 0
     }
 
     conc[i] <- (bn.data$mass[i] / vol[i]) # conc (g/cc)
