@@ -80,7 +80,7 @@ Predict <- function(bn, ensemble.size, sample.size) {
 
   for (i in 1:ensemble.size) {
     keff[ , i] <- ensemble.model[[i]] %>% predict(bn.df)
-    colnames(keff)[i] <- paste0('model-', i, '-', which.min(ensemble.history[[i]]$metrics$mean_absolute_error), '.h5')
+    colnames(keff)[i] <- paste0('model-', i, '-', which.min(ensemble.history[[i]]$metrics$val_mean_absolute_error), '.h5')
   }
 
   keff.mean <- rowMeans(keff) %>% round(5)

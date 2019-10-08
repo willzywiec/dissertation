@@ -84,19 +84,19 @@ BN <- function() {
   dim(control.cpt) <- c(7, 6)
   dimnames(control.cpt) <- list('control' = control, 'operation' = operation)
 
-  mass.cpt <- load('mass.RData')
+  mass.cpt <- readRDS('mass.RData')
   dim(mass.cpt) <- c(1001, 7, 6)
   dimnames(mass.cpt) <- list('mass' = mass, 'control' = control, 'operation' = operation)
 
-  rad.cpt <- load('rad.RData')
+  rad.cpt <- readRDS('rad.RData')
   dim(rad.cpt) <- c(181, 7, 6)
   dimnames(rad.cpt) <- list('rad' = rad, 'control' = control, 'operation' = operation)
 
-  dim.cpt <- load('dim.RData')
+  dim.cpt <- readRDS('dim.RData')
   dim(dim.cpt) <- c(181, 7, 6)
   dimnames(dim.cpt) <- list('dim' = dim, 'control' = control, 'operation' = operation)
 
-  ht.cpt <- load('ht.RData')
+  ht.cpt <- readRDS('ht.RData')
   dim(ht.cpt) <- c(361, 7, 6)
   dimnames(ht.cpt) <- list('ht' = ht, 'control' = control, 'operation' = operation)
 

@@ -54,8 +54,8 @@
 #
 # dim:   reflector thickness (cm)
 #
-# shape: sph
-#        rcc
+# shape: rcc
+#        sph
 #
 # ht:    height (cm)
 
@@ -359,8 +359,8 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
       '\n\t   8016.80c +1 $ O-16',
       '\nmt3  lwtr.20t')
   } else if (ref == 'al2o3') {
-  	matl.cards <- paste0(
-  		matl.cards,
+    matl.cards <- paste0(
+      matl.cards,
       '\nm2   8016.80c +3 $ O-16',
       '\n\t  13027.80c +2 $ Al-27',
       '\nmt2  al27.22t',

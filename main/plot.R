@@ -7,23 +7,23 @@
 
 Plot <- function(file.name, history) {
 
-	library(ggplot2)
-	library(scales)
+  library(ggplot2)
+  library(scales)
 
-	new.theme <- theme_gray() + theme(axis.text = element_text(color = 'black', size = 10), text = element_text(color = 'black', family = 'serif', size = 10))
+  new.theme <- theme_gray() + theme(axis.text = element_text(color = 'black', size = 10), text = element_text(color = 'black', family = 'serif', size = 10))
   theme_set(new.theme)
 
-	if (missing(history)) {
-		history.df <- read.csv(paste0(file.name, '.csv'), header = TRUE)
-	} else {
-  	history.df <- data.frame(
-    	epoch = 1:length(history$metrics$val_loss),
-    	val.loss = history$metrics$val_loss,
-    	val.mae = history$metrics$val_mean_absolute_error,
-    	loss = history$metrics$loss,
-    	mae = history$metrics$mean_absolute_error)
-  	write.csv(history.df, file = paste0(file.name, '.csv'), row.names = FALSE)
-	}
+  if (missing(history)) {
+    history.df <- read.csv(paste0(file.name, '.csv'), header = TRUE)
+  } else {
+    history.df <- data.frame(
+      epoch = 1:length(history$metrics$val_loss),
+      val.loss = history$metrics$val_loss,
+      val.mae = history$metrics$val_mean_absolute_error,
+      loss = history$metrics$loss,
+      mae = history$metrics$mean_absolute_error)
+    write.csv(history.df, file = paste0(file.name, '.csv'), row.names = FALSE)
+  }
 
   ggplot(history.df, aes(x = epoch)) +
     geom_line(aes(y = mae)) +

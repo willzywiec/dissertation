@@ -15,6 +15,7 @@ Tabulate <- function() {
   # load data
   if (file.exists('data-set.csv')) {
     data.set <- read.csv('data-set.csv', header = TRUE)
+    data.set <- data.set[sample(nrow(data.set)), ]
     if (nrow(data.set) >= length(output.files)) {
       Subset(na.omit(data.set))
       return(cat('Loaded data-set.csv\n'))
@@ -93,6 +94,8 @@ Tabulate <- function() {
       hd = hd,
       keff = keff,
       sd = sd)
+
+    data.set <- data.set[sample(nrow(data.set)), ]
 
     # write data to file
     write.csv(data.set, file = 'data-set.csv', row.names = FALSE)

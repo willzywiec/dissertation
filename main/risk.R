@@ -32,15 +32,13 @@ Risk <- function(bn, ensemble.size, sample.size, risk.pool) {
     }
   }
 
-  setwd(test.dir)
-  write.csv(risk, file = 'risk.csv', row.names = FALSE)
-  cat('Saved risk.csv\n')
-
   bn.data <<- bn.data
 
-  # write risk to file
   if ((file.exists('risk.csv')) || (risk.pool > 0)) { 
     cat(paste0(mean(risk[ , 1]), '\n'))
   }
+
+  setwd(test.dir)
+  write.csv(risk, file = 'risk.csv', row.names = FALSE)
 
 }
