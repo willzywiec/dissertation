@@ -5,7 +5,7 @@
 #
 # ...
 
-Model <- function(learning.rate) {
+Model <- function() {
 
   model <- keras_model_sequential() %>%
     layer_dense(
@@ -33,7 +33,7 @@ Model <- function(learning.rate) {
 
   model %>% compile(
     loss = 'mean_squared_error',
-    optimizer = optimizer_adamax(lr = learning.rate), # lr = 0.00075
+    optimizer = optimizer_adamax(lr = 0.00075), # lr = 0.00075
     metrics = c('mean_absolute_error'))
 
 }

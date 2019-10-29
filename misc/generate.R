@@ -7,7 +7,7 @@
 
 Generate <- function() {
 
-	# set deck size
+  # set deck size
   deck.size <- 1e+04
   
   if (file.exists('data-set.csv')) {

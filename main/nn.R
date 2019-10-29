@@ -5,53 +5,40 @@
 #
 # ...
 
-NN <- function(ensemble.size, learning.rate) {
+NN <- function(data.set, ensemble.size, source.dir, test.dir) {
 
   # load packages
-  library(ggplot2)
   library(keras)
 
   # set variables
-  batch.size <- 4096 # 32768
-  epochs <- 1000
+  batch.size <- 32768 # 4096
+  epochs <- 1000 # 2000
   val.split <- 0.2
 
   # load functions
-  source(paste0(source.dir, '/tabulate.R'))
   source(paste0(source.dir, '/model.R'))
   source(paste0(source.dir, '/fit.R'))
   source(paste0(source.dir, '/plot.R'))
-  source(paste0(source.dir, '/subset.R'))
 
-  setwd(test.dir)
+  build.dir <- paste0(test.dir, '/build')
+  dir.create(build.dir, showWarnings = FALSE)
 
-  # delete old files
-  unlink(paste0(test.dir, '/hdf5'), recursive = TRUE)
-  files <- list.files()
-  for (i in 1:length(files)) {
-    if (files[i] != 'data-set.csv' && files[i] != 'training-data.csv' && files[i] != 'training-df.csv' && files[i] != 'test-data.csv' && files[i] != 'test-df.csv') {
-      file.remove(files[i])
-    }
-  }
+  setwd(build.dir)
+  build.files <- list.files(pattern = '\\.h5$')
 
-  dir.create(paste0(test.dir, '/hdf5'), showWarnings = FALSE)
-  hdf5.files <- list.files(pattern = '\\.h5$')
-
-  # tabulate data
-  Tabulate()
-
-  # build and train models
-  if (length(hdf5.files) == 0) {
-    model <- Model(learning.rate)
-    history <- Fit(model, batch.size, epochs, val.split)
+  # build and train ensemble model
+  if (length(build.files) == 0) {
+    model <- Model()
+    history <- Fit(data.set, model, batch.size, epochs, val.split)
     Plot('model-0', history)
   }
 
-  if (length(hdf5.files) < ensemble.size) {
-    ensemble.model <- ensemble.history <- rep(list(0), length(hdf5.files))
-    for (i in (length(hdf5.files) + 1):ensemble.size) {
-      ensemble.model[[i]] <- Model(learning.rate)
-      ensemble.history[[i]] <- Fit(ensemble.model[[i]], batch.size, 5 * epochs, val.split)
+  ensemble.model <- ensemble.history <- rep(list(0), length(build.files))
+
+  if (length(build.files) < ensemble.size) {
+    for (i in (length(build.files) + 1):ensemble.size) {
+      ensemble.model[[i]] <- Model()
+      ensemble.history[[i]] <- Fit(data.set, ensemble.model[[i]], batch.size, 5 * epochs, val.split)
       Plot(paste0('model-', i), ensemble.history[[i]])
       save_model_hdf5(ensemble.model[[i]], paste0('model-', i, '.h5')) # save model
     }
@@ -62,23 +49,28 @@ NN <- function(ensemble.size, learning.rate) {
     }
   }
 
-  # rebuild and validate models
-  setwd(paste0(test.dir, '/hdf5'))
-  hdf5.files <- list.files(pattern = '\\.h5$')
+  setwd(build.dir)
+  build.files <- list.files(pattern = '\\.h5$')
 
-  ensemble.model <- ensemble.history <- list()
+  for (i in 1:ensemble.size) {
+    ensemble.model[[i]] <- load_model_hdf5(build.files[i])
+  }
 
-  if (length(hdf5.files) < ensemble.size * epochs / 2) {
+  # rebuild and validate ensemble model
+  rebuild.dir <- paste0(test.dir, '/rebuild')
+  dir.create(rebuild.dir, showWarnings = FALSE)
+
+  setwd(rebuild.dir)
+  rebuild.files <- list.files(pattern = '\\.h5$')
+
+  ensemble.history <- list()
+
+  if (length(rebuild.files) < ensemble.size * epochs / 2) {
     for (i in 1:ensemble.size) {
-      setwd(test.dir)
-      hdf5.files <- list.files(pattern = '\\.h5$')
-      ensemble.model[[i]] <- load_model_hdf5(hdf5.files[i])
-      setwd(paste0(test.dir, '/hdf5'))
-      hdf5.files <- list.files(pattern = paste0('model-', i, '-.+\\.h5$'))
-      if (length(hdf5.files) < epochs / 2) {
-        ensemble.history[[i]] <- Fit(ensemble.model[[i]], batch.size, epochs / 2, val.split, i)
+      rebuild.files <- list.files(pattern = paste0('model-', i, '-.+\\.h5$'))
+      if (length(rebuild.files) < epochs / 2) {
+        ensemble.history[[i]] <- Fit(data.set, ensemble.model[[i]], batch.size, epochs / 2, val.split, i)
         Plot(paste0('model-', i), ensemble.history[[i]])
-        ensemble.model[[i]] <- load_model_hdf5(paste0('model-', i, '-', which.min(ensemble.history[[i]]$metrics$val_mean_absolute_error), '.h5'))
       } else {
         Plot(paste0('model-', i))
       }
@@ -89,26 +81,32 @@ NN <- function(ensemble.size, learning.rate) {
     }
   }
 
+  # test ensemble model
   mae <- val.mae <- test.mae <- numeric()
-  predictions <- list()
+  predictions <- matrix(nrow = nrow(data.set$test.df), ncol = ensemble.size)
+
+  # subset test data
+  # data.set$test.df <- as.data.frame(cbind(data.set$test.df, keff = data.set$test.data$keff))
+  # data.set$test.df <- subset(data.set$test.df, keff >= 0.95)
+  # data.set$test.df <- as.matrix(data.set$test.df[-27]) # convert data frame to matrix (Keras requirement)
+  # data.set$test.data <- subset(data.set$test.data, keff >= 0.95)
 
   for (i in 1:ensemble.size) {
     metrics <- read.csv(paste0('model-', i, '.csv'))
     ensemble.model[[i]] <- load_model_hdf5(paste0('model-', i, '-', metrics$epoch[which.min(metrics$val.mae)], '.h5'))
     mae[i] <- metrics$mae[which.min(metrics$val.mae)]
     val.mae[i] <- min(metrics$val.mae)
-    predictions[[i]] <- ensemble.model[[i]] %>% predict(test.df)
-    test.mae[i] <- mean(abs(rowMeans(as.data.frame(predictions, col.names = 1:i)) - test.data$keff))
+    predictions[ , i] <- ensemble.model[[i]] %>% predict(data.set$test.df)
+    test.mae[i] <- mean(abs(rowMeans(predictions) - data.set$test.data$keff))
   }
+
+  setwd(test.dir)
+  write.csv(test.mae, file = 'test-mae.csv', row.names = FALSE, col.names = 'test-mae')
 
   cat('Training MAE = ', mean(mae) %>% sprintf('%.5f', .), '\n', sep = '')
   cat('Validation MAE = ', mean(val.mae) %>% sprintf('%.5f', .), '\n', sep = '')
-  cat('Test MAE = ', mean(abs(rowMeans(as.data.frame(predictions, col.names = 1:length(ensemble.model))) - test.data$keff)) %>% sprintf('%.5f', .), '\n', sep = '')
+  cat('Test MAE = ', mean(abs(rowMeans(predictions) - data.set$test.data$keff)) %>% sprintf('%.5f', .), '\n', sep = '')
 
-  ensemble.model <<- ensemble.model
-  test.mae <<- test.mae
-
-  setwd(test.dir)
-  write.csv(test.mae, file = 'test-mae.csv', row.names = FALSE)
+  return(ensemble.model)
 
 }

@@ -5,7 +5,7 @@ output : html_document
 
 ```{r setup, include = FALSE}
 
-knitr::opts_chunk$set(message = FALSE, root.dir = 'E:/test-xxx', warning = FALSE)
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 ```
 
@@ -23,57 +23,66 @@ if (!is.null(dev.list())) dev.off()
 rm(list = ls())
 cat('\014')
 
+```
+
+```{r}
+
 # load packages
-library(parallel)
+library(magrittr)
 
 # set source and test directories
-source.dir <- 'C:/Users/Will/Dropbox/Dissertation/R/main'
-test.dir <- 'E:/test-xxx'
+# source.dir <- 'C:/Users/Will/Dropbox/Dissertation/R/main'
+source.dir <- 'E:/Dissertation/R/main'
+test.dir <- 'E:/test'
 
 # set variables
-ensemble.size <- 1
+ensemble.size <- 10
 sample.size <- 1e+06
 risk.pool <- 10
 
-# load functions
+# load function
+source(paste0(source.dir, '/tabulate.R'))
 
+setwd(test.dir)
+
+# tabulate data
+data.set <- Tabulate(source.dir)
+
+```
+
+```{r}
+
+# load function
 source(paste0(source.dir, '/nn.R'))
+
+setwd(test.dir)
+
+# build ensemble model
+ensemble.model <- NN(data.set, ensemble.size, source.dir, test.dir)
+
+```
+
+```{r}
+
+# load function
 source(paste0(source.dir, '/bn.R'))
-source(paste0(source.dir, '/risk.R'))
-
-```
-
-```{r}
-
-# build neural network
-# NN(ensemble.size, 0.00001)
-NN(ensemble.size, 0.00025)
-NN(ensemble.size, 0.0005)
-NN(ensemble.size, 0.00075)
-NN(ensemble.size, 0.001)
-NN(ensemble.size, 0.00125)
-NN(ensemble.size, 0.0015)
-NN(ensemble.size, 0.00175)
-NN(ensemble.size, 0.002)
-NN(ensemble.size, 0.0025)
-NN(ensemble.size, 0.003)
-NN(ensemble.size, 0.0035)
-NN(ensemble.size, 0.004)
-NN(ensemble.size, 0.005)
-NN(ensemble.size, 0.006)
-
-```
-
-```{r}
+setwd('E:/dist')
 
 # build Bayesian network
-BN()
+bn <- BN()
 
 ```
 
 ```{r}
 
-# assess risk
-Risk(bn, ensemble.size, sample.size, risk.pool)
+# load function
+source(paste0(source.dir, '/risk.R'))
+
+bn.data <- list()
+
+# estimate risk
+for (i in 1:risk.pool) {
+  bn.data[[i]] <- Risk(bn, data.set, ensemble.model, ensemble.size, sample.size)
+}
 
 ```

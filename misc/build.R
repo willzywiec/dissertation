@@ -7,7 +7,7 @@
 #
 # model parameters
 # ----------------
-# mass:  Pu mass (95% Pu-239, 5% Pu-240)
+# mass:  Pu mass (95% Pu-239, 5% Pu-240) (g)
 #
 # form:  alpha phase Pu
 #        delta phase Pu
@@ -72,9 +72,6 @@ Build <- function(mass, form, mod, rad, ref, dim, shape, ht) {
   if (form == 'alpha') {
     pu.mass <- mass
     pu.density <- 19.86
-  } else if (form == 'delta') {
-    pu.mass <- mass
-    pu.density <- 15.9
   } else if (form == 'puo2') {
     pu.mass <- mass
     pu.density <- 11.5

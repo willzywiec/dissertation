@@ -5,13 +5,13 @@
 #
 # ...
 
-Fit <- function(model, batch.size, epochs, val.split, i) {
+Fit <- function(data.set, model, batch.size, epochs, val.split, i) {
 
   if (missing(i)) {
     early.stop <- callback_early_stopping(monitor = 'val_mean_absolute_error', patience = 250)
     model %>% fit(
-      training.df,
-      training.data$keff,
+      data.set$training.df,
+      data.set$training.data$keff,
       batch_size = batch.size,
       epochs = epochs,
       validation_split = val.split,
@@ -20,8 +20,8 @@ Fit <- function(model, batch.size, epochs, val.split, i) {
   } else {
     checkpoint <- callback_model_checkpoint(paste0(test.dir, '/hdf5/model-', i, '-{epoch:1d}.h5'), monitor = 'mean_absolute_error')
     model %>% fit(
-      training.df,
-      training.data$keff,
+      data.set$training.df,
+      data.set$training.data$keff,
       batch_size = batch.size,
       epochs = epochs,
       validation_split = val.split,
