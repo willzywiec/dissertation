@@ -13,7 +13,8 @@ Risk <- function(bn, data.set, ensemble.model, ensemble.size, sample.size) {
   cl <- makeCluster(10, type = 'SOCK')
 
   # sample conditional probability distributions
-  bn.data <- cpdist(bn, nodes = c('mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht'), evidence = TRUE, cluster = cl, n = sample.size) %>% na.omit()
+  # bn.data <- cpdist(bn, nodes = c('mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht'), evidence = TRUE, cluster = cl, n = sample.size) %>% na.omit()
+  bn.data <- cpdist(bn, nodes = c('mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht'), evidence = (as.integer(mass) > 200), batch = sample.size / 10, cluster = cl, n = sample.size) %>% na.omit()
 
   stopCluster(cl)
 
@@ -28,51 +29,28 @@ Risk <- function(bn, data.set, ensemble.model, ensemble.size, sample.size) {
 
   vol <- conc <- hd <- numeric()
 
-  # set parameters
-  for (i in 1:nrow(bn.data)) {
+  # set density (g/cc)
+  bn.data$form <- ifelse((bn.data$form == 'alpha'), 19.86, 11.5)
 
-    # set density (g/cc)
-    if (bn.data$form[i] == 'alpha') {
-      density <- 19.86
-    } else if (bn.data$form[i] == 'puo2') {
-      density <- 11.5
-    }
+  # fix ht (cm) and calculate vol (cc)
+  bn.data$ht <- ifelse((bn.data$shape == 'sph'), (2 * bn.data$rad), bn.data$ht)
+  vol <- ifelse((bn.data$shape == 'sph'), (4/3 * pi * bn.data$rad^3), (pi * bn.data$rad^2 * bn.data$ht))
 
-    # fix ht (cm) and calculate vol (cc)
-    if (bn.data$shape[i] == 'sph') {
-      bn.data$ht[i] <- 2 * bn.data$rad[i]
-      vol[i] <- 4/3 * pi * bn.data$rad[i]^3
-    } else if (bn.data$shape[i] == 'rcc') {
-      vol[i] <- pi * bn.data$rad[i]^2 * bn.data$ht[i]
-    }
+  # fix mod, vol (cc), and rad (cm)
+  bn.data$mod <- ifelse((vol <= bn.data$mass / bn.data$form), 'none', as.character(bn.data$mod))
+  vol <- ifelse((vol <= bn.data$mass / bn.data$form), (bn.data$mass / bn.data$form), vol)
+  bn.data$rad <- ifelse((bn.data$shape == 'sph'), ((3/4 * vol / pi)^(1/3)), ((vol / bn.data$ht / pi)^(1/2)))
 
-    # fix mod, vol (cc), and rad (cm)
-    if (vol[i] <= bn.data$mass[i] / density) {
-      bn.data$mod[i] <- 'none'
-      vol[i] <- bn.data$mass[i] / density
-      if (bn.data$shape[i] == 'sph') {
-        bn.data$rad[i] <- (3/4 * vol[i] / pi)^(1/3)
-      } else if (bn.data$shape[i] == 'rcc') {
-        bn.data$rad[i] <- (vol / bn.data$ht[i] / pi)^(1/2)
-      }
-    }
+  # fix ref and dim (cm)
+  bn.data$ref <- ifelse((bn.data$dim == 0), 'none', as.character(bn.data$ref))
+  bn.data$dim <- ifelse((bn.data$ref == 'none'), 0, bn.data$dim)
 
-    # fix ref and dim (cm)
-    if (bn.data$ref[i] == 'none' || bn.data$dim[i] == 0) {
-      bn.data$ref[i] <- 'none'
-      bn.data$dim[i] <- 0
-    }
+  # calculate conc (g/cc) and h/d
+  conc <- ifelse((vol == 0), 0, (bn.data$mass / vol))
+  hd <- ifelse((vol == 0), 0, (bn.data$ht / (2 * bn.data$rad)))
 
-    # calculate conc (g/cc) and h/d
-    if (vol[i] == 0) {
-      conc[i] <- 0
-      hd[i] <- 0
-    } else {
-      conc[i] <- bn.data$mass[i] / vol[i]
-      hd[i] <- bn.data$ht[i] / (2 * bn.data$rad[i])
-    }
-
-  }
+  # reset form
+  bn.data$form <- ifelse((bn.data$form == 19.86), 'alpha', 'puo2')
 
   bn.data$vol <- vol
   bn.data$conc <- conc
@@ -108,7 +86,7 @@ Risk <- function(bn, data.set, ensemble.model, ensemble.size, sample.size) {
   bn.df <- subset(bn.df, keff >= 0.95)
   bn.df <- bn.df[ , -ncol(bn.df)]
 
-  keff <- matrix(nrow = sample.size, ncol = ensemble.size)
+  keff <- matrix(nrow = nrow(bn.df), ncol = ensemble.size)
 
   if (nrow(bn.df) > 0) {
     for (i in 1:ensemble.size) {
@@ -116,7 +94,7 @@ Risk <- function(bn, data.set, ensemble.model, ensemble.size, sample.size) {
     }
     keff <- rowMeans(keff)
     keff <- keff[keff >= 0.95]
-    cat('Risk = ', nrow(keff) / sample.size, '\n', sep = '')
+    cat('Risk = ', (nrow(keff) / sample.size), '\n', sep = '')
   } else {
     cat('Risk = 0\n')
   }

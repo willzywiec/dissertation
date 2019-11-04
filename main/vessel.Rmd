@@ -35,11 +35,6 @@ library(magrittr)
 source.dir <- 'E:/Dissertation/R/main'
 test.dir <- 'E:/test'
 
-# set variables
-ensemble.size <- 10
-sample.size <- 1e+06
-risk.pool <- 10
-
 # load function
 source(paste0(source.dir, '/tabulate.R'))
 
@@ -51,6 +46,9 @@ data.set <- Tabulate(source.dir)
 ```
 
 ```{r}
+
+# set variable
+ensemble.size <- 10
 
 # load function
 source(paste0(source.dir, '/nn.R'))
@@ -74,6 +72,10 @@ bn <- BN()
 ```
 
 ```{r}
+
+# set variables
+sample.size <- 1e+08
+risk.pool <- 1
 
 # load function
 source(paste0(source.dir, '/risk.R'))

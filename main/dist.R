@@ -70,7 +70,7 @@ rad.6 <- rad.6[which(sapply(rad.6, function(x) x >= 0))]
 rad <- list(rad.1, rad.2, rad.3, rad.4, rad.5, rad.6)
 rad.a <- rad.b <- rad.c <- rad.d <- rad.e <- rad.m <- rad.p <- list()
 
-dim.1 <- c(rnorm(100, mean = 0.635, sd = 10.16), rexp(100, rate = 1/0.635))
+dim.1 <- c(rnorm(100, mean = 0.635, sd = 1.48), rexp(100, rate = 1/0.635))
 dim.1 <- dim.1[which(sapply(dim.1, function(x) x >= 0))]
 dim.2 <- dim.3 <- dim.4 <- dim.5 <- dim.6 <- dim.1
 
