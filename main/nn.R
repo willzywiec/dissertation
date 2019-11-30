@@ -12,7 +12,7 @@ NN <- function(data.set, ensemble.size, source.dir, test.dir) {
 
   # set variables
   batch.size <- 32768 # 4096
-  epochs <- 1000 # 2000
+  epochs <- 2000 # 1000
   val.split <- 0.2
 
   # load functions

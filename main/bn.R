@@ -5,7 +5,7 @@
 #
 # ...
 
-BN <- function() {
+BN <- function(dist) {
 
   # load packages
   library(bnlearn)
@@ -29,7 +29,7 @@ BN <- function() {
   mod <- c('mgo', 'ch2', 'sepiolite', 'h2o', 'none')
   rad <- seq(0, 18, 0.25) * 2.54
   ref <- c('al', 'be', 'du', 'graphite', 'pb', 'mgo', 'ch2', 'ss304', 'h2o', 'none')
-  dim <- seq(0, 18, 0.25) * 2.54
+  dim <- seq(0, 2, 0.25) * 2.54
   shape <- c('sph', 'rcc')
   ht <- seq(0, 36, 0.25) * 2.54
 
@@ -52,10 +52,10 @@ BN <- function() {
     5.00000e-01 , 0           , 0           , 0           , 0           , 0           , 5.00000e-01 ), # waste
     nrow = 7, ncol = 6, dimnames = list(ctrl, op))
 
-  mass.cpt <- array(unlist(readRDS('mass.RData')), dim = c(4001, 7, 6), dimnames = list('mass' = mass, 'ctrl' = ctrl, 'op' = op))
-  rad.cpt <- array(unlist(readRDS('rad.RData')), dim = c(73, 7, 6), dimnames = list('rad' = rad, 'ctrl' = ctrl, 'op' = op))
-  dim.cpt <- array(unlist(readRDS('dim.RData')), dim = c(73, 7, 6), dimnames = list('dim' = dim, 'ctrl' = ctrl, 'op' = op))
-  ht.cpt <- array(unlist(readRDS('ht.RData')), dim = c(145, 7, 6), dimnames = list('ht' = ht, 'ctrl' = ctrl, 'op' = op))
+  mass.cpt <- array(unlist(readRDS(paste0('mass-', dist, '.RData'))), dim = c(4001, 7, 6), dimnames = list('mass' = mass, 'ctrl' = ctrl, 'op' = op))
+  rad.cpt <- array(unlist(readRDS(paste0('rad-', dist, '.RData'))), dim = c(73, 7, 6), dimnames = list('rad' = rad, 'ctrl' = ctrl, 'op' = op))
+  dim.cpt <- array(unlist(readRDS(paste0('dim-', dist, '.RData'))), dim = c(9, 7, 6), dimnames = list('dim' = dim, 'ctrl' = ctrl, 'op' = op))
+  ht.cpt <- array(unlist(readRDS(paste0('ht-', dist, '.RData'))), dim = c(145, 7, 6), dimnames = list('ht' = ht, 'ctrl' = ctrl, 'op' = op))
 
   form.cpt <- array(c(
   # large sample

@@ -8,15 +8,22 @@
 Risk <- function(bn, data.set, ensemble.model, ensemble.size, sample.size) {
 
   # load packages
+  library(bnlearn)
   library(parallel)
 
-  cl <- makeCluster(10, type = 'SOCK')
+  cluster <- makeCluster((detectCores() / 2), type = 'SOCK')
 
   # sample conditional probability distributions
-  # bn.data <- cpdist(bn, nodes = c('mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht'), evidence = TRUE, cluster = cl, n = sample.size) %>% na.omit()
-  bn.data <- cpdist(bn, nodes = c('mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht'), evidence = (as.integer(mass) > 200), batch = sample.size / 10, cluster = cl, n = sample.size) %>% na.omit()
+  bn.data <- cpdist(
+    bn,
+    nodes = c('mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht'),
+    # evidence = TRUE,
+    evidence = (as.integer(mass) > 100),
+    batch = (sample.size / 10),
+    cluster = cluster,
+    n = sample.size) %>% na.omit()
 
-  stopCluster(cl)
+  stopCluster(cluster)
 
   bn.data[[1]] <- unlist(bn.data[[1]]) %>% as.character() %>% as.numeric() # mass
   bn.data[[2]] <- unlist(bn.data[[2]])                                     # form
@@ -61,7 +68,6 @@ Risk <- function(bn, data.set, ensemble.model, ensemble.size, sample.size) {
 
   # one-hot encode categorical variables
   dummy <- dummyVars(~ ., data = data.set$output[-c(12, 13)])
-  # dummy <- dummyVars(~ ., data = data.set$output)
   bn.df <- data.frame(predict(dummy, newdata = bn.data))
 
   # scale data
@@ -71,33 +77,30 @@ Risk <- function(bn, data.set, ensemble.model, ensemble.size, sample.size) {
     bn.df[num[i]] <- scale(bn.df[num[i]], center = data.set$training.mean[i], scale = data.set$training.sd[i])
   }
 
-  bn.df <- as.matrix(bn.df) # convert data frame to matrix (Keras requirement)
+  # convert data frame to matrix (Keras requirement)
+  bn.df <- as.matrix(bn.df)
 
   # load packages
   library(keras)
 
   # predict keff
   keff <- ensemble.model[[1]] %>% predict(bn.df)
-  keff[keff < 0] <- 0
 
   bn.data$keff <- keff
+  bn.data <- subset(bn.data, keff >= 0.5)
 
-  bn.df <- cbind(bn.df, keff)
-  bn.df <- subset(bn.df, keff >= 0.95)
+  bn.df <- cbind(bn.df, keff) %>% subset(keff >= 0.5)
   bn.df <- bn.df[ , -ncol(bn.df)]
 
   keff <- matrix(nrow = nrow(bn.df), ncol = ensemble.size)
 
-  if (nrow(bn.df) > 0) {
-    for (i in 1:ensemble.size) {
-      keff[ , i] <- ensemble.model[[i]] %>% predict(bn.df)
-    }
-    keff <- rowMeans(keff)
-    keff <- keff[keff >= 0.95]
-    cat('Risk = ', (nrow(keff) / sample.size), '\n', sep = '')
-  } else {
-    cat('Risk = 0\n')
+  for (i in 1:ensemble.size) {
+    keff[ , i] <- ensemble.model[[i]] %>% predict(bn.df)
   }
+
+  bn.data$keff <- keff <- rowMeans(keff)
+
+  cat('Risk = ', (length(keff[keff >= 0.9558]) / sample.size), '\n', sep = '')
 
   return(bn.data)
 

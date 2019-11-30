@@ -11,7 +11,7 @@ Model <- function() {
     layer_dense(
       units = 8192,
       activation = 'relu',
-      input_shape = dim(training.df)[2]) %>%
+      input_shape = dim(data.set$training.df)[2]) %>%
     layer_dense(
       units = 256,
       activation = 'relu') %>%
@@ -33,7 +33,7 @@ Model <- function() {
 
   model %>% compile(
     loss = 'mean_squared_error',
-    optimizer = optimizer_adamax(lr = 0.00075), # lr = 0.00075
+    optimizer = optimizer_adamax(lr = 0.00075),
     metrics = c('mean_absolute_error'))
 
 }
