@@ -2,44 +2,41 @@
 #
 # William John Zywiec
 # The George Washington University
-#
-# ...
 
-Generate <- function() {
+# load functions
+source("E:/Dropbox/GWU/R/misc/build.R")
 
-  # set deck size
-  deck.size <- 1e+04
+# generate random uniform data
+mass <- seq(50, 4000, 50)
+form <- c("alpha", "puo2")
+mod <- c("mgo", "sepiolite", "none")
+rad <- seq(0, 18, 1) * 2.54
+ref <- c("al", "be", "du", "graphite", "pb", "mgo", "ch2", "ss304", "h2o", "none")
+thk <- seq(0, 6, 1) * 2.54
+shape <- "sph"
+# ht <- sample(seq(0.5, 36, 0.5) * 2.54, deck.size, replace = TRUE) # 36 in = 91.44 cm
+
+file.dir <- "C:/Users/Will/Desktop/19mar20"
+
+setwd(file.dir)
   
-  if (file.exists('data-set.csv')) {
-    if (nrow(data.set) < deck.size) {
-      deck.size <- deck.size - nrow(data.set)
+# build input decks and run MCNP
+for (i in 1:40) {
+  p <- i + 40
+  dir.create(paste0(file.dir, "/", i))
+  setwd(paste0(file.dir, "/", i))
+  for (j in 1:length(form)) {
+    for (k in 1:length(mod)) {
+      for (l in 1:length(rad)) {
+        for (m in 1:length(ref)) {
+          for (n in 1:length(thk)) {
+            for (o in 1:length(shape)) {
+              Build(mass[i], form[j], mod[k], rad[l], ref[m], thk[n], shape[o])
+              Build(mass[p], form[j], mod[k], rad[l], ref[m], thk[n], shape[o])
+            }
+          }
+        }
+      }
     }
   }
-
-  # load functions
-  source(paste0(source.dir, '/build.R'))
-  source(paste0(source.dir, '/tabulate.R'))
-
-  # tabulate data
-  setwd(test.dir)
-  Tabulate()
-
-  # generate random uniform data
-  mass <- sample(seq(10, 2000, 10), deck.size, replace = TRUE)
-  form <- sample(c('alpha', 'puo2'), deck.size, replace = TRUE)
-  mod <- sample(c('mgo', 'ch2', 'sepiolite', 'h2o', 'none'), deck.size, replace = TRUE)
-  rad <- sample(seq(0.5, 18, 0.5) * 2.54, deck.size, replace = TRUE) # 18 in = 45.72 cm
-  ref <- sample(c('al', 'be', 'du', 'graphite', 'pb', 'mgo', 'ch2', 'ss304', 'h2o', 'none'), deck.size, replace = TRUE)
-  dim <- sample(seq(0.5, 18, 0.5) * 2.54, deck.size, replace = TRUE) # 18 in = 45.72 cm
-  shape <- sample(c('sph', 'rcc'), deck.size, replace = TRUE)
-  ht <- sample(seq(0.5, 36, 0.5) * 2.54, deck.size, replace = TRUE) # 36 in = 91.44 cm
-
-  # build input decks and run MCNP
-  for (i in 1:deck.size) {
-    Build(mass[i], form[i], mod[i], rad[i], ref[i], dim[i], shape[i], ht[i])
-  }
-
-  # tabulate data
-  Tabulate()
-
 }
