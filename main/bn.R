@@ -2,8 +2,6 @@
 #
 # William John Zywiec
 # The George Washington University
-#
-# ...
 
 BN <- function(dist) {
 
@@ -11,26 +9,26 @@ BN <- function(dist) {
   library(bnlearn)
 
   # build graph
-  nodes <- c('op', 'ctrl', 'mass', 'form', 'mod', 'rad', 'ref', 'dim', 'shape', 'ht')
+  nodes <- c("op", "ctrl", "mass", "form", "mod", "rad", "ref", "thk", "shape", "ht")
   dag <- empty.graph(nodes = nodes)
 
   for (i in 2:length(nodes)) {
-    dag <- set.arc(dag, 'op', nodes[i])
+    dag <- set.arc(dag, "op", nodes[i])
     if (i > 2) {
-      dag <- set.arc(dag, 'ctrl', nodes[i])
+      dag <- set.arc(dag, "ctrl", nodes[i])
     }
   }
 
   # build conditional probability tables
-  op <- c('large sample', 'machining', 'metallurgy', 'small sample', 'solution', 'waste')
-  ctrl <- c('A', 'B', 'C', 'D', 'E', 'M', 'P')
+  op <- c("large sample", "machining", "metallurgy", "small sample", "solution", "waste")
+  ctrl <- c("A", "B", "C", "D", "E", "M", "P")
   mass <- seq(0, 4000, 1)
-  form <- c('alpha', 'puo2')
-  mod <- c('mgo', 'ch2', 'sepiolite', 'h2o', 'none')
+  form <- c("alpha", "puo2")
+  mod <- c("mgo", "ch2", "sepiolite", "h2o", "none")
   rad <- seq(0, 18, 0.25) * 2.54
-  ref <- c('al', 'be', 'du', 'graphite', 'pb', 'mgo', 'ch2', 'ss304', 'h2o', 'none')
-  dim <- seq(0, 2, 0.25) * 2.54
-  shape <- c('sph', 'rcc')
+  ref <- c("al", "be", "du", "graphite", "pb", "mgo", "ch2", "ss304", "h2o", "none")
+  thk <- seq(0, 2, 0.25) * 2.54
+  shape <- c("sph", "rcc")
   ht <- seq(0, 36, 0.25) * 2.54
 
   op.cpt <- matrix(c(
@@ -52,10 +50,10 @@ BN <- function(dist) {
     5.00000e-01 , 0           , 0           , 0           , 0           , 0           , 5.00000e-01 ), # waste
     nrow = 7, ncol = 6, dimnames = list(ctrl, op))
 
-  mass.cpt <- array(unlist(readRDS(paste0('mass-', dist, '.RData'))), dim = c(4001, 7, 6), dimnames = list('mass' = mass, 'ctrl' = ctrl, 'op' = op))
-  rad.cpt <- array(unlist(readRDS(paste0('rad-', dist, '.RData'))), dim = c(73, 7, 6), dimnames = list('rad' = rad, 'ctrl' = ctrl, 'op' = op))
-  dim.cpt <- array(unlist(readRDS(paste0('dim-', dist, '.RData'))), dim = c(9, 7, 6), dimnames = list('dim' = dim, 'ctrl' = ctrl, 'op' = op))
-  ht.cpt <- array(unlist(readRDS(paste0('ht-', dist, '.RData'))), dim = c(145, 7, 6), dimnames = list('ht' = ht, 'ctrl' = ctrl, 'op' = op))
+  mass.cpt <- array(unlist(readRDS(paste0("mass-", dist, ".RData"))), dim = c(4001, 7, 6), dimnames = list("mass" = mass, "ctrl" = ctrl, "op" = op))
+  rad.cpt <- array(unlist(readRDS(paste0("rad-", dist, ".RData"))), dim = c(73, 7, 6), dimnames = list("rad" = rad, "ctrl" = ctrl, "op" = op))
+  thk.cpt <- array(unlist(readRDS(paste0("thk-", dist, ".RData"))), dim = c(9, 7, 6), dimnames = list("thk" = thk, "ctrl" = ctrl, "op" = op))
+  ht.cpt <- array(unlist(readRDS(paste0("ht-", dist, ".RData"))), dim = c(145, 7, 6), dimnames = list("ht" = ht, "ctrl" = ctrl, "op" = op))
 
   form.cpt <- array(c(
   # large sample
@@ -106,7 +104,7 @@ BN <- function(dist) {
     1           , 0           ,  # E (NULL)
     1           , 0           ,  # M (NULL)
     0           , 1           ), # P
-    dim = c(2, 7, 6), dimnames = list('form' = form, 'ctrl' = ctrl, 'op' = op))
+    dim = c(2, 7, 6), dimnames = list("form" = form, "ctrl" = ctrl, "op" = op))
 
   mod.cpt <- array(c(
   # large sample
@@ -157,7 +155,7 @@ BN <- function(dist) {
     0           , 0           , 0           , 0           , 1           ,  # E (NULL)
     0           , 0           , 0           , 0           , 1           ,  # M (NULL)
     7.84143E-02 , 1.66521E-01 , 5.06462E-03 , 0           , 7.50000E-01 ), # P
-    dim = c(5, 7, 6), dimnames = list('mod' = mod, 'ctrl' = ctrl, 'op' = op))
+    dim = c(5, 7, 6), dimnames = list("mod" = mod, "ctrl" = ctrl, "op" = op))
 
   ref.cpt <- array(c(
   # large sample
@@ -208,7 +206,7 @@ BN <- function(dist) {
     0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           ,  # E (NULL)
     0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 0           , 1           ,  # M (NULL)
     1.59817E-02 , 5.38644E-02 , 5.38644E-02 , 2.53678E-04 , 5.38644E-02 , 2.27803E-01 , 4.83765E-01 , 1.10604E-01 , 0           , 0           ), # P
-    dim = c(10, 7, 6), dimnames = list('ref' = ref, 'ctrl' = ctrl, 'op' = op))
+    dim = c(10, 7, 6), dimnames = list("ref" = ref, "ctrl" = ctrl, "op" = op))
 
   shape.cpt <- array(c(
   # large sample
@@ -259,7 +257,7 @@ BN <- function(dist) {
     1           , 0           ,  # E (NULL)
     1           , 0           ,  # M (NULL)
     1           , 0           ), # P
-    dim = c(2, 7, 6), dimnames = list('shape' = shape, 'ctrl' = ctrl, 'op' = op))
+    dim = c(2, 7, 6), dimnames = list("shape" = shape, "ctrl" = ctrl, "op" = op))
 
   bn <- list(
     op = op.cpt,
@@ -269,7 +267,7 @@ BN <- function(dist) {
     mod = mod.cpt,
     rad = rad.cpt,
     ref = ref.cpt,
-    dim = dim.cpt,
+    thk = thk.cpt,
     shape = shape.cpt,
     ht = ht.cpt)
   

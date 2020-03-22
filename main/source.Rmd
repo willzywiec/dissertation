@@ -1,21 +1,19 @@
 ---
-title : 'vessel'
+title : "source"
 output : html_document
 ---
 
-# vessel.Rmd
+# source.Rmd
 #
 # William John Zywiec
 # The George Washington University
-#
-# ...
 
 ```{r}
 
 # initialize environment
 if (!is.null(dev.list())) dev.off()
 rm(list = ls())
-cat('\014')
+cat("\014")
 
 ```
 
@@ -27,21 +25,20 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 library(magrittr)
 
 # set variables
-dist <- 'gamma'
-ensemble.size <- 10
+dist <- "gamma"
+ensemble.size <- 20
+replot <- FALSE
 
-# set source and test directories
-source.dir <- 'C:/Users/Will/Dropbox/Dissertation/R/main'
-test.dir <- 'E:/test-xxx'
+source.dir <- "E:/Dropbox/GWU/R/main"
+test.dir <- "E:/test-sph-19mar20"
 
 ```
 
 ```{r}
 
 # load function
-source(paste0(source.dir, '/tabulate.R'))
+source(paste0(source.dir, "/tabulate.R"))
 
-# set working directory
 setwd(test.dir)
 
 # tabulate data
@@ -52,10 +49,9 @@ data.set <- Tabulate(source.dir)
 ```{r}
 
 # load function
-source(paste0(source.dir, '/bn.R'))
+source(paste0(source.dir, "/bn.R"))
 
-# set working directory
-setwd('E:/dist')
+setwd("E:/dist")
 
 # build Bayesian network
 bn <- BN(dist)
@@ -64,27 +60,23 @@ bn <- BN(dist)
 
 ```{r}
 
-# load function
-source(paste0(source.dir, '/nn.R'))
+source(paste0(source.dir, "/nn.R"))
 
-# set working directory
 setwd(test.dir)
 
 # build ensemble model
-ensemble.model <- NN(data.set, ensemble.size, source.dir, test.dir)
+ensemble.model <- NN(data.set, ensemble.size, replot, source.dir, test.dir)
 
 ```
 
 ```{r}
 
 # set variables
-risk.pool <- 1
+risk.pool <- 10
 sample.size <- 1e+07
 
 # load function
-source(paste0(source.dir, '/risk.R'))
-
-bn.data <- list()
+source(paste0(source.dir, "/risk.R"))
 
 # estimate risk
 if (sample.size >= 1e+09) {
@@ -92,14 +84,19 @@ if (sample.size >= 1e+09) {
   sample.size <- 1e+08
 }
 
+bn.data <- list()
+risk <- numeric()
+
 for (i in 1:risk.pool) {
   bn.data[[i]] <- Risk(bn, data.set, ensemble.model, ensemble.size, sample.size)
+  risk[i] <- length(bn.data[[i]]$keff[bn.data[[i]]$keff >= 0.9558]) / sample.size # USL = 0.9558
+  if (i %% 10 == 0) {
+    cat("x", sep = "")
+  } else {
+    cat(".", sep = "")
+  }
 }
 
-# set working directory
-setwd(test.dir)
-
-# save Bayesian network data
-saveRDS(bn.data, file = paste0('bn-data-', dist, '.RData'))
+cat("\nRisk = ", mean(risk), "\n", sep = "")
 
 ```
