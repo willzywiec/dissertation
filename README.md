@@ -2,7 +2,7 @@
 
 These scripts combine a Bayesian network with an ensemble of deep feedforward neural networks, for the purpose of estimating process criticality accident risk.
 
-I generated the MCNP input decks using **generate.R** and **build.R** and ran them on large clusters at Lawrence Livermore National Laboratory using different scripts, which I haven't uploaded to GitHub.
+I generated the MCNP input decks using **generate.R** and **build.R** and ran them on large clusters at Lawrence Livermore National Laboratory.
 
 **dist.R** needs to be run for the distribution fit called in **source.Rmd** (e.g., "gamma"). Once that's done, everything can be run from **source.Rmd**.
 
