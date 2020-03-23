@@ -72,7 +72,7 @@ ensemble.model <- NN(data.set, ensemble.size, replot, source.dir, test.dir)
 ```{r}
 
 # set variables
-risk.pool <- 10
+risk.pool <- 50
 sample.size <- 1e+07
 
 # load function
@@ -88,13 +88,12 @@ bn.data <- list()
 risk <- numeric()
 
 for (i in 1:risk.pool) {
+  if (i == 1) {
+    progress.bar <- txtProgressBar(min = 0, max = risk.pool, style = 3)
+  }
   bn.data[[i]] <- Risk(bn, data.set, ensemble.model, ensemble.size, sample.size)
   risk[i] <- length(bn.data[[i]]$keff[bn.data[[i]]$keff >= 0.9558]) / sample.size # USL = 0.9558
-  if (i %% 10 == 0) {
-    cat("x", sep = "")
-  } else {
-    cat(".", sep = "")
-  }
+  setTxtProgressBar(progress.bar, i)
 }
 
 cat("\nRisk = ", mean(risk), "\n", sep = "")
