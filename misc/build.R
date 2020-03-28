@@ -81,7 +81,7 @@ Build <- function(mass, form, mod, rad, ref, thk, shape, ht) {
   } else if (shape == "rcc") {
     vol <- pi * rad^2 * ht
   }
-
+  
   # fix mod, vol (cc), and rad (cm)
   if (vol <= pu.mass / pu.density) {
     mod <- "none"

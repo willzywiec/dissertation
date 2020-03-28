@@ -273,4 +273,6 @@ BN <- function(dist) {
   
   bn <- custom.fit(dag, dist = bn)
 
+  return(bn)
+
 }

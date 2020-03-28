@@ -10,7 +10,9 @@
 
 # load packages
 library(EnvStats)
+library(evd)
 library(fitdistrplus)
+# library(ParetoPosStable)
 
 # set precision
 options(digits = 15)
@@ -26,7 +28,7 @@ setwd("E:/dist")
 # 6 = waste
 
 # set probability distribution
-dist.type <- "gamma"
+dist.type <- "weibull"
 
 if (file.exists("mass.csv") && file.exists("rad.csv") && file.exists("thk.csv") && file.exists("ht.csv")) {
   
