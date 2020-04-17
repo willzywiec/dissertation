@@ -9,6 +9,7 @@ I built MCNP input decks using **generate.R** and **build.R** and ran them on su
 I ran these scripts on an AMD Ryzen 7 1700 3.0 GHz 8-core CPU and an Nvidia GeForce GTX 1080 8 GB GDDR5X graphics card. For a more complete description of my build, please e-mail me.
 
 ## Prerequisites
+Rtools
 MCNP6.2  
 ENDF/B-VII.1 Nuclear Data
 
