@@ -20,6 +20,7 @@ EnvStats
 evd  
 fitdistrplus  
 ggplot2  
+gRain  
 igraph  
 keras  
 knitr  
