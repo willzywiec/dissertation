@@ -22,6 +22,7 @@ fitdistrplus
 ggplot2  
 igraph  
 keras  
+knitr  
 magrittr  
 parallel  
 scales  
