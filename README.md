@@ -14,7 +14,9 @@ MCNP6.2
 ENDF/B-VII.1 Nuclear Data
 
 ## R Packages
-BiocManager::graph  
+BiocManager::install('graph')  
+BiocManager::install('RBGL')  
+BiocManager::install('Rgraphviz')  
 bnlearn  
 caret  
 EnvStats  
