@@ -5,11 +5,10 @@
 
 BN <- function(dist) {
 
-  # load packages
   library(bnlearn)
 
   # build graph
-  nodes <- c("op", "ctrl", "mass", "form", "mod", "rad", "ref", "thk", "shape", "ht")
+  nodes <- c("op", "ctrl", "mass", "form", "mod", "rad", "ref", "thk")
   dag <- empty.graph(nodes = nodes)
 
   for (i in 2:length(nodes)) {
@@ -28,8 +27,6 @@ BN <- function(dist) {
   rad <- seq(0, 18, 0.25) * 2.54
   ref <- c("al", "be", "du", "graphite", "pb", "mgo", "ch2", "ss304", "h2o", "none")
   thk <- seq(0, 2, 0.25) * 2.54
-  shape <- c("sph", "rcc")
-  ht <- seq(0, 36, 0.25) * 2.54
 
   op.cpt <- matrix(c(
     3.50e-01 ,  # large sample
@@ -53,7 +50,6 @@ BN <- function(dist) {
   mass.cpt <- array(unlist(readRDS(paste0("mass-", dist, ".RData"))), dim = c(4001, 7, 6), dimnames = list("mass" = mass, "ctrl" = ctrl, "op" = op))
   rad.cpt <- array(unlist(readRDS(paste0("rad-", dist, ".RData"))), dim = c(73, 7, 6), dimnames = list("rad" = rad, "ctrl" = ctrl, "op" = op))
   thk.cpt <- array(unlist(readRDS(paste0("thk-", dist, ".RData"))), dim = c(9, 7, 6), dimnames = list("thk" = thk, "ctrl" = ctrl, "op" = op))
-  ht.cpt <- array(unlist(readRDS(paste0("ht-", dist, ".RData"))), dim = c(145, 7, 6), dimnames = list("ht" = ht, "ctrl" = ctrl, "op" = op))
 
   form.cpt <- array(c(
   # large sample
@@ -208,57 +204,6 @@ BN <- function(dist) {
     1.59817E-02 , 5.38644E-02 , 5.38644E-02 , 2.53678E-04 , 5.38644E-02 , 2.27803E-01 , 4.83765E-01 , 1.10604E-01 , 0           , 0           ), # P
     dim = c(10, 7, 6), dimnames = list("ref" = ref, "ctrl" = ctrl, "op" = op))
 
-  shape.cpt <- array(c(
-  # large sample
-    1           , 0           ,  # A
-    1           , 0           ,  # B
-    1           , 0           ,  # C
-    1           , 0           ,  # D
-    1           , 0           ,  # E
-    1           , 0           ,  # M
-    1           , 0           ,  # P (NULL)
-  # machining
-    1           , 0           ,  # A
-    1           , 0           ,  # B (NULL)
-    1           , 0           ,  # C (NULL)
-    1           , 0           ,  # D (NULL)
-    1           , 0           ,  # E (NULL)
-    1           , 0           ,  # M
-    1           , 0           ,  # P (NULL)
-  # metallurgy
-    1           , 0           ,  # A
-    1           , 0           ,  # B
-    1           , 0           ,  # C (NULL)
-    1           , 0           ,  # D (NULL)
-    1           , 0           ,  # E
-    1           , 0           ,  # M (NULL)
-    1           , 0           ,  # P (NULL)
-  # small sample
-    1           , 0           ,  # A
-    1           , 0           ,  # B
-    1           , 0           ,  # C (NULL)
-    1           , 0           ,  # D (NULL)
-    1           , 0           ,  # E (NULL)
-    1           , 0           ,  # M (NULL)
-    1           , 0           ,  # P (NULL)
-  # solution
-    1           , 0           ,  # A
-    1           , 0           ,  # B (NULL)
-    1           , 0           ,  # C (NULL)
-    1           , 0           ,  # D (NULL)
-    1           , 0           ,  # E (NULL)
-    1           , 0           ,  # M (NULL)
-    1           , 0           ,  # P (NULL)
-  # waste
-    1           , 0           ,  # A
-    1           , 0           ,  # B (NULL)
-    1           , 0           ,  # C (NULL)
-    1           , 0           ,  # D (NULL)
-    1           , 0           ,  # E (NULL)
-    1           , 0           ,  # M (NULL)
-    1           , 0           ), # P
-    dim = c(2, 7, 6), dimnames = list("shape" = shape, "ctrl" = ctrl, "op" = op))
-
   bn <- list(
     op = op.cpt,
     ctrl = ctrl.cpt,
@@ -267,9 +212,7 @@ BN <- function(dist) {
     mod = mod.cpt,
     rad = rad.cpt,
     ref = ref.cpt,
-    thk = thk.cpt,
-    shape = shape.cpt,
-    ht = ht.cpt)
+    thk = thk.cpt)
   
   bn <- custom.fit(dag, dist = bn)
 

@@ -8,7 +8,7 @@ if (!is.null(dev.list())) dev.off()
 rm(list = ls())
 cat("\014")
 
-# load functions
+# load function
 source("E:/Dropbox/GWU/R/misc/build.R")
 
 # generate random uniform data

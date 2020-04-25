@@ -59,7 +59,6 @@
 
 Build <- function(mass, form, mod, rad, ref, thk, shape, ht) {
 
-  # load packages
   library(magrittr)
   library(parallel)
 

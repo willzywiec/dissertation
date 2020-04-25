@@ -5,13 +5,13 @@
 
 Split <- function(output) {
 
-  # load packages
   library(caret)
 
   if (nrow(output) > 0) {
 
-    # comment the next two lines if using non-spherical geometry
+    # comment the next three lines if using spherical and non-spherical geometry
     output$shape <- NULL
+    output$ht <- NULL
     output$hd <- NULL
 
     # one-hot encode categorical variables
@@ -24,14 +24,14 @@ Split <- function(output) {
     training.data <- training.data[partition, ]
 
     # scale data
-    index <- c(1, 9, 20:23)
-    # index <- c(1, 9, 20, 23:26)
+    index <- c(1, 9, 20:22) # mass, rad, thk, vol, conc
+    # index <- c(1, 9, 20, 23:26) # mass, rad, thk, ht, vol, conc, hd
 
     training.mean <- apply(training.data[index], 2, mean)
     training.sd <- apply(training.data[index], 2, sd)
 
-    training.df <- training.data[-c(24, 25)]
-    test.df <- test.data[-c(24, 25)]
+    training.df <- training.data[-c(23, 24)]
+    test.df <- test.data[-c(23, 24)]
     # training.df <- training.data[-c(27, 28)]
     # test.df <- test.data[-c(27, 28)]
 

@@ -21,16 +21,10 @@ cat("\014")
 
 knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
-# load packages
 library(magrittr)
 
-# set variables
-dist <- "weibull"
-ensemble.size <- 20
-replot <- FALSE
-
 source.dir <- "E:/Dropbox/GWU/R/main"
-test.dir <- "E:/test-sph-19mar20"
+test.dir <- "E:/test-sph-18apr20"
 
 ```
 
@@ -48,6 +42,25 @@ data.set <- Tabulate(source.dir)
 
 ```{r}
 
+# set variables
+ensemble.size <- 10
+replot <- FALSE
+
+# load function
+source(paste0(source.dir, "/nn.R"))
+
+setwd(test.dir)
+
+# build ensemble model
+ensemble.model <- NN(data.set, ensemble.size, replot, source.dir, test.dir)
+
+```
+
+```{r}
+
+# set variable
+dist <- "normal"
+
 # load function
 source(paste0(source.dir, "/bn.R"))
 
@@ -60,57 +73,89 @@ bn <- BN(dist)
 
 ```{r}
 
-source(paste0(source.dir, "/nn.R"))
+# set variables
+risk.pool <- 1000
+sample.size <- 1e+08
 
-setwd(test.dir)
+# load function
+source(paste0(source.dir, "/risk.R"))
 
-# build ensemble model
-ensemble.model <- NN(data.set, ensemble.size, replot, source.dir, test.dir)
+risk.dir <- paste0(test.dir, "/risk/", dist)
+dir.create(risk.dir, recursive = TRUE, showWarnings = FALSE)
+
+setwd(risk.dir)
+
+# estimate risk
+if (file.exists("bn-data.RData")) {
+
+  bn.data <- readRDS("bn-data.RData")
+  risk <- read.csv("risk.csv", fileEncoding = "UTF-8-BOM")
+  cat("Risk = ", prettyNum(as.numeric(formatC(mean(risk$risk), format = "e", digits = 4)), drop0trailing = TRUE), " (n = ", nrow(risk), ")\n", sep = "")
+
+} else {
+
+  bn.data <- list()
+  risk <- numeric()
+
+  for (i in 1:risk.pool) {
+    bn.data[[i]] <- Risk(bn, data.set, ensemble.model, ensemble.size, sample.size)
+    risk[i] <- length(bn.data[[i]]$keff[bn.data[[i]]$keff >= 0.9558]) / sample.size # USL = 0.9558
+    if (i == 1) {
+      progress.bar <- txtProgressBar(min = 0, max = risk.pool, style = 3)
+      setTxtProgressBar(progress.bar, i)
+    } else if (i == risk.pool) {
+      setTxtProgressBar(progress.bar, i)
+      cat("\n", sep = "")
+    } else {
+      setTxtProgressBar(progress.bar, i)
+    }
+  }
+  
+  saveRDS(bn.data, file = "bn-data.RData")
+  write.csv(as.data.frame(risk, col.names = "risk"), file = "risk.csv", row.names = FALSE)
+  cat("\nRisk = ", prettyNum(as.numeric(formatC(mean(risk), format = "e", digits = 4)), drop0trailing = TRUE), " (n = ", length(risk), ")\n", sep = "")
+
+}
 
 ```
 
 ```{r}
 
+library(gRain)
+
+grain.bn <- as.grain(bn)
+
+summary(grain.bn)
+
+grain.bn$rip
+grain.finding <- setFinding(grain.bn, nodes = "mass", states = "500")
+
+getFinding(grain.finding)
+pFinding(grain.finding)
+
+```
+
+```{r}
+
+library(bnlearn)
+library(caret)
+library(parallel)
+
 # set variables
-risk.pool <- 100
-sample.size <- 1e+07
+sample.size <- 32
+cluster <- makeCluster((detectCores() / 2), type = "SOCK")
 
-# load function
-source(paste0(source.dir, "/risk.R"))
+# sample conditional probability distributions
+bn.data <- cpdist(
+  bn,
+  nodes = c("mass", "form", "mod", "rad", "ref", "thk"),
+  evidence = TRUE,
+  batch = sample.size,
+  cluster = cluster,
+  n = sample.size) %>% na.omit()
 
-setwd(test.dir)
+stopCluster(cluster)
 
-# estimate risk
-if (sample.size >= 1e+09) {
-  risk.pool <- risk.pool * sample.size / 1e+08
-  sample.size <- 1e+08
-}
-
-bn.data <- list()
-risk <- numeric()
-
-for (i in 1:risk.pool) {
-  bn.data[[i]] <- Risk(bn, data.set, ensemble.model, ensemble.size, sample.size)
-  risk[i] <- length(bn.data[[i]]$keff[bn.data[[i]]$keff >= 0.9558]) / sample.size # USL = 0.9558
-  if (i == 1) {
-    progress.bar <- txtProgressBar(min = 0, max = risk.pool, style = 3)
-    setTxtProgressBar(progress.bar, i)
-  } else if (i == risk.pool) {
-    setTxtProgressBar(progress.bar, i)
-    cat("\n", sep = "")
-  } else {
-    setTxtProgressBar(progress.bar, i)
-  }
-}
-
-cat("\nRisk = ", mean(risk), "\n", sep = "")
-
-risk.dir <- paste0(test.dir, "/", dist)
-dir.create(risk.dir, showWarnings = FALSE)
-setwd(risk.dir)
-
-risk <- as.data.frame(risk, col.names = "risk") %>% write.csv(paste0("risk.csv"), row.names = FALSE)
-
-saveRDS(bn.data, file = "bn-data.RData")
+print(bn.data)
 
 ```

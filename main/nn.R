@@ -5,7 +5,6 @@
 
 NN <- function(data.set, ensemble.size, replot, source.dir, test.dir) {
 
-  # load packages
   library(keras)
 
   # set variables
@@ -20,7 +19,6 @@ NN <- function(data.set, ensemble.size, replot, source.dir, test.dir) {
 
   build.dir <- paste0(test.dir, "/build")
   dir.create(build.dir, showWarnings = FALSE)
-
   setwd(build.dir)
   build.files <- list.files(pattern = "\\.h5$")
 

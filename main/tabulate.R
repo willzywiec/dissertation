@@ -78,8 +78,8 @@ Tabulate <- function(source.dir) {
 
           # keff and sd
           final.result <- grep("final result", readLines(output.files[i]), value = TRUE) %>% strsplit("\\s+") %>% unlist()
-          keff[i] <- as.numeric(final.result[4])
-          sd[i] <- as.numeric(final.result[5])
+          keff[i] <- final.result[4]
+          sd[i] <- final.result[5]
 
         }
 
