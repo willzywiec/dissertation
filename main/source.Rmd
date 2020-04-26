@@ -1,5 +1,5 @@
 ---
-title : "source"
+title : 'source'
 output : html_document
 ---
 
@@ -8,30 +8,30 @@ output : html_document
 # William John Zywiec
 # The George Washington University
 
-```{r}
+```{r, include = FALSE}
 
 # initialize environment
 if (!is.null(dev.list())) dev.off()
 rm(list = ls())
-cat("\014")
+cat('\014')
 
 ```
 
-```{r setup, include = FALSE}
+```{r, setup, include = FALSE}
 
 knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 library(magrittr)
 
-source.dir <- "E:/Dropbox/GWU/R/main"
-test.dir <- "E:/test-sph-18apr20"
+source.dir <- 'E:/Dropbox/GWU/R/main'
+test.dir <- 'E:/test-sph-18apr20'
 
 ```
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 
 # load function
-source(paste0(source.dir, "/tabulate.R"))
+source(paste0(source.dir, '/tabulate.R'))
 
 setwd(test.dir)
 
@@ -40,14 +40,14 @@ data.set <- Tabulate(source.dir)
 
 ```
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 
 # set variables
 ensemble.size <- 10
 replot <- FALSE
 
 # load function
-source(paste0(source.dir, "/nn.R"))
+source(paste0(source.dir, '/nn.R'))
 
 setwd(test.dir)
 
@@ -56,41 +56,41 @@ ensemble.model <- NN(data.set, ensemble.size, replot, source.dir, test.dir)
 
 ```
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 
 # set variable
-dist <- "normal"
+dist <- 'gamma'
 
 # load function
-source(paste0(source.dir, "/bn.R"))
+source(paste0(source.dir, '/bn.R'))
 
-setwd("E:/dist")
+setwd('E:/dist')
 
 # build Bayesian network
 bn <- BN(dist)
 
 ```
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 
 # set variables
-risk.pool <- 1000
-sample.size <- 1e+08
+risk.pool <- 10
+sample.size <- 1e+06
 
 # load function
-source(paste0(source.dir, "/risk.R"))
+source(paste0(source.dir, '/risk.R'))
 
-risk.dir <- paste0(test.dir, "/risk/", dist)
+risk.dir <- paste0(test.dir, '/risk/', dist)
 dir.create(risk.dir, recursive = TRUE, showWarnings = FALSE)
 
 setwd(risk.dir)
 
 # estimate risk
-if (file.exists("bn-data.RData")) {
+if (file.exists('risk.csv')) {
 
-  bn.data <- readRDS("bn-data.RData")
-  risk <- read.csv("risk.csv", fileEncoding = "UTF-8-BOM")
-  cat("Risk = ", prettyNum(as.numeric(formatC(mean(risk$risk), format = "e", digits = 4)), drop0trailing = TRUE), " (n = ", nrow(risk), ")\n", sep = "")
+  # bn.data <- readRDS('bn-data.RData')
+  risk <- read.csv('risk.csv', fileEncoding = 'UTF-8-BOM')
+  cat('Risk = ', prettyNum(as.numeric(formatC(mean(risk$risk), format = 'e', digits = 4)), drop0trailing = TRUE), ' (n = ', nrow(risk), ')\n', sep = '')
 
 } else {
 
@@ -105,57 +105,16 @@ if (file.exists("bn-data.RData")) {
       setTxtProgressBar(progress.bar, i)
     } else if (i == risk.pool) {
       setTxtProgressBar(progress.bar, i)
-      cat("\n", sep = "")
+      cat('\n', sep = '')
     } else {
       setTxtProgressBar(progress.bar, i)
     }
   }
   
-  saveRDS(bn.data, file = "bn-data.RData")
-  write.csv(as.data.frame(risk, col.names = "risk"), file = "risk.csv", row.names = FALSE)
-  cat("\nRisk = ", prettyNum(as.numeric(formatC(mean(risk), format = "e", digits = 4)), drop0trailing = TRUE), " (n = ", length(risk), ")\n", sep = "")
+  saveRDS(bn.data, file = 'bn-data.RData')
+  write.csv(as.data.frame(risk, col.names = 'risk'), file = 'risk.csv', row.names = FALSE)
+  cat('\nRisk = ', prettyNum(as.numeric(formatC(mean(risk), format = 'e', digits = 4)), drop0trailing = TRUE), ' (n = ', length(risk), ')\n', sep = '')
 
 }
-
-```
-
-```{r}
-
-library(gRain)
-
-grain.bn <- as.grain(bn)
-
-summary(grain.bn)
-
-grain.bn$rip
-grain.finding <- setFinding(grain.bn, nodes = "mass", states = "500")
-
-getFinding(grain.finding)
-pFinding(grain.finding)
-
-```
-
-```{r}
-
-library(bnlearn)
-library(caret)
-library(parallel)
-
-# set variables
-sample.size <- 32
-cluster <- makeCluster((detectCores() / 2), type = "SOCK")
-
-# sample conditional probability distributions
-bn.data <- cpdist(
-  bn,
-  nodes = c("mass", "form", "mod", "rad", "ref", "thk"),
-  evidence = TRUE,
-  batch = sample.size,
-  cluster = cluster,
-  n = sample.size) %>% na.omit()
-
-stopCluster(cluster)
-
-print(bn.data)
 
 ```

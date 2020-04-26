@@ -6,17 +6,15 @@
 Risk <- function(bn, data.set, ensemble.model, ensemble.size, sample.size) {
 
   library(bnlearn)
-  # library(caret)
   library(parallel)
 
-  cluster <- makeCluster((detectCores() / 2), type = "SOCK")
+  cluster <- makeCluster((detectCores() / 2), type = 'SOCK')
 
   # randomly sample conditional probability distributions
   bn.data <- cpdist(
     bn,
-    nodes = c("mass", "form", "mod", "rad", "ref", "thk"),
-    # nodes = c("mass", "form", "mod", "rad", "ref", "thk", "shape", "ht"),
-    evidence = (as.integer(mass) >= 280 & as.character(mod) == "ch2"),
+    nodes = c('mass', 'form', 'mod', 'rad', 'ref', 'thk'),
+    evidence = (as.integer(mass) >= 200),
     # evidence = TRUE,
     batch = sample.size / 10,
     cluster = cluster,
@@ -30,49 +28,38 @@ Risk <- function(bn, data.set, ensemble.model, ensemble.size, sample.size) {
   bn.data[[4]] <- unlist(bn.data[[4]]) %>% as.character() %>% as.numeric() # rad
   bn.data[[5]] <- unlist(bn.data[[5]])                                     # ref
   bn.data[[6]] <- unlist(bn.data[[6]]) %>% as.character() %>% as.numeric() # thk
-  # bn.data[[7]] <- unlist(bn.data[[7]])                                     # shape
-  # bn.data[[8]] <- unlist(bn.data[[8]]) %>% as.character() %>% as.numeric() # ht
 
-  vol <- conc <- hd <- numeric()
-
-  # set form
-  bn.data$form <- ifelse((bn.data$form == "alpha"), 19.86, 11.5)
+  # set Pu density (g/cc)
+  pu.density <- ifelse((bn.data$form == 'alpha'), 19.86, 11.5)
 
   # calculate vol (cc)
   vol <- 4/3 * pi * bn.data$rad^3
-  # vol <- ifelse((bn.data$shape == "sph"), (4/3 * pi * bn.data$rad^3), (pi * bn.data$rad^2 * bn.data$ht))
 
-  # fix mod, vol (cc), rad (cm), and ht (cm)
-  bn.data$mod <- ifelse((vol <= bn.data$mass / bn.data$form), "none", as.character(bn.data$mod))
-  vol <- ifelse((vol <= bn.data$mass / bn.data$form), (bn.data$mass / bn.data$form), vol)
+  # fix mod, vol (cc), and rad (cm)
+  bn.data$mod <- ifelse((vol <= bn.data$mass / pu.density), 'none', as.character(bn.data$mod))
+  vol <- ifelse((vol <= bn.data$mass / pu.density), (bn.data$mass / pu.density), vol)
   bn.data$rad <- (3/4 * vol / pi)^(1/3)
-  # bn.data$rad <- ifelse((bn.data$shape == "sph"), (3/4 * vol / pi)^(1/3), (vol / bn.data$ht / pi)^(1/2))
-  # bn.data$ht <- ifelse((bn.data$shape == "sph"), (2 * bn.data$rad), bn.data$ht)
 
   # fix ref and thk (cm)
-  bn.data$ref <- ifelse((bn.data$thk == 0), "none", as.character(bn.data$ref))
-  bn.data$thk <- ifelse((bn.data$ref == "none"), 0, bn.data$thk)
+  bn.data$ref <- ifelse((bn.data$thk == 0), 'none', as.character(bn.data$ref))
+  bn.data$thk <- ifelse((bn.data$ref == 'none'), 0, bn.data$thk)
 
-  # calculate conc (g/cc) and h/d
+  # set conc (g/cc)
   conc <- ifelse((vol == 0), 0, (bn.data$mass / vol))
-  # hd <- ifelse((vol == 0), 0, (bn.data$ht / (2 * bn.data$rad)))
 
-  # reset form and set vol (cc) and conc (g/cc)
-  bn.data$form <- ifelse((bn.data$form == 19.86), "alpha", "puo2")
+  # set form, vol (cc), and conc (g/cc)
+  bn.data$form <- ifelse((pu.density == 19.86), 'alpha', 'puo2')
   bn.data$vol <- vol
   bn.data$conc <- conc
-  # bn.data$hd <- hd
 
   library(caret)
 
   # one-hot encode categorical variables
   dummy <- dummyVars(~ ., data = data.set$output[-c(9, 10)])
-  # dummy <- dummyVars(~ ., data = data.set$output[-c(12, 13)])
   bn.df <- data.frame(predict(dummy, newdata = bn.data))
 
   # scale data
   index <- c(1, 9, 20:22) # mass, rad, thk, vol, conc
-  # index <- c(1, 9, 20, 23:26) # mass, rad, thk, ht, vol, conc, hd
 
   for (i in 1:length(index)) {
     bn.df[index[i]] <- scale(bn.df[index[i]], center = data.set$training.mean[i], scale = data.set$training.sd[i])
@@ -86,10 +73,10 @@ Risk <- function(bn, data.set, ensemble.model, ensemble.size, sample.size) {
   # predict keff
   bn.data$keff <- ensemble.model[[1]] %>% predict(bn.df)
 
-  bn.df <- cbind(bn.df, bn.data$keff) %>% subset(bn.data$keff >= 0.9)
+  bn.df <- cbind(bn.df, bn.data$keff) %>% subset(bn.data$keff >= 0.6)
   bn.df <- bn.df[ , -ncol(bn.df)]
 
-  bn.data <- subset(bn.data, keff >= 0.9)
+  bn.data <- subset(bn.data, keff >= 0.6)
 
   keff <- matrix(nrow = nrow(bn.df), ncol = ensemble.size)
 

@@ -1,5 +1,5 @@
 ---
-title : "grid"
+title : 'grid'
 output : html_document
 ---
 
@@ -13,7 +13,7 @@ output : html_document
 # initialize environment
 if (!is.null(dev.list())) dev.off()
 rm(list = ls())
-cat("\014")
+cat('\014')
 
 ```
 
@@ -25,24 +25,24 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 library(magrittr)
 
 # set variables
-dist <- "gamma"
+dist <- 'gamma'
 ensemble.size <- 20
 
-source.dir <- "E:/Dropbox/GWU/R/main"
-test.dir <- "E:/test-sph-15feb20"
+source.dir <- 'E:/Dropbox/GWU/R/main'
+test.dir <- 'E:/test-sph-15feb20'
 
 ```
 
 ```{r}
 
 # load functions
-source(paste0(source.dir, "/split.R"))
-source(paste0(source.dir, "/nn.R"))
+source(paste0(source.dir, '/split.R'))
+source(paste0(source.dir, '/nn.R'))
 
 setwd(test.dir)
 
 # load output
-output <- na.omit(read.csv("output.csv", fileEncoding = "UTF-8-BOM"))
+output <- na.omit(read.csv('output.csv', fileEncoding = 'UTF-8-BOM'))
 output <- output[sample(nrow(output)), ]
 
 mass.index <- seq(0, 4000, 4000 / round(sqrt(ensemble.size)))
@@ -52,14 +52,14 @@ for (i in 1:round(sqrt(ensemble.size))) {
 
   for (j in 1:round(sqrt(ensemble.size))) {
 
-    grid.dir <- paste0(test.dir, "/", mass.index[i + 1], "-", rad.index[j + 1])
+    grid.dir <- paste0(test.dir, '/', mass.index[i + 1], '-', rad.index[j + 1])
     dir.create(grid.dir, showWarnings = FALSE)
 
     setwd(grid.dir)
     temp.output <- subset(output, mass >= mass.index[i] & mass < mass.index[i + 1] & rad >= rad.index[j] & rad < rad.index[j + 1])
 
     data.set <- Split(na.omit(temp.output))
-    cat("Loaded data-set.RData\n")
+    cat('Loaded data-set.RData\n')
 
     # build ensemble model
     ensemble.model <- NN(data.set, 1, source.dir, grid.dir)
