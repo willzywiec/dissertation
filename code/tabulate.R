@@ -3,7 +3,9 @@
 # William John Zywiec
 # The George Washington University
 
-Tabulate <- function(source.dir) {
+Tabulate <- function(code.dir, main.dir) {
+
+  setwd(main.dir)
 
   if (file.exists('data-set.RData')) {
 
@@ -13,7 +15,7 @@ Tabulate <- function(source.dir) {
   } else {
 
     # load function
-    source(paste0(source.dir, '/split.R'))
+    source(paste0(code.dir, '/split.R'))
 
     output.files <- list.files(pattern = '\\.o$')
 
@@ -102,6 +104,7 @@ Tabulate <- function(source.dir) {
 
       output <- output[sample(nrow(output)), ]
       write.csv(output, file = 'output.csv', row.names = FALSE)
+      
       data.set <- na.omit(output) %>% Split()
       cat('Loaded data-set.RData\n')
 

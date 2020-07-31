@@ -14,9 +14,7 @@ Dist <- function(dist.type, test.dir) {
   # set precision
   options(digits = 15)
 
-  fig.dir <- 'E:/Dropbox/GWU/1st Journal Paper/Figures'
-
-  setwd('E:/dist')
+  setwd('E:/main/dist')
 
   # 1 = large sample
   # 2 = machining

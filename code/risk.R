@@ -14,7 +14,7 @@ Risk <- function(bn, data.set, ensemble.model, ensemble.size, sample.size) {
   bn.data <- cpdist(
     bn,
     nodes = c('mass', 'form', 'mod', 'rad', 'ref', 'thk'),
-    evidence = (as.integer(mass) >= 200),
+    evidence = (as.integer(mass) > 100),
     # evidence = TRUE,
     batch = sample.size / 10,
     cluster = cluster,
@@ -73,10 +73,10 @@ Risk <- function(bn, data.set, ensemble.model, ensemble.size, sample.size) {
   # predict keff
   bn.data$keff <- ensemble.model[[1]] %>% predict(bn.df)
 
-  bn.df <- cbind(bn.df, bn.data$keff) %>% subset(bn.data$keff >= 0.6)
+  bn.df <- cbind(bn.df, bn.data$keff) %>% subset(bn.data$keff > 0.6)
   bn.df <- bn.df[ , -ncol(bn.df)]
 
-  bn.data <- subset(bn.data, keff >= 0.6)
+  bn.data <- subset(bn.data, keff > 0.6)
 
   keff <- matrix(nrow = nrow(bn.df), ncol = ensemble.size)
 

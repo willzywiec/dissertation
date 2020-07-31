@@ -25,7 +25,7 @@ Plot <- function(file.name, history) {
 
   ggplot(history.df, aes(x = epoch)) +
     geom_line(aes(y = mae)) +
-    geom_line(aes(y = val.mae), color = '#FC4E07') +
+    geom_line(aes(y = val.mae), alpha = 0.7, color = '#f8766d') +
     scale_x_continuous(breaks = pretty_breaks()) +
     ylab(bquote(mean ~ absolute ~ error ~ (k[eff])))
 
@@ -33,7 +33,7 @@ Plot <- function(file.name, history) {
 
   ggplot(history.df, aes(x = epoch)) +
     geom_line(aes(y = mae)) +
-    geom_line(aes(y = val.mae), color = '#FC4E07') +
+    geom_line(aes(y = val.mae), alpha = 0.7, color = '#f8766d') +
     scale_x_continuous(breaks = pretty_breaks(), limits = c(max(history.df$epoch) / 2, NA)) +
     scale_y_continuous(breaks = pretty_breaks(), limits = c(0, max(tail(history.df$val.mae, max(history.df$epoch) / 2)))) +
     ylab(bquote(mean ~ absolute ~ error ~ (k[eff])))

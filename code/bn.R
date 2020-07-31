@@ -3,9 +3,14 @@
 # William John Zywiec
 # The George Washington University
 
-BN <- function(dist) {
+BN <- function(dist, main.dir) {
 
   library(bnlearn)
+
+  dist.dir <- paste0(main.dir, '/dist')
+  dir.create(dist.dir, showWarnings = FALSE)
+  
+  setwd(dist.dir)
 
   # build graph
   nodes <- c('op', 'ctrl', 'mass', 'form', 'mod', 'rad', 'ref', 'thk')

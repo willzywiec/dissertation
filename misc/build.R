@@ -7,8 +7,8 @@
 # ----------------
 # mass:  Pu mass (95% Pu-239, 5% Pu-240) (g)
 #
-# form:  alpha phase Pu
-#        delta phase Pu
+# form:  alpha-phase Pu
+#        delta-phase Pu
 #        Pu oxide (PuO2)
 #
 # mod:   aluminum oxide

@@ -1,0 +1,253 @@
+---
+title : 'source'
+output : html_document
+---
+
+# source.Rmd
+#
+# William John Zywiec
+# The George Washington University
+
+```{r, include = FALSE}
+
+# initialize environment
+if (!is.null(dev.list())) dev.off()
+rm(list = ls())
+cat('\014')
+
+```
+
+```{r, setup, include = FALSE, message = FALSE, warning = FALSE}
+
+library(magrittr)
+
+code.dir <- 'E:/Dropbox/GWU/R/code'
+main.dir <- 'E:/main'
+
+```
+
+```{r, message = FALSE, warning = FALSE}
+
+# load function
+source(paste0(code.dir, '/tabulate.R'))
+
+# tabulate data
+data.set <- Tabulate(code.dir, main.dir)
+
+```
+
+```{r, message = FALSE, warning = FALSE}
+
+# set variables
+batch.size <- 8192
+ensemble.size <- 50
+epochs <- 200
+layers <- '8192-256-512-256-32-16'
+lr <- 0.00075
+replot <- FALSE
+
+# load function
+source(paste0(code.dir, '/nn.R'))
+
+# build ensemble model
+# ensemble.model <- NN(data.set, batch.size, 50, epochs, layers, lr, replot, code.dir, paste0(main.dir, '/24jun20-sse'))
+# ensemble.model <- NN(data.set, 4096, 15, epochs, layers, lr, replot, code.dir, paste0(main.dir, '/27jun20-sse'))
+# ensemble.model <- NN(data.set, batch.size, 25, epochs, layers, lr, replot, code.dir, paste0(main.dir, '/04jul20-mse'))
+# ensemble.model <- NN(data.set, batch.size, 3, epochs, layers, 0.003, replot, code.dir, paste0(main.dir, '/06jul20-sse-0.003'))
+# ensemble.model <- NN(data.set, batch.size, 3, epochs, layers, 0.00275, replot, code.dir, paste0(main.dir, '/06jul20-sse-0.00275'))
+# ensemble.model <- NN(data.set, batch.size, 3, epochs, layers, 0.0025, replot, code.dir, paste0(main.dir, '/06jul20-sse-0.0025'))
+# ensemble.model <- NN(data.set, batch.size, 3, epochs, layers, 0.00225, replot, code.dir, paste0(main.dir, '/06jul20-sse-0.00225'))
+# ensemble.model <- NN(data.set, batch.size, 3, epochs, layers, 0.002, replot, code.dir, paste0(main.dir, '/06jul20-sse-0.002'))
+# ensemble.model <- NN(data.set, batch.size, 3, epochs, layers, 0.00175, replot, code.dir, paste0(main.dir, '/06jul20-sse-0.00175'))
+# ensemble.model <- NN(data.set, batch.size, 3, epochs, layers, 0.0015, replot, code.dir, paste0(main.dir, '/06jul20-sse-0.0015'))
+# ensemble.model <- NN(data.set, batch.size, 3, epochs, layers, 0.00125, replot, code.dir, paste0(main.dir, '/06jul20-sse-0.00125'))
+# ensemble.model <- NN(data.set, batch.size, 3, epochs, layers, 0.001, replot, code.dir, paste0(main.dir, '/06jul20-sse-0.001'))
+# ensemble.model <- NN(data.set, batch.size, 3, epochs, layers, 0.0005, replot, code.dir, paste0(main.dir, '/06jul20-sse-0.0005'))
+# ensemble.model <- NN(data.set, batch.size, 3, epochs, layers, 0.00025, replot, code.dir, paste0(main.dir, '/06jul20-sse-0.00025'))
+#
+# parameter study
+#
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '256', 0.002, replot, code.dir, paste0(main.dir, '/mse-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '512', 0.002, replot, code.dir, paste0(main.dir, '/mse-512'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '1024', 0.002, replot, code.dir, paste0(main.dir, '/mse-1024'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '2048', 0.002, replot, code.dir, paste0(main.dir, '/mse-2048'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '16384', 0.002, replot, code.dir, paste0(main.dir, '/mse-16384'))
+#
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '2048-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-2048-128'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '2048-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-2048-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '2048-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-2048-512'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '2048-1024', 0.002, replot, code.dir, paste0(main.dir, '/mse-2048-1024'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '2048-2048', 0.002, replot, code.dir, paste0(main.dir, '/mse-2048-2048'))
+#
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-128'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-512'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-1024', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-1024'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-2048', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-2048'))
+#
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-128'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-512'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-1024', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-1024'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-2048', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-2048'))
+#
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-128-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-128-128'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-128-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-128-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-128-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-128-512'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-128-1024', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-128-1024'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-128-2048', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-128-2048'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-256-64', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-256-64'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-256-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-256-128'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-256-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-256-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-256-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-256-512'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-256-1024', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-256-1024'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-256-2048', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-256-2048'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-512-64', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-512-64'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-512-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-512-128'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-512-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-512-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-512-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-512-512'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-512-1024', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-512-1024'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '4096-512-2048', 0.002, replot, code.dir, paste0(main.dir, '/mse-4096-512-2048'))
+#
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-128'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-1024', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-1024'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-2048', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-2048'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-4096', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-4096'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-512-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-512-128'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-512-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-512-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-512-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-512-512'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-512-1024', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-512-1024'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-512-2048', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-512-2048'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-1024-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-1024-128'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-1024-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-1024-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-1024-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-1024-512'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-1024-1024', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-1024-1024'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-1024-2048', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-1024-2048'))
+#
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-64', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-64'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-128'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-512'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-1024', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-1024'))
+#
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-64', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-64'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-128'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-512'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-1024', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-1024'))
+#
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-1024-64', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-1024-64'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-1024-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-1024-128'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-1024-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-1024-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-1024-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-1024-512'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-1024-1024', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-1024-1024'))
+#
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-2048-64', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-2048-64'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-2048-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-2048-128'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-2048-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-2048-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-2048-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-2048-512'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-2048-1024', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-2048-1024'))
+#
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-32', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-32'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-64', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-64'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-128'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-256'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-512'))
+#
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-256-32', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-256-32'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-256-64', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-256-64'))
+# ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-256-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-256-128'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-256-256', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-256-256'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-256-512', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-256-512'))
+#
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-32-8', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-32-8'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-32-16', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-32-16'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-32-32', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-32-32'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-32-64', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-32-64'))
+#
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-64-8', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-64-8'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-64-16', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-64-16'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-64-32', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-64-32'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-64-64', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-64-64'))
+#
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-128-16', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-128-16'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-128-32', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-128-32'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-128-64', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-128-64'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-256-256-128-128', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-256-256-128-128'))
+#
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-256-32-8', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-256-32-8'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-256-32-16', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-256-32-16'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-256-32-32', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-256-32-32'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-256-32-64', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-256-32-64'))
+#
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-256-64-8', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-256-64-8'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-256-64-16', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-256-64-16'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-256-64-32', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-256-64-32'))
+ensemble.model <- NN(data.set, batch.size, 1, epochs, '8192-256-512-256-64-64', 0.002, replot, code.dir, paste0(main.dir, '/mse-8192-256-512-256-64-64'))
+
+```
+
+```{r, message = FALSE, warning = FALSE}
+
+# set variable
+dist <- 'weibull'
+
+# load function
+source(paste0(code.dir, '/bn.R'))
+
+# build Bayesian network
+bn <- BN(dist, main.dir)
+
+```
+
+```{r, message = FALSE, warning = FALSE}
+
+# set variables
+risk.pool <- 1
+sample.size <- 1e+07
+
+# load function
+source(paste0(code.dir, '/risk.R'))
+
+risk.dir <- paste0(main.dir, '/risk/', dist)
+dir.create(risk.dir, recursive = TRUE, showWarnings = FALSE)
+
+setwd(risk.dir)
+
+# estimate risk
+if (file.exists('risk.csv')) {
+
+  bn.data <- readRDS('bn-data.RData')
+  risk <- read.csv('risk.csv', fileEncoding = 'UTF-8-BOM')
+  cat('Risk = ', prettyNum(as.numeric(formatC(mean(risk$risk), format = 'e', digits = 4)), drop0trailing = TRUE), ' (n = ', nrow(risk), ')\n', sep = '')
+
+} else {
+
+  bn.data <- list()
+  risk <- numeric()
+
+  for (i in 1:risk.pool) {
+    bn.data[[i]] <- Risk(bn, data.set, ensemble.model, ensemble.size, sample.size)
+    risk[i] <- length(bn.data[[i]]$keff[bn.data[[i]]$keff >= 0.9558]) / sample.size # USL = 0.9558
+    if (i == 1) {
+      progress.bar <- txtProgressBar(min = 0, max = risk.pool, style = 3)
+      setTxtProgressBar(progress.bar, i)
+    } else if (i == risk.pool) {
+      setTxtProgressBar(progress.bar, i)
+      cat('\n', sep = '')
+    } else {
+      setTxtProgressBar(progress.bar, i)
+    }
+  }
+  
+  saveRDS(bn.data, file = 'bn-data.RData')
+  write.csv(as.data.frame(risk, col.names = 'risk'), file = 'risk.csv', row.names = FALSE)
+  cat('\nRisk = ', prettyNum(as.numeric(formatC(mean(risk), format = 'e', digits = 4)), drop0trailing = TRUE), ' (n = ', length(risk), ')\n', sep = '')
+
+}
+
+```

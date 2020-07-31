@@ -6,6 +6,7 @@
 Split <- function(output) {
 
   library(caret)
+  library(dplyr)
 
   if (nrow(output) > 0) {
 
@@ -18,9 +19,9 @@ Split <- function(output) {
     training.data <- data.frame(predict(dummy, newdata = output))
 
     # partition data
-    partition <- createDataPartition(training.data$keff, p = 0.8, list = FALSE)
-    test.data <- training.data[-partition, ]
-    training.data <- training.data[partition, ]
+    test.data <- subset(training.data, mass > 100 & rad > 7.62 & rad < 45.72)
+    test.data <- sample_n(test.data, round(nrow(training.data) * 0.2))
+    training.data <- anti_join(training.data, test.data)
 
     # scale data
     index <- c(1, 9, 20:22) # mass, rad, thk, vol, conc

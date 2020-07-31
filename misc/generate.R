@@ -12,16 +12,16 @@ cat('\014')
 source('E:/Dropbox/GWU/R/misc/build.R')
 
 # generate random uniform data
-mass <- seq(50, 2000, 50) # seq(50, 4000, 50)
+mass <- 0 # seq(25, 4000, 25)
 form <- c('alpha', 'puo2')
-mod <- c('mgo', 'sepiolite', 'none')
+mod <- c('ch2', 'h2o', 'mgo', 'sepiolite', 'none')
 rad <- seq(0, 18, 1) * 2.54
 ref <- c('al', 'be', 'du', 'graphite', 'pb', 'mgo', 'ch2', 'ss304', 'h2o', 'none')
-thk <- seq(0, 2, 1) * 2.54 # seq(0, 6, 1) * 2.54
+thk <- seq(0, 6, 1) * 2.54 # seq(7, 12, 1) * 2.54
 shape <- 'sph'
 # ht <- sample(seq(0.5, 36, 0.5) * 2.54, deck.size, replace = TRUE) # 36 in = 91.44 cm
 
-file.dir <- 'C:/Users/Will/Desktop/27mar20'
+file.dir <- 'C:/Users/Will/Desktop/04jun20'
 
 setwd(file.dir)
   
