@@ -10,7 +10,7 @@ I built 1.6 million MCNP input decks with **generate.R** and **build.R** and ran
 R  
 Rtools  
 MCNP6.2  
-ENDF/B-VII.1 Nuclear Data (the latest release of ENDF/B-VIII currently has problems)  
+ENDF/B-VII.1 Nuclear Data (the current release of ENDF/B-VIII has problems)  
 
 ## R Packages
 BiocManager::install('graph')  
