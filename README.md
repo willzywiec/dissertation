@@ -29,5 +29,5 @@ keras
 knitr  
 magrittr  
 parallel  
-ParetoPosStable (optional)
+ParetoPosStable (optional)  
 scales  
