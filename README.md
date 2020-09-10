@@ -1,10 +1,10 @@
 # Dissertation
 
-These scripts combine a Bayesian network with an ensemble of neural networks for the purpose of estimating process criticality accident risk. 🤯
+These scripts combine a Bayesian network with a neural network metamodel to estimate process criticality accident risk. 🤯
 
 **dist.R** first needs to be run for the distribution fit called in **source.Rmd** (e.g., "gamma"). Once that's done, everything can be run from **source.Rmd**.
 
-I built 1.6 million MCNP input decks with **generate.R** and **build.R** and ran them on Quartz (a supercomputer at Lawrence Livermore National Laboratory). The rest of the scripts were run on a desktop computer with an AMD Ryzen 7 1700 3.0 GHz 8-core CPU and Nvidia GeForce GTX 1080 8 GB GDDR5X graphics card.
+I built 1.6 million MCNP input decks with **generate.R** and **build.R** and ran them on Quartz (a supercomputer at Lawrence Livermore National Laboratory). The rest of the scripts were run on a desktop computer (AMD Ryzen 7 1700 3.0 GHz 8-core CPU with an NVIDIA GeForce GTX 1080 GPU).
 
 ## Prerequisites
 R  
