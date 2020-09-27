@@ -5,8 +5,9 @@
 
 Plot <- function(file.name, history) {
 
-  library(ggplot2)
-  library(scales)
+  # library(ggplot2)
+  # library(magrittr)
+  # library(scales)
 
   new.theme <- theme_gray() + theme(axis.text = element_text(color = 'black', size = 10), text = element_text(color = 'black', family = 'serif', size = 10))
   theme_set(new.theme)
@@ -24,20 +25,24 @@ Plot <- function(file.name, history) {
   }
 
   ggplot(history.df, aes(x = epoch)) +
+    ggtitle(paste0('model ', file.name)) +
     geom_line(aes(y = mae)) +
-    geom_line(aes(y = val.mae), alpha = 0.7, color = '#f8766d') +
-    scale_x_continuous(breaks = pretty_breaks()) +
-    ylab(bquote(mean ~ absolute ~ error ~ (k[eff])))
+    geom_line(aes(y = val.mae), alpha = 0.7, color = '#ff9999') +
+    geom_point(aes(x = which.min(history.df$mae), y = min(history.df$mae)), color = 'red') +
+    scale_x_continuous() +
+    scale_y_log10(breaks = c(2e-04, 2e-03, 2e-02, 2e-01), limits = c(2e-04, 2e-01)) +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    ylab(bquote(mean ~ absolute ~ error ~ (k[eff]))) +
+    annotate(
+      geom = 'text',
+      x = which.min(history.df$mae),
+      y = min(history.df$mae),
+      vjust = 1.9,
+      label = format(min(history.df$mae), digits = 3, scientific = TRUE),
+      color = 'red',
+      family = 'serif',
+      size = 3.5)
 
-  suppressMessages(ggsave(paste0(file.name, '.png')))
-
-  ggplot(history.df, aes(x = epoch)) +
-    geom_line(aes(y = mae)) +
-    geom_line(aes(y = val.mae), alpha = 0.7, color = '#f8766d') +
-    scale_x_continuous(breaks = pretty_breaks(), limits = c(max(history.df$epoch) / 2, NA)) +
-    scale_y_continuous(breaks = pretty_breaks(), limits = c(0, max(tail(history.df$val.mae, max(history.df$epoch) / 2)))) +
-    ylab(bquote(mean ~ absolute ~ error ~ (k[eff])))
-
-  suppressMessages(ggsave(paste0(file.name, '-tail.png')))
+  ggsave(paste0(file.name, '.jpg'), dpi = 1000) %>% suppressMessages()
 
 }

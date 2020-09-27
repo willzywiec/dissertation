@@ -5,6 +5,9 @@
 
 Model <- function(layers, loss, lr) {
 
+  # library(keras)
+  # library(magrittr)
+
   layers <- strsplit(layers, '-') %>% unlist() %>% as.integer()
 
   if (length(layers) == 1) {

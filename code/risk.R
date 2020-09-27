@@ -3,89 +3,47 @@
 # William John Zywiec
 # The George Washington University
 
-Risk <- function(bn, data.set, ensemble.model, ensemble.size, sample.size) {
+Risk <- function(bn, data.set, ensemble.model, ensemble.size, sample.size, code.dir, main.dir) {
 
-  library(bnlearn)
-  library(parallel)
+  source(paste0(code.dir, '/estimate.R'))
 
-  cluster <- makeCluster((detectCores() / 2), type = 'SOCK')
+  risk.dir <- paste0(main.dir, '/risk-', dist, '-', risk.pool, sub('.', '', sample.size))
+  dir.create(risk.dir, showWarnings = FALSE)
 
-  # randomly sample conditional probability distributions
-  bn.data <- cpdist(
-    bn,
-    nodes = c('mass', 'form', 'mod', 'rad', 'ref', 'thk'),
-    evidence = (as.integer(mass) > 100),
-    # evidence = TRUE,
-    batch = sample.size / 10,
-    cluster = cluster,
-    n = sample.size) %>% na.omit()
+  setwd(risk.dir)
 
-  stopCluster(cluster)
+  # estimate risk
+  if (file.exists('risk.csv')) {
 
-  bn.data[[1]] <- unlist(bn.data[[1]]) %>% as.character() %>% as.numeric() # mass
-  bn.data[[2]] <- unlist(bn.data[[2]])                                     # form
-  bn.data[[3]] <- unlist(bn.data[[3]])                                     # mod
-  bn.data[[4]] <- unlist(bn.data[[4]]) %>% as.character() %>% as.numeric() # rad
-  bn.data[[5]] <- unlist(bn.data[[5]])                                     # ref
-  bn.data[[6]] <- unlist(bn.data[[6]]) %>% as.character() %>% as.numeric() # thk
+    bn.data <- readRDS('bn-data.RData')
+    risk <- read.csv('risk.csv', fileEncoding = 'UTF-8-BOM')
+    cat('Risk = ', format(mean(risk$risk), digits = 3, scientific = TRUE), ' (n = ', nrow(risk), ')\n', sep = '')
 
-  # set Pu density (g/cc)
-  pu.density <- ifelse((bn.data$form == 'alpha'), 19.86, 11.5)
+  } else {
 
-  # calculate vol (cc)
-  vol <- 4/3 * pi * bn.data$rad^3
+    bn.data <- list()
+    risk <- numeric()
 
-  # fix mod, vol (cc), and rad (cm)
-  bn.data$mod <- ifelse((vol <= bn.data$mass / pu.density), 'none', as.character(bn.data$mod))
-  vol <- ifelse((vol <= bn.data$mass / pu.density), (bn.data$mass / pu.density), vol)
-  bn.data$rad <- (3/4 * vol / pi)^(1/3)
+    for (i in 1:risk.pool) {
+      bn.data[[i]] <- Estimate(bn, data.set, ensemble.model, ensemble.size, sample.size)
+      risk[i] <- length(bn.data[[i]]$keff[bn.data[[i]]$keff >= 0.95]) / sample.size # USL = 0.95
+      if (i == 1) {
+        progress.bar <- txtProgressBar(min = 0, max = risk.pool, style = 3)
+        setTxtProgressBar(progress.bar, i)
+      } else if (i == risk.pool) {
+        setTxtProgressBar(progress.bar, i)
+        cat('\n', sep = '')
+      } else {
+        setTxtProgressBar(progress.bar, i)
+      }
+    }
+  
+    saveRDS(bn.data, file = 'bn-data.RData')
+    write.csv(as.data.frame(risk, col.names = 'risk'), file = 'risk.csv', row.names = FALSE)
+    cat('\nRisk = ', format(mean(risk), digits = 3, scientific = TRUE), ' (n = ', length(risk), ')\n', sep = '')
 
-  # fix ref and thk (cm)
-  bn.data$ref <- ifelse((bn.data$thk == 0), 'none', as.character(bn.data$ref))
-  bn.data$thk <- ifelse((bn.data$ref == 'none'), 0, bn.data$thk)
-
-  # set conc (g/cc)
-  conc <- ifelse((vol == 0), 0, (bn.data$mass / vol))
-
-  # set form, vol (cc), and conc (g/cc)
-  bn.data$form <- ifelse((pu.density == 19.86), 'alpha', 'puo2')
-  bn.data$vol <- vol
-  bn.data$conc <- conc
-
-  library(caret)
-
-  # one-hot encode categorical variables
-  dummy <- dummyVars(~ ., data = data.set$output[-c(9, 10)])
-  bn.df <- data.frame(predict(dummy, newdata = bn.data))
-
-  # scale data
-  index <- c(1, 9, 20:22) # mass, rad, thk, vol, conc
-
-  for (i in 1:length(index)) {
-    bn.df[index[i]] <- scale(bn.df[index[i]], center = data.set$training.mean[i], scale = data.set$training.sd[i])
   }
 
-  # convert data frame to matrix (Keras requirement)
-  bn.df <- as.matrix(bn.df)
-
-  library(keras)
-
-  # predict keff
-  bn.data$keff <- ensemble.model[[1]] %>% predict(bn.df)
-
-  bn.df <- cbind(bn.df, bn.data$keff) %>% subset(bn.data$keff > 0.6)
-  bn.df <- bn.df[ , -ncol(bn.df)]
-
-  bn.data <- subset(bn.data, keff > 0.6)
-
-  keff <- matrix(nrow = nrow(bn.df), ncol = ensemble.size)
-
-  for (i in 1:ensemble.size) {
-    keff[ , i] <- ensemble.model[[i]] %>% predict(bn.df)
-  }
-
-  bn.data$keff <- rowMeans(keff)
-
-  return(bn.data)
+  return(risk)
 
 }

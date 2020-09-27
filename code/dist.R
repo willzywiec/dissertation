@@ -3,7 +3,7 @@
 # William John Zywiec
 # The George Washington University
 
-Dist <- function(dist.type, test.dir) {
+Dist <- function(dist.type) {
 
   library(EnvStats)
   library(evd)
@@ -14,7 +14,7 @@ Dist <- function(dist.type, test.dir) {
   # set precision
   options(digits = 15)
 
-  setwd('E:/main/dist')
+  setwd('F:/dist')
 
   # 1 = large sample
   # 2 = machining
@@ -40,7 +40,9 @@ Dist <- function(dist.type, test.dir) {
     mass.6 <- rnorm(500, mean = 84.5, sd = 43.2)
 
     mass <- list(mass.1, mass.2, mass.3, mass.4, mass.5, mass.6)
-    write.csv(mass, file = 'mass.csv', row.names = FALSE)
+    mass.df <- as.data.frame(mass)
+    colnames(mass.df) <- c(1, 2, 3, 4, 5, 6)
+    write.csv(mass.df, file = 'mass.csv', row.names = FALSE)
 
     rad.1 <- rnorm(500, mean = 7.62, sd = 8.09)
     rad.2 <- rnorm(500, mean = 7.62, sd = 8.67)
@@ -50,7 +52,9 @@ Dist <- function(dist.type, test.dir) {
     rad.6 <- rnorm(500, mean = 7.62, sd = 6.09)
 
     rad <- list(rad.1, rad.2, rad.3, rad.4, rad.5, rad.6)
-    write.csv(rad, file = 'rad.csv', row.names = FALSE)
+    rad.df <- as.data.frame(rad)
+    colnames(rad.df) <- c(1, 2, 3, 4, 5, 6)
+    write.csv(rad.df, file = 'rad.csv', row.names = FALSE)
 
     thk.1 <- rnorm(500, mean = 0.635, sd = 1.48)
     thk.2 <- rnorm(500, mean = 0.635, sd = 1.48)
@@ -60,7 +64,9 @@ Dist <- function(dist.type, test.dir) {
     thk.6 <- rnorm(500, mean = 0.635, sd = 1.48)
 
     thk <- list(thk.1, thk.2, thk.3, thk.4, thk.5, thk.6)
-    write.csv(thk, file = 'thk.csv', row.names = FALSE)
+    thk.df <- as.data.frame(thk)
+    colnames(thk.df) <- c(1, 2, 3, 4, 5, 6)
+    write.csv(thk.df, file = 'thk.csv', row.names = FALSE)
 
     ht.1 <- rnorm(500, mean = 11.27, sd = 11.97)
     ht.2 <- rnorm(500, mean = 11.27, sd = 12.83)
@@ -70,7 +76,9 @@ Dist <- function(dist.type, test.dir) {
     ht.6 <- rnorm(500, mean = 11.27, sd = 9.01)
 
     ht <- list(ht.1, ht.2, ht.3, ht.4, ht.5, ht.6)
-    write.csv(ht, file = 'ht.csv', row.names = FALSE)
+    ht.df <- as.data.frame(ht)
+    colnames(ht.df) <- c(1, 2, 3, 4, 5, 6)
+    write.csv(ht.df, file = 'ht.csv', row.names = FALSE)
   
   }
 
@@ -122,9 +130,9 @@ Dist <- function(dist.type, test.dir) {
 
   }
 
-  for (i in 1:length(mass.a)) {
-    write.csv(mass.a[[i]], file = paste0('mass-a-', i, '.csv'), row.names = FALSE)
-  }
+  # for (i in 1:length(mass.a)) {
+  #   write.csv(mass.a[[i]], file = paste0('mass-a-', i, '.csv'), row.names = FALSE)
+  # }
 
   mass.ctrl <- list(mass.a, mass.b, mass.c, mass.d, mass.e, mass.m, mass.p)
   rad.ctrl <- list(rad.a, rad.b, rad.c, rad.d, rad.e, rad.m, rad.p)
@@ -368,3 +376,8 @@ Dist <- function(dist.type, test.dir) {
   return(test.statistics)
 
 }
+
+a <- Dist('gamma')
+b <- Dist('normal')
+c <- Dist('log-normal')
+d <- Dist('weibull')

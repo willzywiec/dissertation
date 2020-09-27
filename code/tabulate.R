@@ -5,7 +5,9 @@
 
 Tabulate <- function(code.dir, main.dir) {
 
-  setwd(main.dir)
+  library(magrittr)
+
+  mcnp.dir <- paste0(main.dir, '/mcnp')
 
   if (file.exists('data-set.RData')) {
 
@@ -17,7 +19,11 @@ Tabulate <- function(code.dir, main.dir) {
     # load function
     source(paste0(code.dir, '/split.R'))
 
+    setwd(mcnp.dir)
+
     output.files <- list.files(pattern = '\\.o$')
+
+    setwd(main.dir)
 
     # load output
     if (file.exists('output.csv')) {
@@ -35,6 +41,8 @@ Tabulate <- function(code.dir, main.dir) {
 
       mass <- rad <- thk <- ht <- vol <- conc <- hd <- keff <- sd <- numeric()
       form <- mod <- ref <- shape <- character()
+
+      setwd(mcnp.dir)
 
       # tabulate data
       for (i in 1:length(output.files)) {
@@ -86,6 +94,8 @@ Tabulate <- function(code.dir, main.dir) {
         }
 
       }
+
+      setwd(main.dir)
 
       output <- data.frame(
         mass = mass,

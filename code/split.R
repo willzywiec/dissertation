@@ -20,7 +20,7 @@ Split <- function(output) {
 
     # partition data
     test.data <- subset(training.data, mass > 100 & rad > 7.62 & rad < 45.72)
-    test.data <- sample_n(test.data, round(nrow(training.data) * 0.2))
+    test.data <- sample_n(test.data, round(nrow(training.data) * 0.1))
     training.data <- anti_join(training.data, test.data)
 
     # scale data

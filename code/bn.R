@@ -9,7 +9,7 @@ BN <- function(dist, main.dir) {
 
   dist.dir <- paste0(main.dir, '/dist')
   dir.create(dist.dir, showWarnings = FALSE)
-  
+
   setwd(dist.dir)
 
   # build graph
