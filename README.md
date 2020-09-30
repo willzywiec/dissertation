@@ -2,7 +2,7 @@
 
 These scripts build a coupled Bayesian network and neural network metamodel, which is used to model fissionable material operations in a nuclear facility and estimate process criticality accident risk. 🤯  
 
-MCNP input decks were built with **generate.R** and **build.R**, and then run with **volley.py** (and **single.py**), which are configured to run on Linux and LSF/Slurm. I'm planning on uploading a compiled **output.csv** file at some point, which would allow users to skip this step.  
+MCNP input decks are built with **generate.R** and **build.R** and run with **volley.py** (and **single.py**), which are configured to run on Linux and LSF/Slurm. I'm planning on uploading a compiled **output.csv** file at some point, which would allow users to skip this step.  
 
 **dist.R** also needs to be run for the distribution fit called in **source.Rmd** (e.g., 'gamma').  
 Once that's done, everything can be run from **source.Rmd**.  
