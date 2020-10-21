@@ -1,0 +1,78 @@
+\documentclass[dissertation]{dissertation-gwu}[2019/11/25]
+% \documentclass[thesis]{thesis-gwu}[2018/08/31]
+
+\usepackage[boxed]{algorithm}
+\usepackage{algorithmic}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{csquotes}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{makecell}
+\usepackage{pdfpages}
+\usepackage{setspace}
+\usepackage{subfiles}
+\usepackage[dvipsnames]{xcolor}
+
+\algsetup{linenosize=\small}
+
+\captionsetup[boxed]{skip=16pt}
+\captionsetup[table]{skip=0.9pt}
+
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+\let\Algorithm\algorithm
+\renewcommand\algorithm[1][]{\Algorithm[#1]\setstretch{1.2}}
+
+\let\oldemptyset\emptyset
+\let\emptyset\varnothing
+
+\lstset{
+  language=R,
+  basicstyle=\color{black}\linespread{0.95}\scriptsize\ttfamily,
+  commentstyle=\color{gray},
+  keywordstyle=\color{black},
+  stringstyle=\color{blue},
+  abovecaptionskip=16pt,
+  captionpos=b,
+  frame=single,
+  rulecolor=\color{black},
+  numbers=left,
+  numberstyle=\scriptsize\ttfamily\color{gray},
+  stepnumber=1,
+  numbersep=5pt,
+  breaklines=true,
+  breakindent=5pt,
+  breakatwhitespace=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=2}
+
+% \begin{filecontents}{tex/doe-o-474.tex}
+% \cleardoublepage\phantomsection
+% \addcontentsline {toc}{chapter}{DOE Order 474.2, Table C. Graded Safeguards Table}
+% \centering
+% \includepdf[pages=1,pagecommand=\label{ch:doe-o-474},angle=90,trim=0.5cm 1.5cm 0 0]{figures/doe-o-474.pdf}
+% \end{filecontents}
+
+\newcommand{\ind}{\perp \!\!\! \perp}
+
+\input{tex/front-matter}
+
+\begin{document}
+
+  \include{tex/introduction}
+  \include{tex/mathematical-background}
+  \include{tex/bn}
+  \include{tex/nn}
+  \include{tex/risk}
+  \bibliographystyle{plain}
+  \bibliography{dissertation-bib}
+  % \include{tex/appendix}
+  \include{tex/doe-o-474}
+
+\end{document}

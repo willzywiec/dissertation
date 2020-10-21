@@ -1,0 +1,65 @@
+% !TEX root = ../dissertation.tex
+% !TEX root = ../tex/risk.tex
+
+\chapter{Estimating Process Criticality Accident Risk}
+
+% -------
+% Results
+% -------
+
+\section{Results}
+
+As expected, the results shown in Fig. 14 indicate that the test errors are partially correlated, as indicated by a decrease in test error as the number of neural networks in the ensemble metamodel increases.
+These results also indicate that setting the learning rate to a value that corresponds to a lower training error allows the ensemble metamodel to asymptotically approach this lower value (Fig. 14).
+Based on these results, it was determined that 10-20 neural networks would likely be enough to minimize the test error on the larger test data set (Table 6) without significantly extending the time it takes to train the ensemble metamodel.
+An ensemble metamodel, comprised of 10 neural networks, was re-trained on 1,584,973 output files.
+To accommodate the larger data set, batch size was increased to 32,768 output files.
+The ensemble metamodel test errors are plotted and shown in Fig. 15, for a test data set that consists of 316,993 output files.
+
+The test errors shown in Fig. 15 are slightly higher than previous test errors (Fig. 14), but low enough to forego further training and optimization.
+These test errors were re-plotted to show the variation in individual output files (Fig. 16).
+
+As shown in Fig. 16, the test errors become slightly more diffuse, but with fewer outliers, as keff increases.
+The keff standard deviations of all 1,584,973 output files were plotted (Fig. 17) to summarize the keff standard deviations and show that test errors (Fig. 16) follow a similar trend.
+
+The average ensemble metamodel test error is 2.74e-04 (Fig. 15), which is very close to the average standard deviation of 2.97e-04 (Fig. 17).
+Even though these results are comparable, there are hundreds of outliers, including several that are 5-10 times larger than 2.74e-04.
+Based on the results shown in Fig. 15 and Fig. 16, it is reasonable to conclude that the ensemble metamodel predicts keff to within % ± 0.02 of the keff that is calculated using MCNP6.2 [15] and ENDF/B-VII.1 nuclear data [17].
+
+Now that the ensemble metamodel has been validated against MCNP6.2 [15] and ENDF/B-VII.1 nuclear data [17], it can be combined with the Bayesian network and used to estimate process criticality accident risk.
+A preliminary estimate was performed by fitting gamma distributions to the data and running 1 million simulations (Fig. 18).
+
+The results shown in Fig. 18 indicate that the hybrid risk model fails to predict a process criticality accident at a frequency % ≥ 1e-06 accidents per year.
+However, since there are outliers, an additional 10 to 100 million simulations were run (Fig. 19, Fig. 20).
+
+The results shown in Fig. 19 and Fig. 20 indicate that the risk of a process criticality accident in Building 332 is estimated to be 1e-07 accidents per year, based on the number of points above the upper subcritical limit.
+This estimate has corresponding critical masses of approximately 600-730 grams of plutonium (95\% 239Pu, 5\% 240Pu by weight), which are very similar to 3 of the 7 spherical plutonium critical masses associated with historical process criticality accidents [1].
+Additional estimates were performed by fitting normal, log-normal, and Weibull distributions to the data and running 100 million simulations for each probability distribution (Fig. 21).
+
+The results shown in Fig. 21 correspond to process criticality accident risk estimates of 5.9e-05 and 1e-07 accidents per year for log-normal and gamma distributions, and < 1e-08 accidents per year for normal and Weibull distributions, respectively.
+These estimates are significantly lower than the previous process criticality accident risk estimate of 3.4e-05 accidents per year, which was calculated using fault tree analysis [12].
+This difference is primarily due to the removal of most of the fissile material from Building 332 [47, 48], as well as the reduction from Category I/II to Category III operations, which limits the quantities and types of plutonium that are allowed in Building 332 [49].
+
+Another notable difference was the wide variation in the results (Fig. 21), which are driven by probability distributions—a consistent weak point in nearly every risk model.
+The obvious benefit of the hybrid risk model is that these probability distributions can be updated and compared to others, which haven’t been tested.
+Another benefit is that the hybrid risk model is based on the actual physics of a process criticality accident—as opposed to fault tree analysis, which relies on estimates of parameters that could result in a process criticality accident [12].
+
+\section{Uncertainty Analysis}
+
+% -----------
+% Conclusions
+% -----------
+
+\chapter{Conclusions}
+
+The process criticality accident risk for Building 332 was estimated to be 5.9e-05 and 1e-07 accidents per year for log-normal and gamma distributions, respectively.
+Additional estimates of process criticality accident risk were < 1e-08 accidents per year for normal and Weibull distributions.
+These estimates were significantly lower than the previous process criticality accident risk estimate of 3.4e-05 accidents per year [12], although the previous estimate was based on fault tree analysis that was performed prior to de-inventory [47, 48]. 
+Overall, the hybrid risk model worked well and generated results that are consistent with critical benchmark experiments [18] and historical process criticality accident data [1]. 
+
+The hybrid risk model presented in this paper uses a Bayesian network and an ensemble metamodel to generate conditional probability queries, predict keff values, and formulate estimates of process criticality accident risk.
+Aside from the risk-based application described in this paper, the hybrid risk model can also be used to develop criticality controls, guide the placement of criticality accident alarm system detectors, and predict the number of safety violations that will occur each year in the facility.
+
+The process of training and optimizing the ensemble metamodel was performed manually, due to the large number of output files that were used, as well as the large number of options that are available to optimize neural network architectures.
+Although there are several algorithms that could have been used to automate this process, the 1-2 hours it took to train each neural network using the smaller data set proved to be too much to allow these algorithms to run continuously.
+In comparison, it took 8-9 hours to train each neural network using the larger data set, which translated into four days of runtime to train the ensemble metamodel.

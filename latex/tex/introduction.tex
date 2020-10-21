@@ -1,0 +1,169 @@
+% !TEX root = ../dissertation.tex
+% !TEX root = ../introduction.tex
+
+\chapter{Introduction}
+
+A criticality accident is an uncontrolled fission chain reaction that occurs when fissionable material (e.g., plutonium, uranium) is inadvertently assembled into a critical or supercritical mass.
+Since the discovery of fission in 1938 \cite{hahn}, there have been more than 60 criticality accidents throughout the world \cite{mclaughlin}.
+These accidents are divided into two categories: those that occur during critical experiments or operations with research reactors, and those that occur in production facilities, more commonly referred to as \textit{process criticality accidents} \cite{mclaughlin}.
+The focus of this work is on the development of a methodology that uses a Bayesian network and a neural network metamodel to estimate process criticality accident risk.
+
+For those who are unfamiliar with criticality accidents, there is the \gls{ines}, which was introduced in 1990 by the \gls{iaea}, to enable prompt communication of the safety significance of accidents and incidents to a wider audience \cite{ines}.
+\gls{ines} goes from 0 to 7 and is intended to be logarithmic, with each level representing an accident approximately ten times as severe as the next level down.
+The Chernobyl disaster, for example, was an \gls{ines} level 7 event, which is defined as a "major release of radioactive material with widespread health and environmental effects requiring implementation of planned and extended countermeasures" \cite{ines}.
+On the other end of the scale is an \gls{ines} level 0 event, which is a "deviation" with no off-site consequences \cite{ines}.
+Process criticality accidents are typically reported as \gls{ines} level 3 or 4 events, which are defined as either a "serious incident" or an "accident with local consequences" \cite{ines,kermisch}.
+
+Historically, fault tree analysis has been the main methodology used by the \gls{doe} to estimate process criticality accident risk \cite{doe2013}.
+Fault tree analysis consists of defining one or more initiating events, building logic gates for all foreseeable failure paths, and applying Boolean algebra to calculate the top-level failure probability \cite{roberts}.
+Over the years, several improvements have been made to this methodology by incorporating binary decision diagrams \cite{reay,remenyte}, dynamic fault trees \cite{cepin,ruijters}, and Monte Carlo simulations \cite{rao}.
+However, fault tree analysis still relies heavily on identifying events, failure paths, and minimum cut sets, which is difficult to do for fissionable material operations and other systems with a high degree of dimensionality \cite{au,cadini2016,khakzad}.
+
+For operations with fissionable material, there are ten parameters that affect nuclear criticality: mass, absorption, geometry/shape, interaction, concentration/density, moderation, enrichment, reflection, volume, and temperature \cite{knief}.
+Most parameters are observable, but even with a perfect understanding of all ten, a radiation transport code is still needed to calculate the effective neutron multiplication factor ($k_{eff}$) of the system, in order to determine if a criticality accident will occur.
+A simplified form of the equation to calculate $k_{eff}$ is shown in \ref{eq:keff} \cite{lamarsh}.
+%
+\begin{equation}
+  \label{eq:keff}
+  k_{eff} = \frac{\mbox{neutrons produced from fission in one generation}}{\mbox{neutrons produced from fission in the previous generation}}
+\end{equation}
+
+If $k_{eff} < 1$, the system is subcritical---and presumably safe.
+If $k_{eff} \geq 1$, the system will produce either a self-sustaining or divergent fission chain reaction and an accompanying burst of neutron and gamma ray radiation (i.e., a criticality accident) \cite{knief,lamarsh}.
+For nuclear criticality applications, $k_{eff}$ is typically calculated using a Monte Carlo radiation transport code, such as MCNP \cite{mcnp}.
+A Monte Carlo radiation transport code works by reading input and building a computer model of the system, which consists of a specific geometric arrangement of fissionable and non-fissionable materials.
+The code then simulates particle interactions and calculates a probabilistic value for $k_{eff}$, based on the number and types of interactions that occur (e.g., fission, scattering, absorption) \cite{mcnp}.
+
+In this work, a Bayesian network is used to model parameters (or variables) that affect nuclear criticality, and a neural network metamodel is trained to predict $k_{eff}$, based on calculations that were performed using MCNP \cite{mcnp} and \gls{endf}/B-VII.1 nuclear data \cite{chadwick2011}.
+This work also describes how this methodology is applied to fissionable material operations in the Plutonium Facility (Building 332) at Lawrence Livermore National Laboratory.
+Building 332 is a multi-laboratory facility that supports a wide variety of activities that are sponsored by the \gls{nnsa} \cite{doe2005}.
+Although the risk of a process criticality accident in Building 332 is low \cite{doe2005}, the consequences are extreme, due to the impact a criticality accident would have on the safety and stewardship of the United States' nuclear stockpile \cite{opus,dod}.
+
+% -----------------
+% Literature Review
+% -----------------
+
+\section{Literature Review}
+
+The motivation for this work originated while reviewing Environmental Impact Statements for U.S. Department of Energy sites and noting that radiation transport codes were not used to analyze the frequency or severity of process criticality accidents (Table \ref{table:doe}).
+At the time, this was considered somewhat strange, since radiation transport codes are commonly used in the field of nuclear engineering to design experiments and evaluate fissionable material operations in nuclear facilities.
+After further review, it appeared that most \gls{doe} Environmental Impact Statements use a simplified form of fault tree analysis, which relies on overly broad and unrealistic assumptions of accident conditions \cite{mattson}.
+
+\begin{table}
+  \caption{Process criticality accident risk at U.S. Department of Energy sites}
+  \label{table:doe}
+  \renewcommand\arraystretch{1.5}
+  \begin{center}
+    \begin{tabular}{|l c c|}
+      \hline
+                                             & accidents/year & reference \\
+      \hline
+      Lawrence Livermore National Laboratory & 3.2e-05        & DOE/EIS-0348 \\
+      Los Alamos National Laboratory         & $<$ 1e-04      & DOE/EIS-0283 \\
+      Nevada National Security Site          & $\leq$ 1e-02   & DOE/EIS-0426 \\
+      Pantex Plant                           & $<$ 1e-06      & DOE/EIS-0098 \\
+      Sandia National Laboratories           & $<$ 1e-07      & DOE/EIS-0281 \\
+      Savannah River Site                    & 1e-02          & DOE/EIS-0541 \\
+      Y-12 National Security Complex         & $\leq$ 1e-02   & DOE/EIS-0387 \\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table}
+
+A summary of the \gls{sar} at the Rocky Flats Plant \cite{mattson} provides some insight into how \gls{doe} sites estimate process criticality accident risk.
+The following paragraphs are taken from R.J. Mattson \cite{mattson}:
+
+\begin{displayquote}
+
+  \textit{The \gls{sar} provides the frequencies for groups of initiating events but does not provide any information on the causes for individual initiating events within a group.
+  A particular concern is the treatment of human errors.
+  Although the involvement of humans in the process is mentioned, the treatment of human errors in the risk analysis is not addressed.
+  The \gls{sar} does not include sufficient detail.
+  At least basic assumptions and data, as well as the process, used to derive the results need to be documented.
+  The example calculation in Appendix C of the \gls{sar} is insufficient.}
+
+  \vspace{+0.4cm}
+
+  \textit{Further, in the course of calculating the risk of criticality accidents, there has not been a systematic, detailed study of the specific operations performed at the Rocky Flats Plant, nor an estimate of the associated probability of human error.
+  Such a study might well produce results different from those resulting from generic data for human error that were used.
+  Of even more importance to safe operation at the plant is the fact that a detailed study of the plant-specific operations might identify possibilities for human error that have not yet been observed.
+  This could be a rich source of new safety information.}
+
+\end{displayquote}
+
+\noindent Even though this summary was published in 1989, it is still relevant today.
+The \gls{sar} that is referenced was written in 1987, and it estimated the site-wide risk of a criticality accident to be 3e-04 accidents/year---six years before a process criticality accident nearly occurred in Building 771 \cite{mckamy}.
+
+% -----------------------
+% -----------------------
+% -----------------------
+
+To illustrate the complexity of fissionable material operations, the results of two different sets of MCNP calculations are plotted and shown in Figures \ref{fig:contour1} and \ref{fig:contour2}.
+The first plot represents a sphere of alpha-phase plutonium ($\rho = 19.86$ g/cm$^{3}$) homogeneously dispersed in water, with one inch of water reflection (Figure \ref{fig:contour1}).
+The second plot represents a sphere of alpha-phase plutonium homogeneously dispersed in magnesium oxide, with one inch of water reflection (Figure \ref{fig:contour2}).
+Even though the only difference between these plots is moderation, the $k_{eff}$ contours are much different (Figure \ref{fig:contour2})---and these differences compound when other parameters that affect nuclear criticality are changed \cite{knief}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{figures/contour1.png}
+  \caption{\textit{keff} contour plot of a sphere of alpha-phase plutonium (95\% $^{239}$Pu, 5\% $^{240}$Pu by weight) with water moderation and one inch of water reflection}
+  \label{fig:contour1}
+  \vspace{+1.1cm}
+  \includegraphics[width=\textwidth]{figures/contour2.png}
+  \caption{\textit{keff} contour plot of a sphere of alpha-phase plutonium (95\% $^{239}$Pu, 5\% $^{240}$Pu by weight) with magnesium oxide moderation and one inch of water reflection}
+  \label{fig:contour2}
+\end{figure}
+
+\subsection{Bayesian Network}
+
+The modeling of high-dimensional, nonlinear systems led to the selection of a Bayesian network \cite{pearl} as one-half of the methodology described in this work.
+One benefit of using a Bayesian network is that complex mechanisms leading to top-level failure do not need to be well understood prior to building the model \cite{khakzad,pearl,scutari}.
+The only things that are needed are an understanding of parameters that affect nuclear criticality \cite{knief} and the ability to model each one.
+Another benefit of using a Bayesian network is that a single network can model multiple modes and/or causes of failure \cite{bobbio,tien}.
+Both of these benefits are ideal for this application, since it is generally easier to model parameters and estimate probabilities when there isn't a need to evaluate low- or mid-level failure.
+One downside of using a Bayesian network is that its ability to model latent variables (e.g., $k_{eff}$) is constrained by the size and complexity of the model \cite{koller,tien}.
+Existing methods, such as \gls{form} or \gls{sorm}, use a Taylor series expansion to approximate the “most probable failure point”, while others use Monte Carlo variance reduction techniques to select samples that are in the "vicinity of failure" \cite{cadini2016}.
+Recently, a new class of methods have been developed, which use a sampling algorithm coupled to a surrogate model (or \textit{metamodel}) to approximate a performance function \cite{cadini2016}.
+
+\subsection{Neural Network Metamodel}
+
+The neural network metamodel described in this work is based on prior research in the field of structural engineering, which focuses on using metamodels to reduce the computational burden of performing direct, simulation-based analysis of physical systems \cite{cadini2015,dubourg,papadrakakis,raissi,zhang}.
+There are several different types of metamodels that can be used to approximate a performance function, including Gaussian process regression models \cite{dubourg,quinonero,smola}, neural networks \cite{goodfellow,hinton}, polynomial chaos expansions \cite{blatman,crestaux,oladyshkin}, quadratic response surfaces \cite{ames,hartley}, random forests \cite{kuhn,liaw}, and support vector machines \cite{bennett,scholkopf,suykens}.
+Neural networks were selected for further use in this work, based on two white papers \cite{tensorflow} that describe \gls{gpu}-accelerated tensor operations (i.e., vector and matrix calculations), which neural networks are preconfigured to use \cite{tensorflow,keras}.
+After initially renting \gls{gpu}-hours on the Amazon Elastic Compute Cloud (EC2), I built a computer with an NVIDIA GeForce GTX 1080 8 GB GDDR5X \gls{gpu}, specifically to work on this dissertation.
+
+\subsection{Random Sampling Algorithms}
+
+The methodology described in this work is based on random sampling algorithms described in F. Cadini and A. Gioletta \cite{cadini2016}, F. Cadini et al. \cite{cadini2015}, V. Dubourg et al. \cite{dubourg}, D. Koller and N. Friedman \cite{koller}, and M. Papadrakakis and N.D. Lagaros \cite{papadrakakis}.
+
+\subsection{Software Packages}
+
+The \textit{bnlearn} \cite{bnlearn}, \textit{Keras} \cite{keras}, and \textit{TensorFlow} \cite{tensorflow} software packages were used throughout this work.
+These software packages were selected because they are popular, well documented, and written in R, a programming language that has several graphical and statistical software packages that were also used throughout this work \cite{igraph,fitdistrplus,grain,caret,bnlearn,ggplot2}.
+\textit{bnlearn} \cite{bnlearn} was used to build the Bayesian network and generate random samples.
+Other Bayesian network software packages, including BUGS and JAGS, were also considered, but not selected, due to lack of integration with either Python or R.
+The \textit{Keras} \cite{keras} and \textit{TensorFlow} \cite{tensorflow} software packages were used to build the neural network metamodel.
+\textit{Keras} is a high-level \gls{api}, which manages interactions between Python/R and the \textit{TensorFlow} platform \cite{keras}.
+\textit{TensorFlow} is an end-to-end, open source machine learning platform, which combines four key abilities \cite{tensorflow}:
+
+\begin{itemize}
+  \item Efficiently executing low-level tensor operations on \gls{cpu}s, \gls{gpu}s, and \gls{tpu}s
+  \item Computing the gradient of arbitrary differentiable expressions
+  \item Scaling computation to many devices
+  \item Exporting programs to external servers, browsers, mobile, and embedded devices
+\end{itemize}
+
+\noindent \textit{Caffe} and \textit{PyTorch} were also considered, but not selected, due to being relatively new and untested when research for this work began in 2017.
+
+% -------------
+% Contributions
+% -------------
+
+\section{Contributions}
+
+The primary contribution of this work is the development of a methodology that uses a Bayesian network and neural network metamodel to estimate process criticality accident risk.
+Although neural network metamodels are not new, this work demonstrates the novel use of a metamodel in the context of performing a Bayesian network-based probabilistic risk assessment.
+The main benefit of this methodology is that it combines the interpretability and random sampling algorithm of a Bayesian network with the high-dimensional, latent variable modeling capability of a neural network metamodel.
+The secondary contribution of this work is the implementation and testing of a \gls{sse} loss function, which is shown to outperform the more commonly used \gls{mse} loss function.
+
+\subsection{Publications}

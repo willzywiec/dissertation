@@ -1,0 +1,76 @@
+---
+title : 'R Notebook'
+output : html_document
+---
+
+# notebook.Rmd
+#
+# William John Zywiec
+# The George Washington University
+
+```{r, include = FALSE}
+
+# initialize environment
+if (!is.null(dev.list())) dev.off()
+rm(list = ls())
+cat('\014')
+
+```
+
+```{r, setup, include = FALSE, message = FALSE, warning = FALSE}
+
+# set variables
+code <- 'mcnp'
+source.dir <- 'E:/Dropbox/GWU/R/source'
+test.dir <- 'F:/300'
+
+```
+
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+
+# load function
+source(paste0(source.dir, '/tabulate.R'))
+
+# tabulate data
+dataset <- Tabulate(code, source.dir, test.dir)
+
+```
+
+```{r, message = FALSE, warning = FALSE}
+
+# set variables
+batch.size <- 8192
+ensemble.size <- 20
+epochs <- 300
+layers <- '8192-256-256-256-256-16'
+loss <- 'sse'
+lr <- 0.00075
+plot <- FALSE
+val.split <- 0.2
+
+# load function
+source(paste0(source.dir, '/nn.R'))
+
+# build ensemble model
+ensemble.model <- NN(dataset, batch.size, ensemble.size, epochs, layers, loss, lr, plot, val.split, source.dir, test.dir)
+
+```
+
+```{r, message = FALSE, warning = FALSE}
+
+# set variables
+dist <- 'gamma'
+risk.pool <- 100
+sample.size <- 1e+07
+
+# load functions
+source(paste0(source.dir, '/bn.R'))
+source(paste0(source.dir, '/risk.R'))
+
+# build Bayesian network
+bn <- BN(dist, test.dir)
+
+# formulate risk estimate
+risk <- Risk(bn, dataset, ensemble.model, ensemble.size, sample.size, source.dir, test.dir)
+
+```

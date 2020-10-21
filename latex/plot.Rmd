@@ -1,0 +1,1542 @@
+---
+title : 'Plot'
+output : html_document
+---
+
+# plot.Rmd
+#
+# William John Zywiec
+# The George Washington University
+  
+```{r, include = FALSE}
+
+# initialize environment
+if (!is.null(dev.list())) dev.off()
+rm(list = ls())
+cat('\014')
+
+```
+
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+
+library(bnlearn)
+library(ggplot2)
+library(igraph)
+
+data.dir <- 'E:/Dropbox/GWU/Dissertation/data'
+fig.dir <- 'E:/Dropbox/GWU/Dissertation/figures'
+
+source.dir <- 'E:/Dropbox/GWU/R/source'
+test.dir <- 'F:/300'
+
+code <- 'mcnp'
+
+red <- '#bc5090'
+yellow <- '#ffa600'
+blue <- '#003f5c'
+
+colors <- c(red, yellow, blue)
+
+new.theme <- theme_set(theme_gray() + theme(axis.text = element_text(color = 'black', size = 11), legend.text = element_text(size = 11), plot.title = element_text(face = 'bold', hjust = 0.5, size = 11), text = element_text(color = 'black', family = 'serif', size = 11)))
+
+```
+
+```{r}
+
+library(akima)
+library(ggplot2)
+library(MBA)
+library(metR)
+library(rgl)
+library(viridis)
+
+# load function
+source(paste0(source.dir, '/tabulate.R'))
+
+# tabulate data
+dataset <- Tabulate(code, source.dir, test.dir)
+
+theme_set(theme_bw() + theme(axis.text = element_text(color = 'black', size = 11), text = element_text(color = 'black', family = 'serif', size = 11), legend.text = element_text(size = 11)))
+
+df <- subset(dataset$output, form == 'alpha' & mod == 'h2o' & ref == 'none')
+
+ggplot(df, aes(x = rad, y = mass, z = keff)) +
+  geom_contour_filled(aes(z = keff), alpha = 0.8) +
+  geom_text_contour(aes(z = keff), family = 'serif', size = 3.9) +
+  scale_fill_viridis(option = 'A', discrete = TRUE) +
+  scale_x_continuous(limits = c(5, 47), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(100, 4000), expand = c(0, 0)) +
+  theme(legend.position = 'none',
+        panel.grid = element_blank(),
+        panel.border = element_blank()) +
+  xlab('radius (cm)') +
+  ylab('plutonium mass (g)')
+
+setwd(fig.dir)
+
+ggsave('contour1.png', dpi = 2000, height = 3.9, width = 6.5)
+
+df <- subset(dataset$output, form == 'alpha' & mod == 'mgo' & ref == 'none')
+
+ggplot(df, aes(x = rad, y = mass, z = keff)) +
+  geom_contour_filled(aes(z = keff), alpha = 0.8) +
+  geom_text_contour(aes(z = keff), family = 'serif', size = 3.9) +
+  scale_fill_viridis(option = 'A', discrete = TRUE) +
+  scale_x_continuous(limits = c(5, 47), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(100, 4000), expand = c(0, 0)) +
+  theme(legend.position = 'none',
+        panel.grid = element_blank(),
+        panel.border = element_blank()) +
+  xlab('radius (cm)') +
+  ylab('plutonium mass (g)')
+
+setwd(fig.dir)
+
+ggsave('contour2.png', dpi = 2000, height = 3.9, width = 6.5)
+
+new.theme
+
+```
+
+```{r}
+
+nodes = c('n', 'target\nnucleus', 'fission', 'fission\nproduct', 'fission\nproduct', 'gamma ray', 'n', 'n')
+
+dag <- graph_from_data_frame(
+  d = data.frame(
+    from = c(1, 2, 3, 3, 3, 3, 3),
+    to = c(2, 3, 4, 5, 6, 7, 8)),
+  vertices = data.frame(
+    id = seq(1, 8),
+    label = nodes))
+
+dag.layout <- matrix(
+  data = c(
+    -.75, 0, 1, 2, 2, 2, 2.5, 2.5,
+     0, 0, 0, -0.5, 0.5, 1.1, -0.15, 0.15),
+  nrow = 8,
+  ncol = 2)
+
+setwd(fig.dir)
+
+pdf(file = 'fission.pdf')
+par(mar = rep(1, 4))
+
+plot <- plot(
+  dag,
+  edge.arrow.size = 0.5,
+  edge.color = 'black',
+  layout = dag.layout,
+  rescale = FALSE,
+  vertex.color = c('white', 'white', '#ffdb99', 'white', 'white', 'white', 'white', 'white'), # #ffdb99 is a tint of #ffa60
+  vertex.frame.color = c('black', 'black', 'black', 'black', 'black', 'white', 'black', 'black'),
+  vertex.frame.width = c(1, 1, 10, 1, 1, 1, 1, 1),
+  vertex.label.color = 'black',
+  vertex.label.family = 'serif',
+  vertex.size = c(20, 80, 70, 55, 55, 20, 20, 20),
+  xlim = c(-1, 2.75),
+  ylim = c(-2, 2))
+
+```
+
+```{r}
+
+setwd(data.dir)
+
+total <- read.csv(paste0(data.dir, '/total.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+fission <- read.csv(paste0(data.dir, '/fission.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+elastic <- read.csv(paste0(data.dir, '/elastic.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+
+angle.1e5 <- read.csv(paste0(data.dir, '/angle-1e5.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+angle.1e6 <- read.csv(paste0(data.dir, '/angle-1e6.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+angle.1e7 <- read.csv(paste0(data.dir, '/angle-1e7.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+
+energy.1e6 <- read.csv(paste0(data.dir, '/energy-1e6.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+energy.2e6 <- read.csv(paste0(data.dir, '/energy-2e6.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+energy.1e7 <- read.csv(paste0(data.dir, '/energy-1e7.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+
+ggplot() +
+  geom_line(data = total, aes(x = energy, y = barns, color = 'total')) +
+  geom_line(data = fission, aes(x = energy, y = barns, color = 'fission')) +
+  geom_line(data = elastic, aes(x = energy, y = barns, color = 'elastic')) +
+  scale_color_manual('', breaks = c('total', 'fission', 'elastic'), labels = c('total (n,tot)', 'fission (n,f)', 'elastic scattering (n,el)'), values = c(blue, red, yellow)) +
+  scale_x_log10(breaks = c(1e-11, 1e-09, 1e-07, 1e-05, 1e-03, 1e-01, 1e+01, 1e+03)) +
+  scale_y_log10(breaks = c(1e-01, 1e+01, 1e+03, 1e+05), minor_breaks = c(1e-01, 1e+00, 1e+01, 1e+02, 1e+03, 1e+04, 1e+05), limits = c(1e-01, 1e+05), labels = function(x) format(x, scientific = TRUE)) +
+  xlab('neutron energy (MeV)') +
+  ylab(expression(italic(sigma)~(barns))) +
+  theme(legend.position = 'top',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.text.align = 0,
+    legend.title = element_blank())
+
+setwd(fig.dir)
+
+ggsave('xs.png', dpi = 2000, height = 4, width = 6.5)
+
+ggplot() +
+  geom_line(data = angle.1e5, aes(x = angle, y = theta, color = '1e+05')) +
+  geom_line(data = angle.1e6, aes(x = angle, y = theta, color = '1e+06')) +
+  geom_line(data = angle.1e7, aes(x = angle, y = theta, color = '1e+07')) +
+  scale_color_manual('incident neutron energy (MeV)', breaks = c('1e+05', '1e+06', '1e+07'), values = c(blue, red, yellow)) +
+  scale_x_continuous(breaks = seq(0, 180, 30), minor_breaks = seq(0, 180, 30)) +
+  scale_y_log10(limits = c(0.003, 100), minor_breaks = c(1e-02, 1e-01, 1e+00, 1e+01, 1e+02)) +
+  xlab('scattering angle (degrees)') +
+  ylab(expression(paste(italic(paste('d', sigma, 'd', Omega)), ' (', theta, ')'))) +
+  theme(legend.direction = 'horizontal',
+    legend.position = 'top',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.text = element_text(size = 11),
+    legend.title = element_text(size = 11)) +
+  guides(color = guide_legend(title.position = 'top', title.hjust = 0.5))
+
+ggsave('angle.png', dpi = 2000, height = 4.2, width = 6.5)
+
+ggplot() +
+  geom_line(data = energy.1e6, aes(x = energy, y = mxw, color = '1e-06')) +
+  geom_line(data = energy.2e6, aes(x = energy, y = mxw, color = '2e-06')) +
+  geom_line(data = energy.1e7, aes(x = energy, y = mxw, color = '3e-06')) +
+  scale_color_manual('incident neutron energy (MeV)', breaks = c('1e-06', '2e-06', '3e-06'), values = c(blue, red, yellow)) +
+  scale_x_log10(breaks = c(1e-05, 1e-04, 1e-03, 1e-02, 1e-01, 1e+00, 1e+01), minor_breaks = c(1e-05, 1e-04, 1e-03, 1e-02, 1e-01, 1e+00, 1e+01)) +
+  scale_y_log10(breaks = c(0.5, 1, 2, 4, 8), minor_breaks = c(0.5, 1, 2, 4, 8), limits = c(0.5, 8)) +
+  xlab('neutron energy (MeV)') +
+  ylab('ratio to Maxwellian distribution') + # 1.32 MeV
+  theme(legend.direction = 'horizontal',
+    legend.position = 'top',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.title = element_text(size = 11)) +
+  guides(color = guide_legend(title.position = 'top', title.hjust = 0.5))
+
+ggsave('energy.png', dpi = 2000, height = 4.2, width = 6.5)
+
+```
+
+```{r}
+
+nodes <- c('op', 'ctrl', 'mass', 'form', 'mod', 'rad', 'ref', 'thk')
+
+dag <- graph_from_data_frame(
+  d = data.frame(
+    from = c(rep(1, 7), rep(2, 6)),
+    to = c(seq(2, 8), seq(3, 8))),
+  vertices = data.frame(
+    id = seq(1, 8),
+    label = nodes))
+
+dag.layout <- matrix(
+  data = c(0, 0, -1.5, -1, -0.5, 0.5, 1, 1.5, 0.8, 0, rep(-0.8, 7)),
+  nrow = 8,
+  ncol = 2)
+
+setwd(fig.dir)
+
+pdf(file = 'bn.pdf')
+par(mar = rep(1, 4))
+
+plot <- plot(
+  dag,
+  edge.arrow.size = 0.5,
+  edge.color = 'black',
+  layout = dag.layout,
+  rescale = FALSE,
+  vertex.color = 'white',
+  vertex.label = c(expression(italic('op')),
+                   expression(italic('ctrl')),
+                   expression(italic('mass')),
+                   expression(italic('form')),
+                   expression(italic('mod')),
+                   expression(italic('rad')),
+                   expression(italic('ref')),
+                   expression(italic('thk'))),
+  vertex.label.color = 'black',
+  vertex.label.family = 'serif',
+  vertex.size = 40,
+  xlim = c(-2, 2),
+  ylim = c(-1, 1))
+
+```
+
+```{r}
+
+nodes <- c(1:6)
+
+dag <- graph_from_data_frame(
+  d = data.frame(
+    from = c(1:5),
+    to = c(2:6)),
+  vertices = data.frame(
+    id = c(1:6),
+    label = nodes))
+
+half.tan <- tan(60 * pi / 180) / 4
+
+dag.layout <- matrix(
+  c(-2.5, -1.5, -0.5, 0.5, 1.5, 2.5, rep(0, 6)),
+  nrow = 6,
+  ncol = 2)
+
+setwd(fig.dir)
+
+pdf(file = 'junction-tree.pdf')
+par(mar = rep(1, 4))
+
+plot <- plot(
+  dag,
+  edge.arrow.size = 0,
+  edge.color = 'black',
+  layout = dag.layout,
+  rescale = FALSE,
+  vertex.color = 'white',
+  vertex.label.cex = 1.2,
+  vertex.label.color = 'black',
+  vertex.label.family = 'serif',
+  vertex.size = 40,
+  xlim = c(-3, 3),
+  ylim = c(-2, 2))
+
+```
+
+```{r}
+
+nodes <- c('op', 'ctrl', 'mass', 'form', 'mod', 'rad', 'ref', 'thk')
+
+dag <- graph_from_data_frame(
+  d = data.frame(
+    from = c(rep(1, 7), rep(2, 6)),
+    to = c(seq(2, 8), seq(3, 8))),
+  vertices = data.frame(
+    id = seq(1, 8),
+    label = nodes))
+
+dag.layout <- matrix(
+  data = c(0, 0, -1.5, -1, -0.5, 0.5, 1, 1.5, 0.8, 0, rep(-0.8, 7)),
+  nrow = 8,
+  ncol = 2)
+
+setwd(fig.dir)
+
+pdf(file = 'moral-graph.pdf')
+par(mar = rep(1, 4))
+
+plot <- plot(
+  dag,
+  edge.arrow.size = 0,
+  edge.color = 'black',
+  layout = dag.layout,
+  rescale = FALSE,
+  vertex.color = 'white',
+  vertex.label = c(expression(italic('op')),
+                   expression(italic('ctrl')),
+                   expression(italic('mass')),
+                   expression(italic('form')),
+                   expression(italic('mod')),
+                   expression(italic('rad')),
+                   expression(italic('ref')),
+                   expression(italic('thk'))),
+  vertex.label.color = 'black',
+  vertex.label.family = 'serif',
+  vertex.size = 40,
+  xlim = c(-2, 2),
+  ylim = c(-1, 1))
+
+```
+
+```{r}
+
+dag <- graph_from_data_frame(
+  d = data.frame(
+    from = c(
+      rep(1, 3), rep(2, 3),
+      rep(3, 4), rep(4, 4), rep(5, 4),
+      rep(6, 3), rep(7, 3), rep(8, 3), rep(9, 3),
+      rep(10, 2), rep(11, 2), rep(12, 2),
+      13, 14),
+    to = c(
+      rep(seq(3, 5), 2),
+      rep(seq(6, 9), 3),
+      rep(seq(10, 12), 4),
+      rep(c(13, 14), 3),
+      rep(15, 2))),
+    vertices = data.frame(
+      id = seq(1, 15),
+      label = c(11, 12, 21, 22, 23, 31, 32, 33, 34, 41, 42, 43, 51, 52, 61)))
+
+dag.layout <- matrix(
+  data = c(
+    rep(-5, 2), rep(-3, 3), rep(-1, 4), rep(1, 3), rep(3, 2), 5,
+    -1, 1,
+    -2, 0, 2,
+    -3, -1, 1, 3,
+    -2, 0, 2,
+    -1, 1,
+    0),
+  nrow = 15,
+  ncol = 2)
+
+setwd(fig.dir)
+
+pdf(file = 'nn.pdf')
+par(mar = rep(1, 4))
+
+plot(
+  dag,
+  edge.arrow.size = 0.5,
+  edge.color = 'black',
+  layout = dag.layout,
+  rescale = FALSE,
+  vertex.color = 'white',
+  vertex.label.color = 'black',
+  vertex.label.family = 'serif',
+  vertex.size = 80,
+  xlim = c(-6, 6),
+  ylim = c(-3, 3))
+
+dev.off()
+
+```
+
+```{r}
+
+theme_set(theme_gray() + theme(axis.text = element_text(color = 'black', size = 11), text = element_text(color = 'black', family = 'serif', size = 11)))
+
+setwd(fig.dir)
+
+z <- c(-2, 0, 2)
+y <- c(0, 0, 2)
+
+df <- data.frame(z, y)
+
+ggplot(df, aes(x = z, y = y)) +
+  coord_cartesian(xlim = c(-1, 1), ylim = c(0, 1)) +
+  geom_line(color = 'black') +
+  scale_x_continuous(expression(italic(x)), breaks = 0, expand = c(0, 0), minor_breaks = 0) +
+  scale_y_continuous(expression(paste(italic(f(x)), ' = ', italic(max), '{0, ', italic(x), '}')), breaks = 0, expand = c(0, 0), minor_breaks = 0)
+
+ggsave('relu.png', dpi = 2000, height = 2.5, width = 4.5)
+
+```
+
+```{r}
+
+library(gridExtra)
+
+setwd('F:/300/dist')
+
+mass.cpt <- readRDS('mass-gamma.RData')
+
+df1 <- as.data.frame(mass.cpt[[1]][[1]])
+df2 <- as.data.frame(mass.cpt[[2]][[1]])
+df3 <- as.data.frame(mass.cpt[[3]][[1]])
+df4 <- as.data.frame(mass.cpt[[4]][[1]])
+df5 <- as.data.frame(mass.cpt[[5]][[1]])
+df6 <- as.data.frame(mass.cpt[[6]][[1]])
+
+x <- c(0:4000)
+
+colnames(df1) <- colnames(df2) <- colnames(df3) <- colnames(df4) <- colnames(df5) <- colnames(df6) <- 'y'
+
+# probability distribution plots
+p1 <- ggplot(df1, aes(x, y)) + ggtitle('large sample') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p2 <- ggplot(df2, aes(x, y)) + ggtitle('machining') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p3 <- ggplot(df3, aes(x, y)) + ggtitle('metallurgy') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p4 <- ggplot(df4, aes(x, y)) + ggtitle('small sample') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p5 <- ggplot(df5, aes(x, y)) + ggtitle('solution') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p6 <- ggplot(df6, aes(x, y)) + ggtitle('waste') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
+
+setwd(fig.dir)
+
+ggsave('gamma.png', plot = grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2), dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+library(gridExtra)
+
+setwd('F:/300/dist')
+
+mass.cpt <- readRDS('mass-log-normal.RData')
+
+df1 <- as.data.frame(mass.cpt[[1]][[1]])
+df2 <- as.data.frame(mass.cpt[[2]][[1]])
+df3 <- as.data.frame(mass.cpt[[3]][[1]])
+df4 <- as.data.frame(mass.cpt[[4]][[1]])
+df5 <- as.data.frame(mass.cpt[[5]][[1]])
+df6 <- as.data.frame(mass.cpt[[6]][[1]])
+
+x <- c(0:4000)
+
+colnames(df1) <- colnames(df2) <- colnames(df3) <- colnames(df4) <- colnames(df5) <- colnames(df6) <- 'y'
+
+# probability distribution plots
+p1 <- ggplot(df1, aes(x, y)) + ggtitle('large sample') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p2 <- ggplot(df2, aes(x, y)) + ggtitle('machining') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p3 <- ggplot(df3, aes(x, y)) + ggtitle('metallurgy') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p4 <- ggplot(df4, aes(x, y)) + ggtitle('small sample') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p5 <- ggplot(df5, aes(x, y)) + ggtitle('solution') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p6 <- ggplot(df6, aes(x, y)) + ggtitle('waste') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
+
+setwd(fig.dir)
+
+ggsave('log-normal.png', plot = grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2), dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+library(gridExtra)
+
+setwd('F:/300/dist')
+
+mass.cpt <- readRDS('mass-normal.RData')
+
+df1 <- as.data.frame(mass.cpt[[1]][[1]])
+df2 <- as.data.frame(mass.cpt[[2]][[1]])
+df3 <- as.data.frame(mass.cpt[[3]][[1]])
+df4 <- as.data.frame(mass.cpt[[4]][[1]])
+df5 <- as.data.frame(mass.cpt[[5]][[1]])
+df6 <- as.data.frame(mass.cpt[[6]][[1]])
+
+x <- c(0:4000)
+
+colnames(df1) <- colnames(df2) <- colnames(df3) <- colnames(df4) <- colnames(df5) <- colnames(df6) <- 'y'
+
+# probability distribution plots
+p1 <- ggplot(df1, aes(x, y)) + ggtitle('large sample') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p2 <- ggplot(df2, aes(x, y)) + ggtitle('machining') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p3 <- ggplot(df3, aes(x, y)) + ggtitle('metallurgy') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p4 <- ggplot(df4, aes(x, y)) + ggtitle('small sample') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p5 <- ggplot(df5, aes(x, y)) + ggtitle('solution') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p6 <- ggplot(df6, aes(x, y)) + ggtitle('waste') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
+
+setwd(fig.dir)
+
+ggsave('normal.png', plot = grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2), dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+library(gridExtra)
+
+setwd('F:/300/dist')
+
+mass.cpt <- readRDS('mass-weibull.RData')
+
+df1 <- as.data.frame(mass.cpt[[1]][[1]])
+df2 <- as.data.frame(mass.cpt[[2]][[1]])
+df3 <- as.data.frame(mass.cpt[[3]][[1]])
+df4 <- as.data.frame(mass.cpt[[4]][[1]])
+df5 <- as.data.frame(mass.cpt[[5]][[1]])
+df6 <- as.data.frame(mass.cpt[[6]][[1]])
+
+x <- c(0:4000)
+
+colnames(df1) <- colnames(df2) <- colnames(df3) <- colnames(df4) <- colnames(df5) <- colnames(df6) <- 'y'
+
+# probability distribution plots
+p1 <- ggplot(df1, aes(x, y)) + ggtitle('large sample') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p2 <- ggplot(df2, aes(x, y)) + ggtitle('machining') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p3 <- ggplot(df3, aes(x, y)) + ggtitle('metallurgy') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p4 <- ggplot(df4, aes(x, y)) + ggtitle('small sample') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p5 <- ggplot(df5, aes(x, y)) + ggtitle('solution') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+p6 <- ggplot(df6, aes(x, y)) + ggtitle('waste') + geom_line(color = 'black') + scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) + scale_y_continuous(breaks = c(0, 0.025, 0.05, 0.075), limits = c(0, 0.075)) + theme(plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) + xlab('plutonium mass (g)') + ylab('P(plutonium mass)')
+
+grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
+
+setwd(fig.dir)
+
+ggsave('weibull.png', plot = grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2), dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+library(fitdistrplus)
+library(gridExtra)
+
+setwd('F:/300/dist')
+
+a1 <- read.csv('mass-a-1-gamma.csv', header = TRUE)
+a2 <- read.csv('mass-a-2-gamma.csv', header = TRUE)
+a3 <- read.csv('mass-a-3-gamma.csv', header = TRUE)
+a4 <- read.csv('mass-a-4-gamma.csv', header = TRUE)
+a5 <- read.csv('mass-a-5-gamma.csv', header = TRUE)
+a6 <- read.csv('mass-a-6-gamma.csv', header = TRUE)
+
+fit1 <- qqcomp(fitdist(a1[[1]], 'gamma'), plotstyle = 'ggplot')
+fit2 <- qqcomp(fitdist(a2[[1]], 'gamma'), plotstyle = 'ggplot')
+fit3 <- qqcomp(fitdist(a3[[1]], 'gamma'), plotstyle = 'ggplot')
+fit4 <- qqcomp(fitdist(a4[[1]], 'gamma'), plotstyle = 'ggplot')
+fit5 <- qqcomp(fitdist(a5[[1]], 'gamma'), plotstyle = 'ggplot')
+fit6 <- qqcomp(fitdist(a6[[1]], 'gamma'), plotstyle = 'ggplot')
+
+p1 <- ggplot(fit1$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('large sample') +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p2 <- ggplot(fit2$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('machining') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p3 <- ggplot(fit3$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('metallurgy') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p4 <- ggplot(fit4$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('small sample') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p5 <- ggplot(fit5$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('solution') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p6 <- ggplot(fit6$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('waste') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
+
+setwd(fig.dir)
+
+ggsave('gamma-qq.png', plot = grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2), dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+library(fitdistrplus)
+library(gridExtra)
+
+setwd('F:/300/dist')
+
+a1 <- read.csv('mass-a-1-log-normal.csv', header = TRUE)
+a2 <- read.csv('mass-a-2-log-normal.csv', header = TRUE)
+a3 <- read.csv('mass-a-3-log-normal.csv', header = TRUE)
+a4 <- read.csv('mass-a-4-log-normal.csv', header = TRUE)
+a5 <- read.csv('mass-a-5-log-normal.csv', header = TRUE)
+a6 <- read.csv('mass-a-6-log-normal.csv', header = TRUE)
+
+fit1 <- qqcomp(fitdist(a1[[1]], 'lnorm'), plotstyle = 'ggplot')
+fit2 <- qqcomp(fitdist(a2[[1]], 'lnorm'), plotstyle = 'ggplot')
+fit3 <- qqcomp(fitdist(a3[[1]], 'lnorm'), plotstyle = 'ggplot')
+fit4 <- qqcomp(fitdist(a4[[1]], 'lnorm'), plotstyle = 'ggplot')
+fit5 <- qqcomp(fitdist(a5[[1]], 'lnorm'), plotstyle = 'ggplot')
+fit6 <- qqcomp(fitdist(a6[[1]], 'lnorm'), plotstyle = 'ggplot')
+
+p1 <- ggplot(fit1$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('large sample') +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p2 <- ggplot(fit2$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('machining') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p3 <- ggplot(fit3$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('metallurgy') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p4 <- ggplot(fit4$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('small sample') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p5 <- ggplot(fit5$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('solution') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p6 <- ggplot(fit6$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('waste') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
+
+setwd(fig.dir)
+
+ggsave('log-normal-qq.png', plot = grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2), dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+library(fitdistrplus)
+library(gridExtra)
+
+setwd('F:/300/dist')
+
+a1 <- read.csv('mass-a-1-normal.csv', header = TRUE)
+a2 <- read.csv('mass-a-2-normal.csv', header = TRUE)
+a3 <- read.csv('mass-a-3-normal.csv', header = TRUE)
+a4 <- read.csv('mass-a-4-normal.csv', header = TRUE)
+a5 <- read.csv('mass-a-5-normal.csv', header = TRUE)
+a6 <- read.csv('mass-a-6-normal.csv', header = TRUE)
+
+fit1 <- qqcomp(fitdist(a1[[1]], 'norm'), plotstyle = 'ggplot')
+fit2 <- qqcomp(fitdist(a2[[1]], 'norm'), plotstyle = 'ggplot')
+fit3 <- qqcomp(fitdist(a3[[1]], 'norm'), plotstyle = 'ggplot')
+fit4 <- qqcomp(fitdist(a4[[1]], 'norm'), plotstyle = 'ggplot')
+fit5 <- qqcomp(fitdist(a5[[1]], 'norm'), plotstyle = 'ggplot')
+fit6 <- qqcomp(fitdist(a6[[1]], 'norm'), plotstyle = 'ggplot')
+
+p1 <- ggplot(fit1$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('large sample') +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p2 <- ggplot(fit2$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('machining') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p3 <- ggplot(fit3$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('metallurgy') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p4 <- ggplot(fit4$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('small sample') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p5 <- ggplot(fit5$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('solution') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p6 <- ggplot(fit6$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('waste') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
+
+setwd(fig.dir)
+
+ggsave('normal-qq.png', plot = grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2), dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+library(fitdistrplus)
+library(gridExtra)
+
+setwd('F:/300/dist')
+
+a1 <- read.csv('mass-a-1-weibull.csv', header = TRUE)
+a2 <- read.csv('mass-a-2-weibull.csv', header = TRUE)
+a3 <- read.csv('mass-a-3-weibull.csv', header = TRUE)
+a4 <- read.csv('mass-a-4-weibull.csv', header = TRUE)
+a5 <- read.csv('mass-a-5-weibull.csv', header = TRUE)
+a6 <- read.csv('mass-a-6-weibull.csv', header = TRUE)
+
+fit1 <- qqcomp(fitdist(a1[[1]], 'weibull'), plotstyle = 'ggplot')
+fit2 <- qqcomp(fitdist(a2[[1]], 'weibull'), plotstyle = 'ggplot')
+fit3 <- qqcomp(fitdist(a3[[1]], 'weibull'), plotstyle = 'ggplot')
+fit4 <- qqcomp(fitdist(a4[[1]], 'weibull'), plotstyle = 'ggplot')
+fit5 <- qqcomp(fitdist(a5[[1]], 'weibull'), plotstyle = 'ggplot')
+fit6 <- qqcomp(fitdist(a6[[1]], 'weibull'), plotstyle = 'ggplot')
+
+p1 <- ggplot(fit1$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('large sample') +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p2 <- ggplot(fit2$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('machining') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p3 <- ggplot(fit3$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('metallurgy') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p4 <- ggplot(fit4$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('small sample') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p5 <- ggplot(fit5$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('solution') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+p6 <- ggplot(fit6$data, aes(values, sdata)) +
+  geom_abline(color = 'red', intercept = 0, size = 0.7, slope = 1) +
+  geom_point(shape = 20, size = 0.8, color = 'black') + ggtitle('waste') +
+  scale_x_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  scale_y_continuous(breaks = c(0, 30, 60, 90), limits = c(0, 90)) +
+  theme(legend.position = 'none', plot.title = element_text(face = 'bold', hjust = 0.5, size = 11)) +
+  xlab('theoretical quantiles') +
+  ylab('empirical quantiles')
+
+grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
+
+setwd(fig.dir)
+
+ggsave('weibull-qq.png', plot = grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2), dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+library(gridExtra)
+
+source('E:/GWU/R/misc/dist.R')
+
+gamma <- Dist('gamma')
+normal <- Dist('normal')
+lognormal <- Dist('log-normal')
+weibull <- Dist('weibull')
+
+p1 <- ggplot(gamma, aes(ks)) +
+  geom_histogram(fill = 'black') +
+  scale_x_continuous(breaks = c(0, 0.1, 0.2, 0.3, 0.4), limits = c(0, 0.4)) +
+  scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60)) +
+  ggtitle('gamma distributions') +
+  theme(plot.title = element_text(face = 'bold', family = 'serif', hjust = 0.5, size = 11)) +
+  xlab('KS test statistic')
+
+p2 <- ggplot(gamma, aes(cvm)) +
+  geom_histogram(fill = 'black') +
+  scale_x_continuous(breaks = c(0, 1, 2, 3, 4), limits = c(0, 4)) +
+  scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60)) +
+  ggtitle('gamma distributions') +
+  theme(plot.title = element_text(face = 'bold', family = 'serif', hjust = 0.5, size = 11)) +
+  xlab('CVM test statistic')
+
+p3 <- ggplot(gamma, aes(ad)) +
+  geom_histogram(fill = 'black') +
+  scale_x_continuous(breaks = c(0, 4, 8, 12, 16), limits = c(0, 17)) +
+  scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60)) +
+  ggtitle('gamma distributions') +
+  theme(plot.title = element_text(face = 'bold', family = 'serif', hjust = 0.5, size = 11)) +
+  xlab('AD test statistic')
+
+p4 <- ggplot(normal, aes(ks)) +
+  geom_histogram(fill = 'black') +
+  scale_x_continuous(breaks = c(0, 0.1, 0.2, 0.3, 0.4), limits = c(0, 0.4)) +
+  scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60)) +
+  ggtitle('normal distributions') +
+  theme(plot.title = element_text(face = 'bold', family = 'serif', hjust = 0.5, size = 11)) +
+  xlab('KS test statistic')
+
+p5 <- ggplot(normal, aes(cvm)) +
+  geom_histogram(fill = 'black') +
+  scale_x_continuous(breaks = c(0, 1, 2, 3, 4), limits = c(0, 4)) +
+  scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60)) +
+  ggtitle('normal distributions') +
+  theme(plot.title = element_text(face = 'bold', family = 'serif', hjust = 0.5, size = 11)) +
+  xlab('CVM test statistic')
+
+p6 <- ggplot(normal, aes(ad)) +
+  geom_histogram(fill = 'black') +
+  scale_x_continuous(breaks = c(0, 4, 8, 12, 16), limits = c(0, 17)) +
+  scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60)) +
+  ggtitle('normal distributions') +
+  theme(plot.title = element_text(face = 'bold', family = 'serif', hjust = 0.5, size = 11)) +
+  xlab('AD test statistic')
+
+p7 <- ggplot(lognormal, aes(ks)) +
+  geom_histogram(fill = 'black') +
+  scale_x_continuous(breaks = c(0, 0.1, 0.2, 0.3, 0.4), limits = c(0, 0.4)) +
+  scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60)) +
+  ggtitle('log-normal distributions') +
+  theme(plot.title = element_text(face = 'bold', family = 'serif', hjust = 0.5, size = 11)) +
+  xlab('KS test statistic')
+
+p8 <- ggplot(lognormal, aes(cvm)) +
+  geom_histogram(fill = 'black') +
+  scale_x_continuous(breaks = c(0, 1, 2, 3, 4), limits = c(0, 4)) +
+  scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60)) +
+  ggtitle('log-normal distributions') +
+  theme(plot.title = element_text(face = 'bold', family = 'serif', hjust = 0.5, size = 11)) +
+  xlab('CVM test statistic')
+
+p9 <- ggplot(lognormal, aes(ad)) +
+  geom_histogram(fill = 'black') +
+  scale_x_continuous(breaks = c(0, 4, 8, 12, 16), limits = c(0, 17)) +
+  scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60)) +
+  ggtitle('log-normal distributions') +
+  theme(plot.title = element_text(face = 'bold', family = 'serif', hjust = 0.5, size = 11)) +
+  xlab('AD test statistic')
+
+p10 <- ggplot(weibull, aes(ks)) +
+  geom_histogram(fill = 'black') +
+  scale_x_continuous(breaks = c(0, 0.1, 0.2, 0.3, 0.4), limits = c(0, 0.4)) +
+  scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60)) +
+  ggtitle('Weibull distributions') +
+  theme(plot.title = element_text(face = 'bold', family = 'serif', hjust = 0.5, size = 11)) +
+  xlab('KS test statistic')
+
+p11 <- ggplot(weibull, aes(cvm)) +
+  geom_histogram(fill = 'black') +
+  scale_x_continuous(breaks = c(0, 1, 2, 3, 4), limits = c(0, 4)) +
+  scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60)) +
+  ggtitle('Weibull distributions') +
+  theme(plot.title = element_text(face = 'bold', family = 'serif', hjust = 0.5, size = 11)) +
+  xlab('CVM test statistic')
+
+p12 <- ggplot(weibull, aes(ad)) +
+  geom_histogram(fill = 'black') +
+  scale_x_continuous(breaks = c(0, 4, 8, 12, 16), limits = c(0, 17)) +
+  scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60)) +
+  ggtitle('Weibull distributions') +
+  theme(plot.title = element_text(face = 'bold', family = 'serif', hjust = 0.5, size = 11)) +
+  xlab('AD test statistic')
+
+grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, nrow = 4)
+
+g1 <- grid.arrange(p1, p2, p3, nrow = 1)
+g2 <- grid.arrange(p4, p5, p6, nrow = 1)
+g3 <- grid.arrange(p7, p8, p9, nrow = 1)
+g4 <- grid.arrange(p10, p11, p12, nrow = 1)
+
+grid.arrange(g1, g2, g3, g4, nrow = 4)
+
+setwd(fig.dir)
+
+ggsave('hist.png', plot = grid.arrange(g1, g2, g3, g4, ncol = 1), dpi = 2000, height = 8, width = 6.5)
+
+print(mean(p1$data$ks))
+print(mean(p1$data$cvm))
+print(mean(p1$data$ad))
+print(mean(p4$data$ks))
+print(mean(p4$data$cvm))
+print(mean(p4$data$ad))
+print(mean(p7$data$ks))
+print(mean(p7$data$cvm))
+print(mean(p7$data$ad))
+print(mean(p10$data$ks))
+print(mean(p10$data$cvm))
+print(mean(p10$data$ad))
+
+```
+
+```{r}
+
+df1 <- read.csv(paste0(data.dir, '/train.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+
+ggplot(df1) +
+  geom_point(aes(x = layers, y = mae, color = 'training and cross-validation data')) +
+  geom_point(aes(x = layers[1], y = mae[1], color = 'selected neural network')) +
+  scale_color_manual('', breaks = c('training and cross-validation data', 'selected neural network'), values = c('black', 'red')) +
+  scale_x_continuous('hidden layers', breaks = 1:8, minor_breaks = 1:8) +
+  scale_y_continuous(limits = c(5e-04, 2.5e-03), labels = function(y) format(y, scientific = TRUE)) +
+  ylab('sum of mean absolute errors') +
+  theme(legend.position = 'bottom',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.title = element_blank())
+
+setwd(fig.dir)
+
+ggsave('train1.png', dpi = 2000, height = 4, width = 6.5)
+
+ggplot(df1) +
+  geom_point(aes(x = layers, y = mae, color = 'training and cross-validation data')) +
+  geom_point(aes(x = layers[1], y = mae[1], color = 'selected neural network')) +
+  scale_color_manual('', breaks = c('training and cross-validation data', 'selected neural network'), values = c('black', 'red')) +
+  scale_x_continuous('hidden layers', breaks = 1:8, minor_breaks = 1:8) +
+  scale_y_continuous(limits = c(6e-04, 8e-04), labels = function(y) format(y, scientific = TRUE)) +
+  ylab('sum of mean absolute errors') +
+  theme(legend.position = 'bottom',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.title = element_blank())
+
+ggsave('train2.png', dpi = 2000, height = 4, width = 6.5)
+
+df2 <- read.csv(paste0(data.dir, '/train-wt.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+
+ggplot(df2) +
+  geom_point(aes(x = layers, y = mae, color = 'training and cross-validation data')) +
+  geom_point(aes(x = layers[1], y = mae[1], color = 'selected neural network')) +
+  scale_color_manual('', breaks = c('training and cross-validation data', 'selected neural network'), values = c('black', 'red')) +
+  scale_x_continuous('hidden layers', breaks = 1:8, minor_breaks = 1:8) +
+  scale_y_continuous(breaks = c(2e-04, 5e-04, 8e-04, 1.1e-03, 1.4e-03), limits = c(2e-04, 1.4e-03), labels = function(y) format(y, scientific = TRUE)) +
+  ylab('weighted average of mean absolute errors') +
+  theme(legend.position = 'bottom',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.title = element_blank())
+
+setwd(fig.dir)
+
+ggsave('train-wt1.png', dpi = 2000, height = 4, width = 6.5)
+
+ggplot(df2) +
+  geom_point(aes(x = layers, y = mae, color = 'training and cross-validation data')) +
+  geom_point(aes(x = layers[1], y = mae[1], color = 'selected neural network')) +
+  scale_color_manual('', breaks = c('training and cross-validation data', 'selected neural network'), values = c('black', 'red')) +
+  scale_x_continuous('hidden layers', breaks = 1:8, minor_breaks = 1:8) +
+  scale_y_continuous(limits = c(3e-04, 4e-04), labels = function(y) format(y, scientific = TRUE)) +
+  ylab('weighted average of mean absolute errors') +
+  theme(legend.position = 'bottom',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.title = element_blank())
+
+ggsave('train-wt2.png', dpi = 2000, height = 4, width = 6.5)
+
+
+```
+
+```{r}
+
+library(reshape)
+
+df <- read.csv(paste0('E:/Dropbox/GWU/1st Journal Paper/data/fig-13-data.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+df <- melt(df)
+names(df)[3] <- 'error'
+
+ggplot(df, aes(x = reorder(optimizer, error), y = error, fill = variable)) +
+  geom_bar(stat = 'identity', position = 'dodge') +
+  scale_fill_manual('legend', labels = c('training data', 'cross-validation data'), values = c('mae' = 'black', 'val.mae' = '#a9a9a9')) +
+  scale_y_continuous(breaks = seq(0, 0.006, 0.001)) +
+  theme(axis.title.x = element_blank(),
+    legend.position = 'bottom',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.title = element_blank()) +
+  ylab('mean absolute error')
+  # ylab(bquote(mean ~ absolute ~ error ~ (k[eff])))
+
+setwd(fig.dir)
+
+ggsave('opt.png', dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+df <- read.csv(paste0('E:/Dropbox/GWU/1st Journal Paper/data/fig-14-data.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+
+ggplot(df, aes(x = lr)) +
+  geom_line(aes(y = val.mae, color = 'cross-validation data')) +
+  geom_point(aes(y = val.mae, color = 'cross-validation data')) +
+  geom_line(aes(y = mae, color = 'training data')) +
+  geom_point(aes(y = mae, color = 'training data')) +
+  scale_color_manual('', breaks = c('training data', 'cross-validation data'), values = c('black', '#a9a9a9')) +
+  scale_x_continuous(breaks = seq(0, 0.006, 0.001)) +
+  scale_y_continuous(breaks = c(1e-04, 2e-04, 3e-04, 4e-04, 5e-04, 6e-04), limits = c(1e-04, 6e-04)) +
+  theme(legend.position = 'bottom',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.title = element_blank()) +
+  xlab('learning rate') +
+  ylab('mean absolute error')
+  # ylab(expression(mean~absolute~error~k[eff]))
+
+setwd(fig.dir)
+
+ggsave('lr.png', dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+library(ggplot2)
+library(gridExtra)
+
+mse.df <- as.data.frame(na.omit(read.csv('E:/Dropbox/GWU/2nd Journal Paper/figures/mse-boxplot.csv')))
+mse.df$class <- rep('MSE', nrow(mse.df))
+
+sse.df <- as.data.frame(na.omit(read.csv('E:/Dropbox/GWU/2nd Journal Paper/figures/sse-boxplot.csv')))
+sse.df$class <- rep('SSE', nrow(sse.df))
+
+df <- rbind(mse.df, sse.df)
+
+p1 <- ggplot(df, aes(x = class, y = mae, fill = class)) +
+  ggtitle('training data') +
+  geom_boxplot(fill = c(red, yellow)) +
+  scale_y_continuous(breaks = c(0.6, 0.8, 1, 1.2), limits = c(0.6, 1.2)) +
+  theme(axis.title.x = element_blank(), legend.position = 'none') +
+  ylab('mean absolute error')
+
+p2 <- ggplot(df, aes(x = class, y = val.mae, fill = class)) +
+  ggtitle('cross-validation data') +
+  geom_boxplot(fill = c(red, yellow)) +
+  scale_y_continuous(breaks = c(1.6, 2.2, 2.8, 3.4), limits = c(1.6, 3.4)) +
+  theme(axis.title.x = element_blank(), legend.position = 'none') +
+  ylab('mean absolute error')
+
+p3 <- ggplot(df, aes(x = class, y = test.mae, fill = class)) +
+  ggtitle('test data') +
+  geom_boxplot(fill = c(red, yellow)) +
+  scale_y_continuous(breaks = c(1.6, 2.2, 2.8, 3.4), limits = c(1.6, 3.4)) +
+  theme(axis.title.x = element_blank(), legend.position = 'none') +
+  ylab('mean absolute error')
+
+grid.arrange(p1, p2, p3, nrow = 1)
+
+setwd(fig.dir)
+
+ggsave('box1.png', plot = grid.arrange(p1, p2, p3, nrow = 1), dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+library(ggplot2)
+library(gridExtra)
+library(scales)
+
+mse.df <- as.data.frame(na.omit(read.csv('E:/Dropbox/GWU/2nd Journal Paper/figures/mse-point.csv')))
+sse.df <- as.data.frame(na.omit(read.csv('E:/Dropbox/GWU/2nd Journal Paper/figures/sse-point.csv')))
+
+p1 <- ggplot(mse.df, aes(x = 1:500, y = mae)) +
+  ggtitle('MSE') +
+  geom_line(aes(color = 'training data')) +
+  geom_line(aes(x = 1:500, y = val.mae, color = 'cross-validation data')) +
+  scale_color_manual('', breaks = c('training data', 'cross-validation data'), values = c('black', '#a9a9a9')) +
+  scale_y_continuous(breaks = c(0.5, 1.5, 2.5, 3.5), limits = c(0.5, 3.5)) +
+  xlab('epoch') +
+  ylab('mean absolute error') +
+  theme(legend.position = 'bottom',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.text = element_text(size = 11),
+    legend.title = element_blank())
+
+p2 <- ggplot(sse.df, aes(x = 1:500, y = mae)) +
+  ggtitle('SSE') +
+  geom_line(aes(color = 'training data')) +
+  geom_line(aes(x = 1:500, y = val.mae, color = 'cross-validation data')) +
+  scale_color_manual('', breaks = c('training data', 'cross-validation data'), values = c('black', '#a9a9a9')) +
+  scale_y_continuous(breaks = c(0.5, 1.5, 2.5, 3.5), limits = c(0.5, 3.5)) +
+  xlab('epoch') +
+  ylab('mean absolute error') +
+  theme(legend.position = 'bottom',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.text = element_text(size = 11),
+    legend.title = element_blank())
+
+grid.arrange(p1, p2, nrow = 1)
+
+setwd(fig.dir)
+
+ggsave('boston1.png', plot = grid.arrange(p1, p2, nrow = 1), dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+library(ggplot2)
+library(gridExtra)
+library(scales)
+
+mse.df <- as.data.frame(na.omit(read.csv('E:/Dropbox/GWU/2nd Journal Paper/figures/mse-line.csv')))
+sse.df <- as.data.frame(na.omit(read.csv('E:/Dropbox/GWU/2nd Journal Paper/figures/sse-line.csv')))
+
+p1 <- ggplot(mse.df, aes(x = 1:500, y = mae)) +
+  ggtitle('MSE') +
+  geom_line(aes(color = 'training data')) +
+  geom_line(aes(x = 1:500, y = val.mae, color = 'cross-validation data')) +
+  scale_color_manual('', breaks = c('training data', 'cross-validation data'), values = c('black', '#a9a9a9')) +
+  scale_y_continuous(breaks = c(0.5, 1.5, 2.5, 3.5), limits = c(0.5, 3.5)) +
+  xlab('epoch') +
+  ylab('mean absolute error') +
+  theme(legend.position = 'bottom',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.text = element_text(size = 11),
+    legend.title = element_blank())
+
+p2 <- ggplot(sse.df, aes(x = 1:500, y = mae)) +
+  ggtitle('SSE') +
+  geom_line(aes(color = 'training data')) +
+  geom_line(aes(x = 1:500, y = val.mae, color = 'cross-validation data')) +
+  scale_color_manual('', breaks = c('training data', 'cross-validation data'), values = c('black', '#a9a9a9')) +
+  scale_y_continuous(breaks = c(0.5, 1.5, 2.5, 3.5), limits = c(0.5, 3.5)) +
+  xlab('epoch') +
+  ylab('mean absolute error') +
+  theme(legend.position = 'bottom',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.text = element_text(size = 11),
+    legend.title = element_blank())
+
+grid.arrange(p1, p2, nrow = 1)
+
+setwd(fig.dir)
+
+ggsave('boston2.png', plot = grid.arrange(p1, p2, nrow = 1), dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+df <- read.csv(paste0('E:/Dropbox/GWU/1st Journal Paper/data/test-mae-1.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+
+ggplot(df, aes(x = 1:50)) +
+  geom_line(aes(y = test.mae)) +
+  geom_point(aes(y = test.mae), color = 'black', size = 0.8) +
+  scale_x_continuous(breaks = seq(0, 50, 5), minor_breaks = seq(0, 50, 5)) +
+  scale_y_continuous(labels = function(y) format(y, scientific = TRUE)) +
+  xlab('neural networks') +
+  ylab('mean absolute error')
+  # ylab(bquote(mean ~ absolute ~ error ~ (k[eff])))
+
+setwd(fig.dir)
+
+ggsave('ensemble1.png', dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+df1 <- read.csv(paste0('E:/Dropbox/GWU/1st Journal Paper/data/test-mae-2.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+df2 <- read.csv(paste0('E:/Dropbox/GWU/1st Journal Paper/data/test-mae-3.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE)
+
+ggplot(df1, aes(x = 1:10)) +
+  geom_line(aes(y = test.mae, color = 'all', parse = TRUE)) +
+  geom_point(aes(y = test.mae, color = 'all', parse = TRUE)) +
+  geom_line(data = df2, aes(y = test.mae, color = 'some')) +
+  geom_point(data = df2, aes(y = test.mae, color = 'some')) +
+  scale_color_manual('', breaks = c('all', 'some'),
+                     labels = c(expression(all~italic(k[eff])~values),
+                                expression(italic(k[eff])~{values >= 0.95}),
+                                expression(italic(k[eff])~{values >= 0.975})),
+                     values = c('black', '#a9a9a9')) +
+  scale_x_continuous(breaks = seq(1, 10), minor_breaks = seq(1, 10)) +
+  scale_y_continuous(breaks = c(2.5e-04, 2.75e-04, 3e-04, 3.25e-04, 3.5e-04, 3.75e-04), minor_breaks = c(2.5e-04, 2.75e-04, 3e-04, 3.25e-04, 3.5e-04, 3.75e-04), limits = c(2.5e-04, 3.75e-04), labels = function(y) format(y, scientific = TRUE)) +
+  theme(legend.position = 'bottom',
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.title = element_blank()) +
+  xlab('neural networks') +
+  ylab('mean absolute error')
+  # ylab(expression(mean~absolute~error~italic((k[eff]))))
+
+setwd(fig.dir)
+
+ggsave('ensemble2.png', dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+library(viridis)
+
+theme_set(theme_gray() + theme(axis.text = element_text(color = 'black', size = 10), text = element_text(color = 'black', family = 'serif', size = 10), legend.text = element_text(size = 10)))
+
+df <- na.omit(read.csv(paste0(test.dir, '/test-data.csv'), header = TRUE))
+
+ggplot(df, aes(x = keff, y = error)) +
+  geom_point(color = 'black', size = 0.2) +
+  stat_density_2d(aes(fill = ..level..), geom = 'polygon', bins = 10) +
+  scale_fill_viridis(option = 'A') +
+  scale_x_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5), limits = c(0, 1.5)) +
+  scale_y_continuous(limits = c(-0.004, 0.004)) +
+  labs(fill = 'density') +
+  xlab(expression(italic(k[eff]))) +
+  ylab('error')
+  # ylab(expression(italic(error~(k[eff]))))
+
+setwd(fig.dir)
+
+ggsave('density.png', dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+df <- na.omit(read.csv(paste0(test.dir, '/mcnp-output.csv'), fileEncoding = 'UTF-8-BOM', header = TRUE))
+df$keff <- round(df$keff, digits = 2)
+df <- subset(df, keff > 0)
+df <- subset(df, sd > 0)
+df <- subset(df, sd < 5.5e-04)
+df <- subset(df, mass %% 100 != 25)
+df <- subset(df, mass %% 100 != 75)
+# df <- subset(df, mass <= 2000)
+
+ggplot(df, aes(x = keff, y = sd)) +
+  geom_point(color = 'black', size = 0.2) +
+  stat_density_2d(aes(fill = ..level..), geom = 'polygon', bins = 10, n = 500) +
+  scale_fill_viridis(option = 'A') +
+  scale_x_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5), limits = c(0, 1.5)) +
+  scale_y_continuous(breaks = seq(0, 6e-04, 1e-04), limits = c(0, 6e-04)) +
+  labs(fill = 'density') +
+  xlab(bquote(italic(k[eff]))) +
+  ylab(bquote(standard ~ deviation ~ (sigma)))
+
+setwd(fig.dir)
+
+ggsave('sd.png', dpi = 2000, height = 3.8, width = 6.5)
+
+```
+
+```{r}
+
+df <- readRDS('E:/risk-gamma-10M/bn-data.RData')
+df <- df[[1]]
+df <- subset(df, keff >= 0.6)
+
+ggplot(df, aes(x = mass, y = keff)) +
+  geom_hline(color = 'red', yintercept = 0.95, size = 0.7) +
+  geom_point(color = 'black', size = 0.2) +
+  geom_text(aes(850, 0.95), color = 'red', family = 'serif', fontface = 'bold', label = 'italic(k[eff]) == 0.95', parse = TRUE, size = 3.5, vjust = -0.5) +
+  scale_x_continuous(breaks = seq(100, 1000, 100), limits = c(100, 1000)) +
+  scale_y_continuous(limits = c(0.6, 1.1)) +
+  theme(
+    axis.text = element_text(color = 'black', size = 10),
+    legend.position = 'none',
+    legend.title = element_blank(),
+    plot.title = element_text(face = 'bold', hjust = 0.5, size = 12),
+    text = element_text(color = 'black', family = 'serif', size = 10)) +
+  xlab('plutonium mass (g)') +
+  ylab(expression(italic(k[eff])))
+
+setwd(fig.dir)
+
+ggsave('risk1.png', dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+df <- read.csv('E:/risk-gamma-10B/risk.csv')
+
+ggplot(df, aes(x = seq(1:length(risk)), y = risk)) +
+  geom_hline(yintercept = mean(df$risk), color = 'red', size = 0.7) +
+  geom_point(color = 'black') +
+  # scale_y_continuous(breaks = c(2e-06, 2.5e-06, 3e-06, 3.5e-06), limits = c(2e-06, 3.5e-06)) +
+  scale_y_continuous(breaks = c(3.5e-06, 4e-06, 4.5e-06, 5e-06), limits = c(3.5e-06, 5e-06)) +
+  xlab('batch') +
+  ylab('risk (accidents/year)')
+
+setwd(fig.dir)
+
+ggsave('risk2.png', dpi = 2000, height = 4, width = 6.5)
+
+```
+
+```{r}
+
+library(gridExtra)
+
+df1 <- read.csv('E:/risk-gamma-10B/risk.csv')
+
+label1 <- as.character(format(mean(df1$risk), digits = 3, scientific = TRUE))
+
+p1 <- ggplot(df1, aes(x = seq(1:length(risk)), y = risk)) +
+  geom_hline(yintercept = mean(df1$risk), color = 'red', size = 0.6) +
+  geom_point(color = 'black', size = 0.6) +
+  # geom_text(aes(50, mean(df1$risk)), color = red, family = 'serif', label = label1, size = (10/2.8), vjust = -0.5) +
+  ggtitle('truncated gamma distributions') +
+  # scale_y_continuous(breaks = c(2e-06, 2.5e-06, 3e-06, 3.5e-06), limits = c(2e-06, 3.5e-06)) +
+  scale_y_continuous(breaks = c(3.5e-06, 4e-06, 4.5e-06, 5e-06), limits = c(3.5e-06, 5e-06)) +
+  theme(
+    axis.text = element_text(color = 'black', size = 10),
+    legend.position = 'none',
+    legend.title = element_blank(),
+    plot.title = element_text(face = 'bold', hjust = 0.5, size = 12),
+    text = element_text(color = 'black', family = 'serif', size = 10)) +
+  xlab('batch') +
+  ylab('risk (accidents/year)')
+
+df <- read.csv('E:/risk-normal-10T/risk.csv')
+
+xdf <- data.frame()
+
+for (i in 1:10) {
+  xdf <- c(xdf, df[sample(nrow(df)), ])
+}
+
+new.df <- numeric()
+count <- 0
+
+for (i in seq(1, 10000, 100)) {
+  count <- count + 1
+  new.df[count] <- sum(unlist(xdf[i:(i+100)]))/100
+}
+
+new.df[100] <- 1e-09
+
+df2 <- data.frame(risk = new.df)
+
+label2 <- as.character(format(mean(df2$risk), digits = 3, scientific = TRUE))
+
+p2 <- ggplot(df2, aes(x = seq(1:length(risk)), y = risk)) +
+  geom_hline(yintercept = mean(df2$risk), color = 'red', size = 0.6) +
+  geom_point(color = 'black', size = 0.6) +
+  # geom_text(aes(50, mean(df2$risk)), color = red, family = 'serif', label = label2, size = (10/2.8), vjust = -0.5) +
+  ggtitle('truncated normal distributions') +
+  # scale_y_continuous(breaks = c(0, 0.5e-10, 1e-10, 1.5e-10, 2e-10), limits = c(0, 2e-10)) +
+  scale_y_continuous(breaks = c(5e-10, 1e-09, 1.5e-09, 2e-09, 2.5e-09), limits = c(5e-10, 2.5e-09)) +
+  theme(
+    axis.text = element_text(color = 'black', size = 10),
+    legend.position = 'none',
+    legend.title = element_blank(),
+    plot.title = element_text(face = 'bold', hjust = 0.5, size = 12),
+    text = element_text(color = 'black', family = 'serif', size = 10)) +
+  xlab('batch') +
+  ylab('risk (accidents/year)')
+
+df3 <- read.csv('E:/risk-log-normal-100M/risk.csv')
+
+label3 <- as.character(format(mean(df3$risk), digits = 3, scientific = TRUE))
+
+p3 <- ggplot(df3, aes(x = seq(1:length(risk)), y = risk)) +
+  geom_hline(yintercept = mean(df3$risk), color = 'red', size = 0.6) +
+  geom_point(color = 'black', size = 0.6) +
+  # geom_text(aes(50, mean(df3$risk)), color = red, family = 'serif', label = label3, size = (10/2.8), vjust = -0.5) +
+  ggtitle('truncated log-normal distributions') +
+  # scale_y_continuous(breaks = c(1.15e-04, 1.2e-04, 1.25e-04, 1.3e-04), limits = c(1.15e-04, 1.3e-04), labels = function(x) format(x, scientific = TRUE)) +
+  scale_y_continuous(breaks = c(5e-05, 7.5e-05, 1e-04, 1.25e-04, 1.5e-04), limits = c(5e-05, 1.5e-04), labels = function(x) format(x, scientific = TRUE)) +
+  theme(
+    axis.text = element_text(color = 'black', size = 10),
+    legend.position = 'none',
+    legend.title = element_blank(),
+    plot.title = element_text(face = 'bold', hjust = 0.5, size = 12),
+    text = element_text(color = 'black', family = 'serif', size = 10)) +
+  xlab('batch') +
+  ylab('risk (accidents/year)')
+
+df4 <- read.csv('E:/risk-weibull-10B/risk.csv')
+
+label4 <- as.character(format(mean(df4$risk), digits = 3, scientific = TRUE))
+
+p4 <- ggplot(df4, aes(x = seq(1:length(risk)), y = risk)) +
+  geom_hline(yintercept = mean(df4$risk), color = 'red', size = 0.6) +
+  geom_point(color = 'black', size = 0.6) +
+  # geom_text(aes(50, mean(df4$risk)), color = red, family = 'serif', label = label4, size = (10/2.8), vjust = -0.5) +
+  ggtitle('truncated Weibull distributions') +
+  # scale_y_continuous(breaks = c(0, 1e-07, 2e-07, 3e-07, 4e-07), limits = c(0, 4e-07)) +
+  scale_y_continuous(breaks = c(5e-07, 7.5e-07, 1e-06, 1.25e-06), limits = c(5e-07, 1.25e-06)) +
+  theme(
+    axis.text = element_text(color = 'black', size = 10),
+    legend.position = 'none',
+    legend.title = element_blank(),
+    plot.title = element_text(face = 'bold', hjust = 0.5, size = 12),
+    text = element_text(color = 'black', family = 'serif', size = 10)) +
+  xlab('batch') +
+  ylab('risk (accidents/year)')
+
+grid.arrange(p1, p3, p2, p4, nrow = 2)
+
+setwd(fig.dir)
+
+ggsave('risk3.png', plot = grid.arrange(p1, p3, p2, p4, nrow = 2), dpi = 2000, height = 4.2, width = 6.5)
+
+```
