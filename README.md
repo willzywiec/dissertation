@@ -1,6 +1,6 @@
 # Dissertation
 
-These scripts build a coupled Bayesian network and neural network metamodel, which is used to model fissionable material operations in a nuclear facility and estimate process criticality accident risk. 🤯  
+These scripts build a coupled Bayesian network and neural network metamodel, which models fissionable material operations in a nuclear facility and estimates process criticality accident risk. 🤯  
 
 MCNP input decks are built with **generate.R** and **build.R** and run with **volley.py** (and **single.py**), which are configured to run on Linux and LSF/Slurm. I'm planning on uploading a compiled **output.csv** file at some point, which would allow users to skip this step.  
 
