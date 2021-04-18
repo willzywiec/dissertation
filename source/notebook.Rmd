@@ -8,7 +8,7 @@ output : html_document
 # William John Zywiec
 # The George Washington University
 
-```{r, include = FALSE}
+```{r, include = FALSE, warning = FALSE}
 
 # initialize environment
 if (!is.null(dev.list())) dev.off()
@@ -17,17 +17,16 @@ cat('\014')
 
 ```
 
-```{r, setup, include = FALSE, message = FALSE, warning = FALSE}
+```{r, setup, include = FALSE, warning = FALSE}
 
 # set variables
 code <- 'mcnp'
-source.dir <- 'E:/Dropbox/GWU/R/source'
-data.dir <- 'F:/data'
-test.dir <- 'F:/test'
+source.dir <- 'source' # directory that contains all source files
+data.dir <- 'data' # directory that contains MCNP data (build/linux)
 
 ```
 
-```{r, include = FALSE, message = FALSE, warning = FALSE}
+```{r, warning = FALSE}
 
 # load function
 source(paste0(source.dir, '/tabulate.R'))
@@ -37,42 +36,51 @@ dataset <- Tabulate(code, source.dir, data.dir)
 
 ```
 
-```{r, message = FALSE, warning = FALSE}
+```{r, warning = FALSE}
 
 # set variables
 batch.size <- 8192
-ensemble.size <- 20
-epochs <- 300
+ensemble.size <- 15 # 15
+epochs <- 1500 # 1500
 layers <- '8192-256-256-256-256-16'
 loss <- 'sse'
-lr <- 0.00075
-plot <- FALSE
+opt.alg <- 'adamax'
+learning.rate <- 0.00075
+replot <- TRUE
+test.dir <- paste0('E:/test/', loss) # directory that contains model files
 val.split <- 0.2
 
 # load function
 source(paste0(source.dir, '/nn.R'))
 
-# build ensemble model
-# ensemble.model <- NN(dataset, batch.size, ensemble.size, epochs, layers, loss, lr, plot, val.split, source.dir, test.dir)
-ensemble.model <- NN(dataset, batch.size, ensemble.size, epochs, layers, 'mse', lr, plot, val.split, source.dir, 'F:/mse-test')
+# build metamodel
+metamodel <- NN(dataset, batch.size, ensemble.size, epochs, layers, loss, opt.alg, learning.rate, replot, val.split, source.dir, test.dir)
 
 ```
 
-```{r, message = FALSE, warning = FALSE}
+```{r, warning = FALSE}
 
 # set variables
-dist <- 'gamma'
+dist <- 'normal'
 risk.pool <- 100
-sample.size <- 1e+07
+dist.dir <- 'E:/dist'
+
+if (dist == 'normal') {
+  sample.size <- 1e+10
+} else if (dist == 'gamma' || dist == 'weibull') {
+  sample.size <- 1e+08
+} else if (dist == 'log-normal') {
+  sample.size <- 1e+07
+}
 
 # load functions
 source(paste0(source.dir, '/bn.R'))
 source(paste0(source.dir, '/risk.R'))
 
 # build Bayesian network
-bn <- BN(dist, test.dir)
+bn <- BN(dist, dist.dir)
 
-# formulate risk estimate
-risk <- Risk(bn, dataset, ensemble.model, ensemble.size, sample.size, source.dir, test.dir)
+# estimate risk
+risk <- Risk(bn, dataset, metamodel, risk.pool, sample.size, source.dir, test.dir)
 
 ```

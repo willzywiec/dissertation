@@ -3,12 +3,9 @@
 # William John Zywiec
 # The George Washington University
 
-BN <- function(dist, test.dir) {
+BN <- function(dist, dist.dir) {
 
   library(bnlearn)
-
-  dist.dir <- paste0(test.dir, '/dist')
-  dir.create(dist.dir, showWarnings = FALSE)
 
   setwd(dist.dir)
 
@@ -18,9 +15,7 @@ BN <- function(dist, test.dir) {
 
   for (i in 2:length(nodes)) {
     dag <- set.arc(dag, 'op', nodes[i])
-    if (i > 2) {
-      dag <- set.arc(dag, 'ctrl', nodes[i])
-    }
+    if (i > 2) dag <- set.arc(dag, 'ctrl', nodes[i])
   }
 
   # build conditional probability tables
@@ -31,7 +26,7 @@ BN <- function(dist, test.dir) {
   mod <- c('mgo', 'ch2', 'sepiolite', 'h2o', 'none')
   rad <- seq(0, 18, 0.25) * 2.54
   ref <- c('al', 'be', 'du', 'graphite', 'pb', 'mgo', 'ch2', 'ss304', 'h2o', 'none')
-  thk <- seq(0, 2, 0.25) * 2.54
+  thk <- seq(0, 6, 0.25) * 2.54
 
   op.cpt <- matrix(c(
     3.50e-01 ,  # large sample
@@ -54,7 +49,7 @@ BN <- function(dist, test.dir) {
 
   mass.cpt <- array(unlist(readRDS(paste0('mass-', dist, '.RData'))), dim = c(4001, 7, 6), dimnames = list('mass' = mass, 'ctrl' = ctrl, 'op' = op))
   rad.cpt <- array(unlist(readRDS(paste0('rad-', dist, '.RData'))), dim = c(73, 7, 6), dimnames = list('rad' = rad, 'ctrl' = ctrl, 'op' = op))
-  thk.cpt <- array(unlist(readRDS(paste0('thk-', dist, '.RData'))), dim = c(9, 7, 6), dimnames = list('thk' = thk, 'ctrl' = ctrl, 'op' = op))
+  thk.cpt <- array(unlist(readRDS(paste0('thk-', dist, '.RData'))), dim = c(25, 7, 6), dimnames = list('thk' = thk, 'ctrl' = ctrl, 'op' = op))
 
   form.cpt <- array(c(
   # large sample

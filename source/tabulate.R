@@ -3,13 +3,11 @@
 # William John Zywiec
 # The George Washington University
 
-Tabulate <- function(code, source.dir, test.dir) {
+Tabulate <- function(code, source.dir, data.dir) {
 
   library(magrittr)
 
-  output.dir <- paste0(test.dir, '/', code)
-
-  setwd(test.dir)
+  setwd(data.dir)
 
   if (file.exists(paste0(code, '-dataset.RData'))) {
 
@@ -19,20 +17,16 @@ Tabulate <- function(code, source.dir, test.dir) {
   } else {
 
     # load function
-    source(paste0(source.dir, '/split.R'))
-
-    setwd(output.dir)
+    source(paste0(source.dir, '/scale.R'))
 
     output.files <- list.files(pattern = '\\.o$')
-
-    setwd(test.dir)
 
     # load output
     if (file.exists(paste0(code, '-output.csv'))) {
       output <- read.csv(paste0(code, '-output.csv'), fileEncoding = 'UTF-8-BOM') %>% na.omit()
       if (nrow(output) >= length(output.files)) {
         output <- output[sample(nrow(output)), ]
-        dataset <- Split(code, output)
+        dataset <- Scale(code, output)
         cat('Loaded ', code, '-dataset.RData\n', sep = '')
       } else {
         remove(output)
@@ -44,9 +38,6 @@ Tabulate <- function(code, source.dir, test.dir) {
       mass <- rad <- thk <- ht <- vol <- conc <- hd <- keff <- sd <- numeric()
       form <- mod <- ref <- shape <- character()
 
-      setwd(output.dir)
-
-      # tabulate data
       for (i in 1:length(output.files)) {
 
         if (any(grep('final result', readLines(output.files[i])))) {
@@ -97,8 +88,6 @@ Tabulate <- function(code, source.dir, test.dir) {
 
       }
 
-      setwd(test.dir)
-
       output <- data.frame(
         mass = mass,
         form = form,
@@ -117,7 +106,7 @@ Tabulate <- function(code, source.dir, test.dir) {
       output <- output[sample(nrow(output)), ]
       write.csv(output, file = paste0(code, '-output.csv'), row.names = FALSE)
       
-      dataset <- Split(code, output)
+      dataset <- Scale(code, output)
       cat('Loaded ', code, '-dataset.RData\n', sep = '')
 
     } else if (!exists('data') && length(output.files) == 0) {
