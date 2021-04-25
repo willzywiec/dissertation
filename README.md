@@ -6,7 +6,8 @@ This repository contains a PDF of my dissertation, "Analysis of Process Critical
 
 ## Prerequisites
 Python 3.7+ (if running MCNP input decks on Linux and LSF/Slurm)  
-TensorFlow
+TensorFlow 2.1+ 
+CUDA 10+ (optional)
 R  
 Rtools  
 MCNP6.2 (or equivalent)  
@@ -19,7 +20,9 @@ I'm planning on uploading a compiled **output.csv** file at some point, which wo
 
 **dist.R** in the **dist** folder also needs to be run for the distribution fit called in **notebook.Rmd** (e.g., 'gamma'). Once that's done, everything can be run from **notebook.Rmd**.  
 
-With the exception of the MCNP input decks, which were run on Quartz (a supercomputer at LLNL), everything else was run on a desktop computer (AMD Ryzen 7 1700 3.0 GHz 8-core CPU with an NVIDIA GeForce GTX 1080 GPU). All scripts were tested on 4/24/2021 using Python 3.8.5, TensorFlow 2.4, and CUDA 11.3.
+With the exception of the MCNP input decks, which were run on Quartz (a supercomputer at LLNL), everything else was run on a desktop computer (AMD Ryzen 7 1700 3.0 GHz 8-core CPU with an NVIDIA GeForce GTX 1080 GPU).  
+
+All scripts were tested on 4/24/2021 using Python 3.8.5, TensorFlow 2.4, and CUDA 11.3.  
 
 ## R Packages Needed
 BiocManager  
