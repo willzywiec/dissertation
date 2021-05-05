@@ -6,8 +6,8 @@ This repository contains a PDF of my dissertation, "Analysis of Process Critical
 
 ## Prerequisites
 Python 3.7+ (if running MCNP input decks on Linux and LSF/Slurm)  
-TensorFlow 2.1+ 
-CUDA 10+ (optional)
+TensorFlow 2.1+  
+CUDA 10+ (optional)  
 R  
 Rtools  
 MCNP6.2 (or equivalent)  
