@@ -1,6 +1,8 @@
 # Dissertation
 
-This repository contains a PDF of my dissertation, "Analysis of Process Criticality Accident Risk Using a Metamodel-Driven Bayesian Network", as well as generalized copies of several scripts that I wrote, which I'm in the process of refactoring to run from a single directory using PyTorch. While I was working on this project, breakers in my apartment regularly blew and power outages occurred, so I maintained the source code in the cloud with a hardware backup and wrote several Python and R scripts to automate a lot of saving/reloading processes that are no longer necessary.
+This repository contains a PDF of my dissertation, "Analysis of Process Criticality Accident Risk Using a Metamodel-Driven Bayesian Network", as well as generalized copies of several scripts that I wrote, which I'm in the process of refactoring to run from a single directory using PyTorch.  
+  
+While I was working on this project, breakers in my apartment regularly blew and power outages occurred, so I maintained the source code in the cloud with a hardware backup and wrote several Python and R scripts to automate a lot of saving/reloading processes that are no longer necessary.
 
 **notebook.Rmd** in the **source** folder builds a coupled Bayesian network and neural network metamodel and estimates process criticality accident risk. 🤯  
 
