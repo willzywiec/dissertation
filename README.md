@@ -5,7 +5,7 @@ This repository contains a PDF of my dissertation, "Analysis of Process Critical
 **notebook.Rmd** in the **source** folder builds a coupled Bayesian network and neural network metamodel and estimates process criticality accident risk. 🤯  
 
 ## Prerequisites
-Python 3.7+ (if running MCNP input decks on Linux and LSF/Slurm)  
+Python 3.7+ (if running MCNP input decks on Linux using LSF/Slurm)  
 TensorFlow 2.1+  
 CUDA 10+ (optional)  
 R  
