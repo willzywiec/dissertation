@@ -15,7 +15,7 @@ ENDF/B-VII.1 nuclear data (the current release of ENDF/B-VIII has problems)
 
 **install.R** installs all necessary R packages.
 
-MCNP input decks were built using **grid.R** (**build** folder) and run using **volley.py** (**linux** folder), which is configured to run on Linux and LSF/Slurm.
+MCNP input decks were built using **grid.R** (**build** folder) and run using **volley.py** (**linux** folder), which is configured to run on Linux using LSF/Slurm.
 I'm planning on uploading a compiled **output.csv** file at some point, which would allow users to skip this step.  
 
 **dist.R** in the **dist** folder also needs to be run for the distribution fit called in **notebook.Rmd** (e.g., 'gamma'). Once that's done, everything can be run from **notebook.Rmd**.  
