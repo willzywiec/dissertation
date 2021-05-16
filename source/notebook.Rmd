@@ -21,8 +21,9 @@ cat('\014')
 
 # set variables
 code <- 'mcnp'
-source.dir <- 'source' # directory that contains all source files
-data.dir <- 'data' # directory that contains MCNP data (build/linux)
+home.dir <- 'C:/Users/X/Documents/dissertation' # modify this path
+source.dir <- paste0(home.dir, '/source') # directory that contains all source files
+data.dir <- paste0(home.dir, '/data') # directory that contains MCNP data (build/linux)
 
 ```
 
@@ -47,7 +48,7 @@ loss <- 'sse'
 opt.alg <- 'adamax'
 learning.rate <- 0.00075
 replot <- TRUE
-test.dir <- paste0('E:/test/', loss) # directory that contains model files
+test.dir <- paste0(home.dir, '/test/', loss) # directory that contains model files
 val.split <- 0.2
 
 # load function
@@ -63,7 +64,7 @@ metamodel <- NN(dataset, batch.size, ensemble.size, epochs, layers, loss, opt.al
 # set variables
 dist <- 'normal'
 risk.pool <- 100
-dist.dir <- 'E:/dist'
+dist.dir <- paste0(home.dir, '/dist') # directory that contains distribution data
 
 if (dist == 'normal') {
   sample.size <- 1e+10
