@@ -5,13 +5,13 @@ This repository contains a PDF of my dissertation, "Analysis of Process Critical
 While I was working on this project, breakers in my apartment regularly blew, so I maintained the source code in the cloud with a hardware backup and wrote several Python and R scripts to automate a lot of saving/reloading processes that are no longer necessary. Running these scripts as-is will generate approximately 85 GB of data, which is saved to the **test** folder. To avoid saving this data directly to your main hard drive, I recommend moving the **test** folder to an external hard drive and modifying the **test.dir** path on line 51 of **source/notebook.Rmd**.
 
 ## Prerequisites
-Python 3.7+ (if running MCNP input decks on Linux using LSF/Slurm)  
+Python 3.7+
 TensorFlow 2.1+  
-CUDA 10+ (optional)  
+CUDA 10+  
 R  
 Rtools  
-MCNP6.2 (or equivalent)  
-ENDF/B-VII.1 nuclear data (the current release of ENDF/B-VIII has problems)  
+MCNP6.2 (optional)  
+ENDF/B-VII.1 nuclear data (optional)  
 
 **install.R** installs all necessary R packages.
 
