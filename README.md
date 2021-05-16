@@ -13,6 +13,7 @@ Rtools
 MCNP6.2 (optional)  
 ENDF/B-VII.1 nuclear data (optional)  
 
+## Running the Code
 **install.R** installs all necessary R packages.
 
 MCNP input decks were built using **build/grid.R** and run using **linux/volley.py**, which is configured to run on Linux using Slurm. These scripts are unnecessary, unless you want to build and run additional MCNP simulations. The **data/mcnp-output.csv** file is a cleaned and pre-configured dataset that consists of output from 1,542,397 MCNP simulations that were run on Quartz (a supercomputer at LLNL). With the exception of MCNP input decks, which were run on Quartz, everything else was run on a desktop computer (AMD Ryzen 7 1700 3.0 GHz 8-core CPU with an NVIDIA GeForce GTX 1080 GPU).  
