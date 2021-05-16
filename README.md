@@ -1,28 +1,28 @@
 # Dissertation
 
-This repository contains a PDF of my dissertation, "Analysis of Process Criticality Accident Risk Using a Metamodel-Driven Bayesian Network", as well as generalized copies of several scripts that I wrote, which I'm in the process of refactoring to run from a single directory. While I was working on this project, breakers in my apartment regularly blew and power outages occurred, so I maintained the source code in the cloud with a hardware backup and wrote several Python and R scripts to automate a lot of saving/reloading processes that are no longer necessary.
-
-**notebook.Rmd** in the **source** folder builds a coupled Bayesian network and neural network metamodel and estimates process criticality accident risk. 🤯  
+This repository contains a PDF of my dissertation, "Analysis of Process Criticality Accident Risk Using a Metamodel-Driven Bayesian Network", as well as modified copies of several scripts that I wrote, which I'm in the process of refactoring to run using PyTorch.  
+  
+While I was working on this project, breakers in my apartment regularly blew, so I maintained the source code in the cloud with a hardware backup and wrote several Python and R scripts to automate a lot of saving/reloading processes that are no longer necessary. Running **source/notebook.Rmd** as-is will generate approximately 85 GB of data, which is saved to the **test** folder. To avoid saving this data directly to your main hard drive, I recommend moving the **test** folder to an external hard drive and modifying the **test.dir** path on line 51 of **source/notebook.Rmd**.
 
 ## Prerequisites
-Python 3.7+ (if running MCNP input decks on Linux and LSF/Slurm)  
+Python 3.7+
 TensorFlow 2.1+  
-CUDA 10+ (optional)  
-R  
+CUDA 10+  
+R 4+  
 Rtools  
-MCNP6.2 (or equivalent)  
-ENDF/B-VII.1 nuclear data (the current release of ENDF/B-VIII has problems)  
+MCNP6.2 (optional)  
+ENDF/B-VII.1 nuclear data (optional)  
 
+## Running the Code
 **install.R** installs all necessary R packages.
 
-MCNP input decks were built using **grid.R** (**build** folder) and run using **volley.py** (**linux** folder), which is configured to run on Linux and LSF/Slurm.
-I'm planning on uploading a compiled **output.csv** file at some point, which would allow users to skip this step.  
+MCNP input decks were built using **build/grid.R** and run using **linux/volley.py**, which is configured to run on Linux using Slurm. These scripts are unnecessary, unless you want to build and run additional MCNP simulations. The **data/mcnp-output.csv** file is a cleaned and pre-configured dataset that consists of output from 1,542,397 MCNP simulations that were run on Quartz (a supercomputer at LLNL). With the exception of MCNP input decks, which were run on Quartz, everything else was run on a desktop computer (AMD Ryzen 7 1700 3.0 GHz 8-core CPU with an NVIDIA GeForce GTX 1080 GPU).  
 
-**dist.R** in the **dist** folder also needs to be run for the distribution fit called in **notebook.Rmd** (e.g., 'gamma'). Once that's done, everything can be run from **notebook.Rmd**.  
-
-With the exception of the MCNP input decks, which were run on Quartz (a supercomputer at LLNL), everything else was run on a desktop computer (AMD Ryzen 7 1700 3.0 GHz 8-core CPU with an NVIDIA GeForce GTX 1080 GPU).  
-
-All scripts were tested on 4/24/2021 using Python 3.8.5, TensorFlow 2.4, and CUDA 11.3.  
+**dist/dist.R** needs to be run for the distribution fit called in **source/notebook.Rmd** (e.g., 'gamma'). Once that's done, everything can be run from **source/notebook.Rmd**.  
+  
+Running **source/notebook.Rmd** builds a coupled Bayesian network and neural network metamodel and estimates process criticality accident risk. 🤯  
+  
+All scripts were tested on 4/24/2021 using R 4.0.2, Python 3.8.5, TensorFlow 2.4, and CUDA 11.3.  
 
 ## R Packages Needed
 BiocManager  

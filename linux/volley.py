@@ -1,11 +1,12 @@
 # volley.py
-
+#
 # refactored for Slurm
 
-# 1. run this script
-# 2. make sure the pbatch files are formatted correctly
-# 3. uncomment the last 3 lines ('# ')
-# 4. run this script again
+# 1. comment the last 3 lines
+# 2. run this script
+# 3. make sure the pbatch files are formatted correctly
+# 4. uncomment the last 3 lines
+# 5. run this script again
 
 from os import getcwd, listdir, system
 
@@ -38,14 +39,14 @@ system('rm slurm*')
 
 i = 0
 
-for f in files:
+for file in files:
 	fileName = 'pbatch' + str(i)
 	sbatchIndex.append(fileName)
 	sbatchFile = open(fileName, 'w')
 	sbatchFile.write(sbatchText1 + sbatchText2 + path)
-	for g in f:
-		sbatchFile.write(sbatchText3 + g + ' out=' + g[:-2] + '.o srctp=' + g[:-2] + '.srctp runtpe=' + g[:-2] + '.runtpe tasks 16')
-		sbatchFile.write('\npython single.py ' + g[:-2] + '.o ' + g[:-2] + '.txt')
+	for f in file:
+		sbatchFile.write(sbatchText3 + f + ' out=' + f[:-2] + '.o srctp=' + f[:-2] + '.srctp runtpe=' + f[:-2] + '.runtpe tasks 16')
+		sbatchFile.write('\npython single.py ' + f[:-2] + '.o ' + f[:-2] + '.txt')
 		sbatchFile.write('\nrm slurm*')
 	i += 1
 	sbatchFile.close()
