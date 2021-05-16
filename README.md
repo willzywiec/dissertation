@@ -8,7 +8,7 @@ While I was working on this project, breakers in my apartment regularly blew, so
 Python 3.7+
 TensorFlow 2.1+  
 CUDA 10+  
-R  
+R 4+  
 Rtools  
 MCNP6.2 (optional)  
 ENDF/B-VII.1 nuclear data (optional)  
@@ -21,7 +21,7 @@ MCNP input decks were built using **build/grid.R** and run using **linux/volley.
   
 Running **source/notebook.Rmd** builds a coupled Bayesian network and neural network metamodel and estimates process criticality accident risk. 🤯  
   
-All scripts were tested on 4/24/2021 using Python 3.8.5, TensorFlow 2.4, and CUDA 11.3.  
+All scripts were tested on 4/24/2021 using R 4.0.2, Python 3.8.5, TensorFlow 2.4, and CUDA 11.3.  
 
 ## R Packages Needed
 BiocManager  
