@@ -7,7 +7,7 @@ While I was working on this project, breakers in my apartment regularly blew, so
 Running **source/notebook.Rmd** as-is will generate approximately 85 GB of data, which is saved to the **test** folder. To avoid saving this data directly to your main hard drive, I recommend moving the **test** folder to an external hard drive and modifying the **test.dir** path on line 51 of **source/notebook.Rmd**.
 
 ## Prerequisites
-Python 3.7+
+Python 3.7+  
 TensorFlow 2.1+  
 CUDA 10+  
 R 4+  
