@@ -32,7 +32,7 @@ Noctua NT-H1 Thermal Compound
 Nvidia GeForce GTX 1080 8 GB GDDR5X GPU  
 Samsung 960 EVO 500 GB M.2-2280 SSD  
 
-I've been running this build for four years, and it's my favorite computer that I've ever built. I have to give a lot of props to DAN cases (https://www.dan-cases.com/). They make a superior product in a small form factor, and my temperatures were always within tolerance, despite pushing this computer to the limit for days and weeks at a time.  
+I've been running this rig for four years, and it's my favorite computer that I've ever built. I have to give a lot of props to DAN cases (https://www.dan-cases.com/). They make a superior product in a small form factor, and my temperatures were always within tolerance, despite pushing this computer to the limit for days and weeks at a time.  
 
 **dist/dist.R** needs to be run for the distribution fit called in **source/notebook.Rmd** (e.g., 'gamma'). Once that's done, everything can be run from **source/notebook.Rmd**.  
   
