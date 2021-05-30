@@ -2,7 +2,7 @@
 
 This repository contains a PDF of my dissertation, "Analysis of Process Criticality Accident Risk Using a Metamodel-Driven Bayesian Network", as well as modified copies of several scripts that I wrote, which I'm in the process of refactoring to run using PyTorch.  
   
-While I was working on this project, breakers in my apartment regularly popped open randomly, so I maintained the source code in the cloud with a hardware backup and wrote several Python and R scripts to automate a lot of saving/reloading processes that are no longer necessary.  
+While I was working on this project, breakers in my apartment regularly popped open, so I maintained the source code in the cloud with a hardware backup and wrote several Python and R scripts to automate a lot of saving/reloading processes that are no longer necessary.
 
 Running **source/notebook.Rmd** as-is will generate approximately 85 GB of data, which is saved to the **test** folder. To avoid saving this data directly to your main hard drive, I recommend moving the **test** folder to an external hard drive and modifying the **test.dir** path on line 51 of **source/notebook.Rmd**.
 
