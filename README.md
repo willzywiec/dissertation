@@ -14,6 +14,7 @@ R 4+
 Rtools  
 MCNP6.2 (optional)  
 ENDF/B-VII.1 nuclear data (optional)  
+32+ GB RAM (I initially started this project with 16 GB RAM and quickly ran into memory issues)  
 
 ## Running the Code
 **install.R** installs all necessary R packages.
@@ -31,14 +32,14 @@ All scripts were tested on 4/24/2021 using R 4.0.2, Python 3.8.5, TensorFlow 2.4
 ## Deep Learning Desktop Computer 
 AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
 Asus ROG Strix B350-i Motherboard  
-Corsair Vengeance LPX 16 GB (2 x 8 GB) DDR4 3000 MHz RAM (later upgraded to 32 GB (2 x 16 GB))  
+Corsair Vengeance LPX 32 GB (2 x 16 GB) DDR4 3200 MHz RAM
 DAN A4-SFGX v2 Mini ITX Case  
 Noctua NH-L9a + AM4 Kit Cooler (I also bought a Cryorig C7, but it sat a bit higher than I liked)  
 Noctua NT-H1 Thermal Compound  
 Nvidia GeForce GTX 1080 8 GB GDDR5X GPU  
 Samsung 960 EVO 500 GB M.2-2280 SSD  
 
-I've been running this rig for four years, and it's my favorite computer that I've ever built. I have to give a lot of props to DAN cases (https://www.dan-cases.com/). They make a superior product in a small form factor, and my temperatures were always within tolerance, despite pushing this computer to the limit for days and weeks at a time.  
+I've been running this rig for four years, and it's my favorite computer that I've ever built. I have to give a lot of props to DAN cases (https://www.dan-cases.com/). They make a superior product, and my temperatures were always within tolerance despite pushing this computer to the limit for days and weeks at a time.  
 
 ## R Packages Needed
 BiocManager  
