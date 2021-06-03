@@ -32,7 +32,7 @@ All scripts were tested on 4/24/2021 using R 4.0.2, Python 3.8.5, TensorFlow 2.4
 ## Deep Learning Desktop Computer 
 AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
 Asus ROG Strix B350-i Motherboard  
-Corsair Vengeance LPX 32 GB (2 x 16 GB) DDR4 3200 MHz RAM
+Corsair Vengeance LPX 32 GB (2 x 16 GB) DDR4 3200 MHz RAM  
 DAN A4-SFGX v2 Mini ITX Case  
 Noctua NH-L9a + AM4 Kit Cooler (I also bought a Cryorig C7, but it sat a bit higher than I liked)  
 Noctua NT-H1 Thermal Compound  
