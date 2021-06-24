@@ -1,8 +1,7 @@
-# build.R
+# new-build.R
 #
-# William John Zywiec
-# The George Washington University
-#
+# Will Zywiec
+
 # model parameters
 # ----------------
 # mass:  mass (g)
@@ -65,6 +64,9 @@ Build <- function(mass, form, mod, rad, ref, thk, shape, ht) {
 
   library(magrittr)
   library(parallel)
+
+  # set water.ref to TRUE if you want to include a one-inch water reflector around the sphere
+  water.ref <- FALSE
 
   # set format and precision
   Format <- function(x) formatC(x, format = 'e', digits = 14)
@@ -170,38 +172,68 @@ Build <- function(mass, form, mod, rad, ref, thk, shape, ht) {
   }
 
   # build cell and surface cards
-  if (ref == 'none' || thk == 0) {
-    cell.cards <- paste0(
-      '1  1 ', -avg.density %>% Format(), ' -1',
-      '\n2  2 ', -as.numeric(matl.density[match('h2o', matl.density) + 1]) %>% Format(), ' +1 -2',
-      '\n3  0 +2')
-    if (shape == 'sph') {
-      surface.cards <- paste0(
-        '\n1  so  ', rad,
-        '\n2  so  ', h2o.rad)
-    } else if (shape == 'rcc') {
-      surface.cards <- paste0(
-        '\n1  rcc  0 0 0 0 0 ', ht, ' ', rad,
-        '\n2  rcc  0 0 -2.54 0 0 ', ht + 2.54, ' ', h2o.rad)
+  if (water.ref == TRUE) {
+    if (ref == 'none' || thk == 0) {
+      cell.cards <- paste0(
+        '1  1 ', -avg.density %>% Format(), ' -1',
+        '\n2  2 ', -as.numeric(matl.density[match('h2o', matl.density) + 1]) %>% Format(), ' +1 -2',
+        '\n3  0 +2')
+      if (shape == 'sph') {
+        surface.cards <- paste0(
+          '\n1  so  ', rad,
+          '\n2  so  ', h2o.rad)
+      } else if (shape == 'rcc') {
+        surface.cards <- paste0(
+          '\n1  rcc  0 0 0 0 0 ', ht, ' ', rad,
+          '\n2  rcc  0 0 -2.54 0 0 ', ht + 2.54, ' ', h2o.rad)
+      }
+    } else {
+      cell.cards <- paste0(
+        '1  1 ', -avg.density %>% Format(), ' -1',
+        '\n2  2 ', -ref.density %>% Format(), ' +1 -2',
+        '\n3  3 ', -as.numeric(matl.density[match('h2o', matl.density) + 1]) %>% Format(), ' +2 -3',
+        '\n4  0 +3')
+      if (shape == 'sph') {
+        surface.cards <- paste0(
+          '\n1  so  ', rad,
+          '\n2  so  ', ref.rad,
+          '\n3  so  ', h2o.rad)
+      } else if (shape == 'rcc') {
+        surface.cards <- paste0(
+          '\n1  rcc  0 0 0 0 0 ', ht, ' ', rad,
+          '\n2  rcc  0 0 ', -thk, ' 0 0 ', ht + 2 * thk, ' ', ref.rad,
+          '\n3  rcc  0 0 ', -thk - 2.54, ' 0 0 ', ht + 2 * thk + 5.08, ' ', h2o.rad)
+      }
     }
-  } else {
-    cell.cards <- paste0(
-      '1  1 ', -avg.density %>% Format(), ' -1',
-      '\n2  2 ', -ref.density %>% Format(), ' +1 -2',
-      '\n3  3 ', -as.numeric(matl.density[match('h2o', matl.density) + 1]) %>% Format(), ' +2 -3',
-      '\n4  0 +3')
-    if (shape == 'sph') {
-      surface.cards <- paste0(
-        '\n1  so  ', rad,
-        '\n2  so  ', ref.rad,
-        '\n3  so  ', h2o.rad)
-    } else if (shape == 'rcc') {
-      surface.cards <- paste0(
-        '\n1  rcc  0 0 0 0 0 ', ht, ' ', rad,
-        '\n2  rcc  0 0 ', -thk, ' 0 0 ', ht + 2 * thk, ' ', ref.rad,
-        '\n3  rcc  0 0 ', -thk - 2.54, ' 0 0 ', ht + 2 * thk + 5.08, ' ', h2o.rad)
+  } else if (water.ref == FALSE) {
+    if (ref == 'none' || thk == 0) {
+      cell.cards <- paste0(
+        '1  1 ', -avg.density %>% Format(), ' -1',
+        '\n2  0 +1')
+      if (shape == 'sph') {
+        surface.cards <- paste0(
+          '\n1  so  ', rad)
+      } else if (shape == 'rcc') {
+        surface.cards <- paste0(
+          '\n1  rcc  0 0 0 0 0 ', ht, ' ', rad)
+      }
+    } else {
+      cell.cards <- paste0(
+        '1  1 ', -avg.density %>% Format(), ' -1',
+        '\n2  2 ', -ref.density %>% Format(), ' +1 -2',
+        '\n3  0 +2')
+      if (shape == 'sph') {
+        surface.cards <- paste0(
+          '\n1  so  ', rad,
+          '\n2  so  ', ref.rad)
+      } else if (shape == 'rcc') {
+        surface.cards <- paste0(
+          '\n1  rcc  0 0 0 0 0 ', ht, ' ', rad,
+          '\n2  rcc  0 0 ', -thk, ' 0 0 ', ht + 2 * thk, ' ', ref.rad)
+      }
     }
   }
+  
 
   # build material cards
   if (form == 'puo2') {
@@ -311,15 +343,7 @@ Build <- function(mass, form, mod, rad, ref, thk, shape, ht) {
       matl.cards,
       '\nmt1  lwtr.20t')
   } else if (mod == 'none') {
-    if (form == 'alpha' || form == 'delta') {
-      matl.cards <- paste0(
-        '\nm1  94239.80c ', (-0.95 * fiss.wt) %>% Format(), ' $ Pu-239',
-        '\n\t  94240.80c ', (-0.05 * fiss.wt) %>% Format(), ' $ Pu-240')
-    } else if (form == 'heu') {
-      matl.cards <- paste0(
-        '\nm1  92235.80c ', (-0.9315 * fiss.wt) %>% Format(), ' $ U-235',
-        '\n\t  92238.80c ', (-0.0685 * fiss.wt) %>% Format(), ' $ U-238')
-    } else if (form == 'puo2' || form == 'uo2') {
+    if (form == 'puo2' || form == 'uo2') {
       matl.cards <- paste0(
         '\nm1   8016.80c ', o2 %>% Format(), ' $ O-16',
         matl.cards)
@@ -706,10 +730,18 @@ Build <- function(mass, form, mod, rad, ref, thk, shape, ht) {
   }
 
   # build data cards
-  if (ref == 'none') {
-    imp <- 'imp:n 1 1 0'
-  } else {
-    imp <- 'imp:n 1 1 1 0'
+  if (water.ref == TRUE) {
+    if (ref == 'none') {
+      imp <- 'imp:n 1 1 0'
+    } else {
+      imp <- 'imp:n 1 1 1 0'
+    }
+  } else if (water.ref == FALSE) {
+    if (ref == 'none') {
+      imp <- 'imp:n 1 0'
+    } else {
+      imp <- 'imp:n 1 1 0'
+    }
   }
 
   kcode <- 'kcode 10000 1 50 500'

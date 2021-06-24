@@ -1,56 +1,59 @@
 # volley.py
 #
-# refactored for Slurm
+# Will Zywiec
 
-# 1. comment the last 3 lines
-# 2. run this script
-# 3. make sure the pbatch files are formatted correctly
-# 4. uncomment the last 3 lines
-# 5. run this script again
+def volley(path):
 
-from os import getcwd, listdir, system
+    from os import getcwd, listdir, system
 
-path = getcwd()
+    # get all MCNP input decks
+    files = [f for f in listdir(path) if '.i' in f]
+    files = [f for f in files if '#' not in f]
 
-files = [f for f in listdir(path) if '.i' in f]
-files = [f for f in files if '#' not in f]
+    files.sort()
+    # files.reverse() # option to reverse files (recommended if reruns are needed)
 
-files.sort()
-# files.reverse()
+    print(path)
 
-sbatchText1 = '#!/bin/bash\n#SBATCH -t 24:00:00\n#SBATCH -p pbatch\n#SBATCH -A wbronze\n#SBATCH -N 1\n#SBATCH -n 16'
-sbatchText2 = '\n\ndate\ncd '
-sbatchText3 = '\nsrun -N 1 -n 16 /usr/apps/mcnp/bin/mcnp6.2.mpi inp='
+    # format pbatch text file
+    pbatchText1 = '#!/bin/bash\n#SBATCH -t 24:00:00\n#SBATCH -p pbatch\n#SBATCH -A wbronze\n#SBATCH -N 1\n#SBATCH -n 16'
+    pbatchText2 = '\n\ndate\ncd '
+    pbatchText3 = '\nsrun -N 1 -n 16 /usr/apps/mcnp/bin/mcnp6.2.mpi inp='
 
-sbatchIndex = []
+    pbatchIndex = []
 
-def chunks(l, n):
-	for i in range(0, len(l), n):
-		yield l[i:i + n]
+    # function to split up MCNP input decks into chunks (requires understanding of trade-off between wall-time and max job time limit)
+    def chunks(l, n):
+        for i in range(0, len(l), n):
+            yield l[i:i + n]
 
-files = chunks(files, 500)
+    # 1 chunk = 350 MCNP input decks
+    files = chunks(files, 350)
 
-system('rm *.o')
-system('rm *.srctp')
-system('rm *.runtpe')
-system('rm pbatch*')
-system('rm quartz*')
-system('rm slurm*')
+    # remove garbage
+    system('rm ' + path + '/pbatch*')
+    system('rm ' + path + '/quartz*')
+    system('rm slurm*')
 
-i = 0
+    i = 0
 
-for file in files:
-	fileName = 'pbatch' + str(i)
-	sbatchIndex.append(fileName)
-	sbatchFile = open(fileName, 'w')
-	sbatchFile.write(sbatchText1 + sbatchText2 + path)
-	for f in file:
-		sbatchFile.write(sbatchText3 + f + ' out=' + f[:-2] + '.o srctp=' + f[:-2] + '.srctp runtpe=' + f[:-2] + '.runtpe tasks 16')
-		sbatchFile.write('\npython single.py ' + f[:-2] + '.o ' + f[:-2] + '.txt')
-		sbatchFile.write('\nrm slurm*')
-	i += 1
-	sbatchFile.close()
+    # write pbatch files
+    for f in files:
+        fileName = 'pbatch' + str(i)
+        pbatchIndex.append(fileName)
+        pbatchFile = open(path + '/' + fileName, 'w')
+        pbatchFile.write(pbatchText1 + pbatchText2 + path)
+        for g in f:
+            pbatchFile.write(pbatchText3 + g + ' out=' + g[:-2] + '.o srctp=' + g[:-2] + '.srctp runtpe=' + g[:-2] + '.runtpe tasks 16')
+            pbatchFile.write('\npython cleanup.py ' + g[:-2] + '.o ' + g[:-2] + '.txt')
+            # pbatchFile.write('\nrm slurm*')
+        i += 1
+        pbatchFile.close()
 
-for s in range(0, 101):
-        command = 'sbatch pbatch' + str(s)
+    # get all pbatch files
+    pbatchFiles = [f for f in listdir(path) if 'pbatch' in f]
+
+    # submit batch jobs
+    for p in pbatchFiles:
+        command = 'sbatch ' + path + '/' + str(p)
         system(command)
