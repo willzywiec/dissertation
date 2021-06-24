@@ -37,7 +37,7 @@ Noctua NT-H1 Thermal Compound
 Nvidia GeForce GTX 1080 8 GB GDDR5X GPU  
 Samsung 960 EVO 500 GB M.2-2280 SSD  
 
-I've been running this rig for four years, and it's my favorite computer that I've ever built. I have to give a lot of props to DAN cases (https://www.dan-cases.com/). They make a great small form factor case, and my temperatures were always within tolerance despite pushing this computer to the limit for days and weeks at a time.  
+I've been using this computer for four years, and it's my favorite computer that I've ever built. I have to give a lot of credit to DAN cases (https://www.dan-cases.com/). They make a great small form factor case, and my temperatures were always within tolerance despite pushing this computer to the limit for weeks at a time.  
 
 ## R Packages Needed
 BiocManager  
