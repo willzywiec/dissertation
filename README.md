@@ -1,6 +1,6 @@
 # Dissertation
 
-This repository contains a PDF of my dissertation, "Analysis of Process Criticality Accident Risk Using a Metamodel-Driven Bayesian Network", as well as modified copies of several scripts that I wrote, which I'm in the process of refactoring to run using PyTorch.  
+This repository contains a PDF of my dissertation, as well as modified copies of several scripts that I wrote, which I'm in the process of refactoring to run using PyTorch.  
   
 While I was working on this project, breakers in my apartment regularly popped open, so I maintained the source code in the cloud with a hardware backup and wrote several Python and R scripts to automate a lot of saving/reloading processes that are no longer necessary.
 
@@ -36,8 +36,6 @@ Noctua NH-L9a + AM4 Kit Cooler (I also bought a Cryorig C7, but it sat a bit hig
 Noctua NT-H1 Thermal Compound  
 Nvidia GeForce GTX 1080 8 GB GDDR5X GPU  
 Samsung 960 EVO 500 GB M.2-2280 SSD  
-
-I've been using this computer for four years, and it's my favorite computer that I've ever built. I have to give a lot of credit to DAN cases (https://www.dan-cases.com/). They make a great small form factor case, and my temperatures were always within tolerance despite pushing this computer to the limit for weeks at a time.  
 
 ## R Packages Needed
 BiocManager  
