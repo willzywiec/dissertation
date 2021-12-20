@@ -2,8 +2,7 @@
 
 This repository contains a PDF of my dissertation, as well as modified copies of several scripts I wrote that are included in an appendix. 
 
-Running **source/notebook.Rmd** as-is builds a coupled Bayesian network and neural network metamodel and estimates process criticality accident risk. 🤯  
-These scripts generate approximately 85 GB of data, which is saved to the **test** folder. To avoid saving this data directly to your computer, I recommend moving the **test** folder to an external hard drive and modifying the **test.dir** path on line 51 of **source/notebook.Rmd**.  
+Running **source/notebook.Rmd** as-is builds a coupled Bayesian network and neural network metamodel and estimates process criticality accident risk. 🤯 These scripts generate approximately 85 GB of data, which is saved to the **test** folder. To avoid saving this data directly to your computer, I recommend moving the **test** folder to an external hard drive and modifying the **test.dir** path on line 51 of **source/notebook.Rmd**.  
 
 ## Prerequisites
 Python 3.7+  
