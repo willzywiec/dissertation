@@ -1,10 +1,9 @@
 # Dissertation
 
-This repository contains a PDF of my dissertation, as well as modified copies of several scripts that I wrote, which I'm in the process of refactoring to run using PyTorch.  
-  
-While I was working on this project, breakers in my old apartment regularly popped open, so I maintained the source code in the cloud with a hardware backup and wrote several Python and R scripts to automate a lot of saving/reloading processes that are no longer necessary.
+This repository contains a PDF of my dissertation, as well as modified copies of several scripts I wrote that are included in an appendix. 
 
-Running **source/notebook.Rmd** as-is will generate approximately 85 GB of data, which is saved to the **test** folder. To avoid saving this data directly to your main hard drive, I recommend moving the **test** folder to an external hard drive and modifying the **test.dir** path on line 51 of **source/notebook.Rmd**.
+Running **source/notebook.Rmd** as-is builds a coupled Bayesian network and neural network metamodel and estimates process criticality accident risk. 🤯  
+These scripts generate approximately 85 GB of data, which is saved to the **test** folder. To avoid saving this data directly to your computer, I recommend moving the **test** folder to an external hard drive and modifying the **test.dir** path on line 51 of **source/notebook.Rmd**.  
 
 ## Prerequisites
 Python 3.7+  
@@ -19,11 +18,11 @@ ENDF/B-VII.1 nuclear data (optional)
 ## Running the Code
 **install.R** installs all necessary R packages.
 
-MCNP input decks were built using **build/grid.R** and run using **linux/copy.py** and **linux/volley.py**, which are configured to run on Linux using Slurm. I'm in the process of configuring Git LFS to upload and version a 130 MB **data/mcnp-output.csv** file, which is a pre-configured dataset that consists of output from 1,542,397 MCNP simulations that were run on Quartz (a supercomputer at LLNL).
+MCNP input decks were built using **build/grid.R** and run using **linux/copy.py** and **linux/volley.py**, which are configured to run on Linux using Slurm. The data I used in my dissertation consisted of a 130 MB **data/mcnp-output.csv** file, which contains output from 1,542,397 MCNP simulations that were run on the Quartz supercomputer at LLNL.
 
-With the exception of the MCNP simulations, everything was run on a desktop computer that I built specifically to work on this project. The specs of this desktop computer are provided below.  
+With the exception of the MCNP simulations, everything was run on a desktop computer that I built specifically to work on this project (specs below).
 
-**dist/dist.R** needs to be run for the distribution fit called in **source/notebook.Rmd** (e.g., 'gamma'). Once that's done, everything can be run from **source/notebook.Rmd**. Running **source/notebook.Rmd** builds a coupled Bayesian network and neural network metamodel and estimates process criticality accident risk. 🤯  
+**dist/dist.R** needs to be run for the truncated probability distribution fits called in **source/notebook.Rmd** (e.g., 'gamma'). Once that's done, everything can be run from **source/notebook.Rmd**.    
   
 All scripts were tested on 4/24/2021 using R 4.0.2, Python 3.8.5, TensorFlow 2.4, and CUDA 11.3.  
 
