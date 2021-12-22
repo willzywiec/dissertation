@@ -24,7 +24,7 @@ R 4+
 Rtools  
 MCNP6.2 (optional)  
 ENDF/B-VII.1 nuclear data (optional)  
-32+ GB RAM (I initially started this project with 16 GB RAM and quickly ran into memory issues)  
+32+ GB RAM (I initially started this project with 16 GB RAM and eventually ran into memory issues)  
 
 ## Running the Code
 **install.R** installs all necessary R packages.
