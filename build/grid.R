@@ -16,7 +16,7 @@ build.dir <- 'D:/7-11in' # modify this path
 setwd(build.dir)
 
 # set variables
-mass <- seq(25, 4000, 25) # seq(25, 4000, 25)
+mass <- seq(3275, 4000, 25) # seq(25, 4000, 25)
 form <- c('alpha', 'delta', 'puo2', 'heu', 'uo2')
 mod <- c('mgo', 'sepiolite', 'ch2', 'h2o', 'none')
 rad <- seq(0, 18, 1) * 2.54
