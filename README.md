@@ -4,6 +4,8 @@ This repository contains a PDF of my dissertation, as well as modified copies of
 
 Running **source/notebook.Rmd** as-is builds a Bayesian network coupled to a deep neural network metamodel. It's entire purpose in life is to convert nuclear facility data into keff values and estimate process criticality accident risk (i.e., P(keff) >= 1 🤯). These scripts generate approximately 85 GB of data, which are saved to the **test** folder. To avoid saving this data directly to your computer, I recommend moving the **test** folder to an external hard drive and modifying the **test.dir** path on line 51 of **source/notebook.Rmd**.  
 
+**Fun story**: I started working on my PhD in 2017 at the beginning of the worldwide GPU shortage. At the time, a lot of software (e.g., PyTorch) and cloud-based platforms (e.g., SageMaker) were brand new and only starting to take off. I bought some time on AWS, ran tests, and quickly determined that buying a GPU would save me (tens of) thousands of dollars. I ended up purchasing and building a small form-factor desktop computer around a GTX 1080, and it's been a steady workhorse ever since. About 3/4 of the way through my dissertation, I had to upgrade the RAM to 32 GB to accommodate some of the larger datasets and models I was using.  
+
 ## Prerequisites
 Python 3.7+  
 TensorFlow 2.1+  
@@ -22,8 +24,6 @@ MCNP input decks were built using **build/grid.R** and run using **linux/copy.py
 **dist/dist.R** needs to be run for the truncated probability distribution fits called in **source/notebook.Rmd** (e.g., 'gamma'). Once that's done, everything can be run from **source/notebook.Rmd**.    
   
 All scripts were tested on 4/24/2021 using R 4.0.2, Python 3.8.5, TensorFlow 2.4, and CUDA 11.3.  
-
-**Fun story**: I started working on my PhD in 2017 at the beginning of the worldwide GPU shortage. At the time, a lot of software (e.g., PyTorch) and cloud-based platforms (e.g., SageMaker) were brand new and only starting to take off. I bought some time on AWS, ran tests, and quickly determined that buying a GPU would save me (tens of) thousands of dollars. I ended up purchasing and building a small form-factor desktop computer around a GTX 1080, and it's been a steady workhorse ever since. About 3/4 of the way through my dissertation, I had to upgrade the RAM to 32 GB to accommodate some of the larger datasets and models I was using.  
 
 ## Deep Learning Desktop Computer 
 AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
