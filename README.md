@@ -6,6 +6,16 @@ Running **source/notebook.Rmd** as-is builds a Bayesian network coupled to a dee
 
 **Fun story**: I started working on my PhD in 2017 at the beginning of the worldwide GPU shortage. At the time, a lot of software (e.g., PyTorch) and cloud-based platforms (e.g., SageMaker) were brand new and only starting to take off. I bought some time on AWS, ran tests, and quickly determined that buying a GPU would save me (tens of) thousands of dollars. I ended up purchasing and building a desktop computer around a GTX 1080, and it's been a steady workhorse ever since. About 3/4 of the way through my dissertation, I had to upgrade the RAM to 32 GB to accommodate some of the larger datasets and models I was using.  
 
+## Deep Learning Desktop Computer 
+AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
+Asus ROG Strix B350-i Motherboard  
+Corsair Vengeance LPX 32 GB (2 x 16 GB) DDR4 3200 MHz RAM  
+DAN A4-SFGX v2 Mini ITX Case  
+Noctua NH-L9a + AM4 Kit Cooler (I also bought a Cryorig C7, but it sat a bit higher than I liked)  
+Noctua NT-H1 Thermal Compound  
+Nvidia GeForce GTX 1080 8 GB GDDR5X GPU  
+Samsung 960 EVO 500 GB M.2-2280 SSD  
+
 ## Prerequisites
 Python 3.7+  
 TensorFlow 2.1+  
@@ -24,16 +34,6 @@ MCNP input decks were built using **build/grid.R** and run using **linux/copy.py
 **dist/dist.R** needs to be run for the truncated probability distribution fits called in **source/notebook.Rmd** (e.g., 'gamma'). Once that's done, everything can be run from **source/notebook.Rmd**.    
   
 All scripts were tested on 4/24/2021 using R 4.0.2, Python 3.8.5, TensorFlow 2.4, and CUDA 11.3.  
-
-## Deep Learning Desktop Computer 
-AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
-Asus ROG Strix B350-i Motherboard  
-Corsair Vengeance LPX 32 GB (2 x 16 GB) DDR4 3200 MHz RAM  
-DAN A4-SFGX v2 Mini ITX Case  
-Noctua NH-L9a + AM4 Kit Cooler (I also bought a Cryorig C7, but it sat a bit higher than I liked)  
-Noctua NT-H1 Thermal Compound  
-Nvidia GeForce GTX 1080 8 GB GDDR5X GPU  
-Samsung 960 EVO 500 GB M.2-2280 SSD  
 
 ## R Packages Needed
 BiocManager  
