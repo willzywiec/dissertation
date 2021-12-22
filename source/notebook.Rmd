@@ -64,7 +64,7 @@ metamodel <- NN(dataset, batch.size, ensemble.size, epochs, layers, loss, opt.al
 # set variables
 dist <- 'normal'
 risk.pool <- 100
-dist.dir <- paste0(home.dir, '/dist') # directory that contains distribution data
+dist.dir <- paste0(home.dir, '/dist') # directory that contains fitted distribution data
 
 if (dist == 'normal') {
   sample.size <- 1e+10
