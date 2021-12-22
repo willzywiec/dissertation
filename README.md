@@ -2,7 +2,7 @@
 
 This repository contains a PDF of my dissertation, as well as modified copies of several scripts that are included in the appendix. This is very much a long term work-in-progress, which I'm actively maintaining in a separate repository.  
 
-Running **source/notebook.Rmd** as-is builds a Bayesian network coupled with a deep neural network metamodel. It's entire purpose in life is to convert facility data into keff values and estimate process criticality accident risk (e.g., P(keff) >= 1 🤯). These scripts generate approximately 85 GB of data, which are saved to the **test** folder. To avoid saving this data directly to your computer, I recommend moving the **test** folder to an external hard drive and modifying the **test.dir** path on line 51 of **source/notebook.Rmd**.  
+Running **source/notebook.Rmd** as-is builds a Bayesian network coupled to a deep neural network metamodel. It's entire purpose in life is to convert facility data into keff values and estimate process criticality accident risk (e.g., P(keff) >= 1 🤯). These scripts generate approximately 85 GB of data, which are saved to the **test** folder. To avoid saving this data directly to your computer, I recommend moving the **test** folder to an external hard drive and modifying the **test.dir** path on line 51 of **source/notebook.Rmd**.  
 
 ## Prerequisites
 Python 3.7+  
