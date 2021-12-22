@@ -23,7 +23,7 @@ MCNP input decks were built using **build/grid.R** and run using **linux/copy.py
   
 All scripts were tested on 4/24/2021 using R 4.0.2, Python 3.8.5, TensorFlow 2.4, and CUDA 11.3.  
 
-Fun story: I started working on my PhD in 2017 at the beginning of the worldwide GPU shortage. At the time, a lot of software (e.g., PyTorch) and cloud-based platforms (e.g., SageMaker) were brand new and only starting to take off. I bought some time on AWS, ran tests, and quickly determined that buying a GPU would save me (tens of) thousands of dollars. I ended up purchasing and building a small form-factor desktop computer around a GTX 1080, and it's been a steady workhorse ever since. About 3/4 of the way through my dissertation, I had to upgrade the RAM to 32 GB to accommodate some of the larger datasets and models I was using.
+**Fun story**: I started working on my PhD in 2017 at the beginning of the worldwide GPU shortage. At the time, a lot of software (e.g., PyTorch) and cloud-based platforms (e.g., SageMaker) were brand new and only starting to take off. I bought some time on AWS, ran tests, and quickly determined that buying a GPU would save me (tens of) thousands of dollars. I ended up purchasing and building a small form-factor desktop computer around a GTX 1080, and it's been a steady workhorse ever since. About 3/4 of the way through my dissertation, I had to upgrade the RAM to 32 GB to accommodate some of the larger datasets and models I was using.  
 
 ## Deep Learning Desktop Computer 
 AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
