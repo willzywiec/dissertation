@@ -17,11 +17,13 @@ ENDF/B-VII.1 nuclear data (optional)
 ## Running the Code
 **install.R** installs all necessary R packages.
 
-MCNP input decks were built using **build/grid.R** and run using **linux/copy.py** and **linux/volley.py**, which are configured to run on Linux using Slurm. The data I used in my dissertation consisted of a 130 MB **mcnp-output.csv** file, which contains output from 1,542,397 MCNP simulations that were run on the Quartz supercomputer at LLNL. I haven't posted this .csv file or the simulation output because of export control issues. With the exception of the MCNP simulations, everything was run on a desktop computer that I built specifically to work on this project (specs below).  
+MCNP input decks were built using **build/grid.R** and run using **linux/copy.py** and **linux/volley.py**, which are configured to run on Linux using Slurm. The data I used in my dissertation consisted of a 130 MB **mcnp-output.csv** file, which contains output from 1,542,397 MCNP simulations that were run on the Quartz supercomputer at LLNL. I haven't posted this .csv file or the simulation output because of export control issues. With the exception of the MCNP simulations, everything was run on a desktop computer that I built specifically to work on this project.  
 
 **dist/dist.R** needs to be run for the truncated probability distribution fits called in **source/notebook.Rmd** (e.g., 'gamma'). Once that's done, everything can be run from **source/notebook.Rmd**.    
   
 All scripts were tested on 4/24/2021 using R 4.0.2, Python 3.8.5, TensorFlow 2.4, and CUDA 11.3.  
+
+Fun story: I started working on my PhD in 2017 at the beginning of the worldwide GPU shortage. At the time, a lot of software (e.g., PyTorch) and cloud-based platforms (e.g., SageMaker) were brand new and only starting to take off. I bought some time on AWS, ran tests, and quickly determined that buying a GPU would save me (tens of) thousands of dollars. I ended up purchasing and building a small form-factor desktop computer around a GTX 1080, and it's been a steady workhorse ever since. About 3/4 of the way through my dissertation, I had to upgrade the RAM to 32 GB to accommodate some of the larger datasets and models I was using.
 
 ## Deep Learning Desktop Computer 
 AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
