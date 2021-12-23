@@ -6,7 +6,7 @@ Running **source/notebook.Rmd** as-is builds a Bayesian network coupled to a dee
 
 **Fun story**: I started working on my PhD in 2017 at the beginning of the worldwide GPU shortage. At the time, a lot of software (e.g., PyTorch) and cloud-based platforms (e.g., SageMaker) were brand new and starting to take off. I bought some time on AWS, ran tests, and quickly determined that buying a GPU would save me (tens of) thousands of dollars. I ended up purchasing and building a desktop computer around a GTX 1080, and it's been a steady workhorse ever since. About 3/4 of the way through my dissertation, I had to upgrade the RAM to 32 GB to accommodate some of the larger datasets and models I was using. Given everything that's happened since then, my only regret is not purchasing 3 or 4 more GTX 1080s.
 
-## Deep Learning Desktop Computer 
+## Deep Learning Desktop Computer
 AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
 Asus ROG Strix B350-i Motherboard  
 Corsair Vengeance LPX 32 GB (2 x 16 GB) DDR4 3200 MHz RAM  
