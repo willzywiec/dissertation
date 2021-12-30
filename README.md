@@ -1,6 +1,6 @@
 # Dissertation
 
-This repository contains a PDF of my dissertation, titled "Analysis of Process Criticality Accident Risk Using a Metamodel-Driven Bayesian Network", as well as modified copies of several scripts that are included in the appendix. This is very much a long term work-in-progress, which I'm actively maintaining in a separate repository.  
+This repository contains a PDF of my dissertation, "Analysis of Process Criticality Accident Risk Using a Metamodel-Driven Bayesian Network", as well as modified copies of several scripts that are included in the appendix. This is very much a long term work-in-progress, which I'm actively maintaining in a separate repository.  
 
 Running **source/notebook.Rmd** as-is builds a deep neural network metamodel coupled with a Bayesian network. It's entire purpose in life is to convert nuclear facility data into keff values and estimate process criticality accident risk (i.e., P(keff) >= 1 🤯). These scripts generate approximately 85 GB of data, which are saved to the **test** folder. To avoid saving this data directly to your computer, I recommend moving the **test** folder to an external hard drive and modifying the **test.dir** path on line 51 of **source/notebook.Rmd**.  
 
