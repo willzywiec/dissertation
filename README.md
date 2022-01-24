@@ -2,7 +2,7 @@
 
 This repository contains a PDF of my dissertation, "Analysis of Process Criticality Accident Risk Using a Metamodel-Driven Bayesian Network", as well as slightly modified copies of several scripts that are included in the appendix. This is very much a long term work-in-progress, which I'm actively working on converting into a CRAN package (https://www.github.com/willzywiec/criticality).  
 
-These scripts build a deep neural network metamodel coupled with a Bayesian network, which can be used to estimate process criticality accident risk (i.e., P(keff) >= 0.95 to 1 🤯). When combined with a database of ~1.5 million MCNP simulations, these scripts generate approximately 85 GB of data, which are saved to the **test** folder.  
+These scripts build a deep neural network metamodel coupled with a Bayesian network, which can be used to estimate process criticality accident risk (i.e., P(keff) >= 0.95 🤯). When combined with a database of ~1.5 million MCNP simulations, these scripts generate approximately 85 GB of data, which are saved to the **test** folder.  
 
 **Fun story**: I started working on my PhD in 2017 at the beginning of the worldwide GPU shortage. I bought some time on AWS EC2, ran tests, and quickly determined that buying a GPU would likely save me tens of thousands of dollars. I ended up purchasing a GTX 1080 and building a desktop computer and it's been a steady workhorse ever since. About 2/3 of the way through my dissertation, I had to upgrade the RAM to 32 GB to accommodate some of the larger datasets and models I was using. Given everything that's happened since then, my only regret is not purchasing 3 or 4 more GTX 1080s.  
 
