@@ -4,7 +4,7 @@ This repository contains a PDF of my dissertation, "Analysis of Process Critical
 
 These scripts build a deep neural network metamodel coupled with a Bayesian network, which can be used to estimate process criticality accident risk (i.e., P(keff) >= 0.95 🤯). When combined with a database of ~1.5 million MCNP simulations, these scripts generate approximately 85 GB of data, which are saved to the **test** folder.  
 
-**Fun story**: I started working on my PhD in 2017 at the beginning of the worldwide GPU shortage. Luckily, Best Buy allowed me to reserve an Nvidia GTX 1080 for in-store pickup, so while I waited for my GPU to arrive, I bought some time on AWS EC2, ran tests, and quickly determined that buying a GPU would likely save me thousands of dollars. I built a small form factor desktop computer for about $1700 and it's been a steady workhorse ever since. About 2/3 of the way through my dissertation, I had to upgrade the RAM to 32 GB to accommodate some of the larger datasets and models I was using. Given everything that's happened since then, my only regret is not purchasing 3 or 4 more GTX 1080s.  
+**Fun story**: I started working on my PhD in 2017 at the beginning of the worldwide GPU shortage. Luckily, Best Buy allowed me to reserve a GTX 1080 for in-store pickup, so while I waited for my GPU to arrive, I bought some time on AWS EC2, ran tests, and quickly determined that buying a GPU would likely save me thousands of dollars. I built a small form factor desktop computer for about $1700 and it's been a steady workhorse ever since. About 2/3 of the way through my dissertation, I had to upgrade the RAM to 32 GB to accommodate some of the larger datasets and models I was using. Given everything that's happened since then, my only regret is not purchasing 3 or 4 more GTX 1080s.  
 
 ## Deep Learning Desktop Computer
 AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
@@ -13,7 +13,7 @@ Corsair Vengeance LPX 32 GB (2 x 16 GB) DDR4 3200 MHz RAM
 DAN A4-SFGX v2 Mini ITX Case  
 Noctua NH-L9a + AM4 Kit Cooler (I also bought a Cryorig C7, but it sat a bit higher than I liked)  
 Noctua NT-H1 Thermal Compound  
-Nvidia GeForce GTX 1080 8 GB GDDR5X GPU  
+Nvidia GeForce GTX 1080 8 GB GDDR5X Founders Edition GPU  
 Samsung 960 EVO 500 GB M.2-2280 SSD  
 
 ## Prerequisites
