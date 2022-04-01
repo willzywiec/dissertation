@@ -1,6 +1,6 @@
 # Dissertation
 
-This repository contains a PDF of my dissertation, "Analysis of Process Criticality Accident Risk Using a Metamodel-Driven Bayesian Network", as well as slightly modified copies of several R scripts I wrote between 2017 and 2021. This is very much a long term work-in-progress, which has morphed into a CRAN package I currently maintain (https://www.github.com/willzywiec/criticality).  
+This repository contains a PDF of my dissertation, "Analysis of Process Criticality Accident Risk Using a Metamodel-Driven Bayesian Network", as well as slightly modified copies of several R scripts I wrote between 2017 and 2021. This is very much a long term work-in-progress, which morphed into a CRAN package I currently maintain (https://www.github.com/willzywiec/criticality).  
 
 These scripts build a deep neural network metamodel coupled with a Bayesian network, which can be used to estimate the risk of bad things happening (e.g., P(keff) >= 1 🤯). When combined with a database of ~1.5 million MCNP simulations, these scripts generate approximately 85 GB of data, which are saved to the **test** folder.  
 
