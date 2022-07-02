@@ -2,9 +2,7 @@
 
 This repository contains a PDF of my dissertation, "Analysis of Process Criticality Accident Risk Using a Metamodel-Driven Bayesian Network", as well as slightly modified copies of several R scripts I wrote between 2017 and 2021. This is very much a long term work-in-progress, which morphed into a CRAN package I currently maintain (https://www.github.com/willzywiec/criticality).  
 
-These scripts build a deep neural network metamodel coupled with a Bayesian network, which can be used to estimate the risk of bad things happening in a nuclear facility (e.g., P(keff) >= 1 🤯). These scripts generate approximately 85 GB of data, which are saved to the **test** folder.  
-
-**Fun story**: I started working on my PhD in August of 2017, which coincided with the beginning of the (now ongoing) worldwide GPU shortage. At the time, purchasing a GTX 1080 for $500-600 seemed a little expensive, so I decided to rent a GPU-enabled AWS server to run a few tests. To my horror, I blew past $150 after three days of training a toy metamodel. Luckily, Best Buy allowed me to reserve a GTX 1080 for in-store pickup, which is something they no longer do (Boo!). I spent around $1700 to build a deep learning desktop computer and it's been a money-saving workhorse ever since. About 2/3 of the way through my dissertation, I had to upgrade the RAM to 32 GB to accommodate some of the larger datasets and metamodels I was building. Given everything that's happened since then, my only regret is not purchasing 3 or 4 more GTX 1080s when I had the chance.  
+These scripts build a deep neural network metamodel coupled with a Bayesian network, which can be used to estimate the risk of accidents and safety incidents happening in a nuclear facility (e.g., P(keff) >= 1 🤯). These scripts generate approximately 85 GB of data, which are saved to the **test** folder.  
 
 ## Deep Learning Desktop Computer
 AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
