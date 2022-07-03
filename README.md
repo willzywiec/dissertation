@@ -2,7 +2,7 @@
 
 This repository contains a PDF of my dissertation, "Analysis of Process Criticality Accident Risk Using a Metamodel-Driven Bayesian Network", as well as slightly modified copies of several R scripts I wrote between 2017 and 2021. This is very much a long term work-in-progress, which morphed into a CRAN package I currently maintain (https://www.github.com/willzywiec/criticality).  
 
-These scripts build a Bayesian network coupled with a deep neural network metamodel of Monte Carlo radiation transport simulations, which can be used to estimate nuclear accident risk (P(keff) >= 1 🤯). The default configuration of these scripts generate approximately 85 GB of data, which are saved to the **test** folder. The hardware and software I used is provided below.  
+These scripts build a Bayesian network coupled with a deep neural network metamodel of Monte Carlo radiation transport simulations, which can be used to estimate nuclear accident risk (i.e., P(keff) >= 1 🤯). The default configuration of these scripts generate approximately 85 GB of data, which are saved to the **test** folder. The hardware and software I used is provided below.  
 
 ## Deep Learning Desktop Computer
 AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
