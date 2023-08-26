@@ -6,7 +6,7 @@ These scripts build a deep neural network metamodel of Monte Carlo radiation tra
 
 I was a little bit disappointed that the formatting requirements of GWU dissertations precluded an epigraph. The one I would've used is provided below.
 
-"Risk comes from not knowing what you're doing." - Warren Buffett
+"Risk comes from not knowing what you're doing." - Warren Buffett  
 
 ## Deep Learning Desktop Computer
 AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
