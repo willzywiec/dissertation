@@ -4,6 +4,10 @@ This repository contains a PDF of my dissertation, "Analysis of Process Critical
 
 These scripts build a deep neural network metamodel of Monte Carlo radiation transport simulations, which are used to estimate process criticality accident risk (P(keff) >= 1 🤯). The default configuration of these scripts generate approximately 85 GB of data, which are saved to the **test** folder. The hardware and software I used are provided below.  
 
+I was a little bit disappointed that the formatting requirements of GWU dissertations precluded an epigraph. The one I would've used is provided below.
+
+"Risk comes from not knowing what you're doing." - Warren Buffett
+
 ## Deep Learning Desktop Computer
 AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
 Asus ROG Strix B350-i Motherboard  
