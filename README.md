@@ -31,7 +31,9 @@ ENDF/B-VII.1 nuclear data (optional)
 ## Running the Code
 **install.R** installs all necessary R packages.
 
-MCNP input decks were built using **build/grid.R** and run using **linux/copy.py** and **linux/volley.py**, which are configured to run on Red Hat Linux using Slurm. The data I used in my dissertation consisted of a 130 MB **mcnp-output.csv** file, which contains output from 1,542,397 MCNP simulations that were run on the Quartz supercomputer at LLNL. I haven't posted this .csv file or the simulation output because of potential export control issues. With the exception of the MCNP simulations, everything was run on a desktop computer I built for this project.  
+MCNP input decks were built using **build/grid.R** and run using **linux/copy.py** and **linux/volley.py**, which are configured to run on Red Hat Linux using Slurm. The data I used in my dissertation consisted of a 130 MB **mcnp-output.csv** file, which contains output from 1,542,397 MCNP simulations that were run on the Quartz supercomputer at LLNL. I haven't posted the .csv file or simulation output, but an example of the required .csv file format is shown below. With the exception of the MCNP simulations, everything was run on a desktop computer I built for this project.  
+
+![excel-screenshot](https://github.com/willzywiec/dissertation/assets/30445407/b9c383c8-bd33-432e-8bec-06a833e3d3f8)
 
 **dist/dist.R** needs to be run for the truncated probability distribution fits called in **source/notebook.Rmd** (e.g., 'gamma'). Once that's done, everything else can be run from **source/notebook.Rmd**.    
   
