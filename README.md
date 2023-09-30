@@ -4,7 +4,7 @@ This repository contains a PDF of my dissertation, "Analysis of Process Critical
 
 These scripts build a deep neural network metamodel of Monte Carlo radiation transport simulations, which are used to estimate process criticality accident risk (P(keff) >= 1 🤯). The default configuration of these scripts generate approximately 85 GB of data, which are saved to the **test** folder. The hardware and software I used are provided below.  
 
-I was a little bit disappointed that the formatting requirements of GWU dissertations precluded an epigraph. The one I would've used is provided below.
+GWU dissertations don't allow an epigraph. The one I would've used is provided below.
 
 "Risk comes from not knowing what you're doing." - Warren Buffett  
 
@@ -31,7 +31,9 @@ ENDF/B-VII.1 nuclear data (optional)
 ## Running the Code
 **install.R** installs all necessary R packages.
 
-MCNP input decks were built using **build/grid.R** and run using **linux/copy.py** and **linux/volley.py**, which are configured to run on Linux using Slurm. The data I used in my dissertation consisted of a 130 MB **mcnp-output.csv** file, which contains output from 1,542,397 MCNP simulations that were run on the Quartz supercomputer at LLNL. I haven't posted this .csv file or the simulation output because of potential export control issues. With the exception of the MCNP simulations, everything was run on a desktop computer I built for this project.  
+MCNP input decks were built using **build/grid.R** and run using **linux/copy.py** and **linux/volley.py**, which are configured to run on Red Hat Linux using Slurm. The data I used in my dissertation consisted of a 130 MB **mcnp-output.csv** file, which contains output from 1,542,397 MCNP simulations that were run on the Quartz supercomputer at LLNL. I haven't posted the .csv file or simulation output, but an example of the required .csv file format is shown below. With the exception of the MCNP simulations, everything was run on a desktop computer I built for this project.  
+
+![excel-screenshot](https://github.com/willzywiec/dissertation/assets/30445407/b9c383c8-bd33-432e-8bec-06a833e3d3f8)
 
 **dist/dist.R** needs to be run for the truncated probability distribution fits called in **source/notebook.Rmd** (e.g., 'gamma'). Once that's done, everything else can be run from **source/notebook.Rmd**.    
   
@@ -66,4 +68,4 @@ snow
 xfun  
 
 ## Closing Remarks
-I recently compiled an updated PDF of my dissertation using MiKTeX and the **latexmk dissertation.tex** command. I didn't include the LaTeX source code here, but if I forget how it's done or someone else stumbles upon this thread, I think it's easier to install LaTeXTools through package control and compile PDFs directly in Sublime Text.  
+I recently compiled an updated PDF of my dissertation using MiKTeX and the **latexmk dissertation.tex** command. I didn't include the LaTeX source code here, but if I forget how it's done or someone else stumbles upon this thread, it's generally easier to install LaTeXTools and compile PDFs directly in Sublime Text using **package control**.  
