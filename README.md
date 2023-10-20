@@ -1,6 +1,6 @@
 # Dissertation
 
-This repository contains slightly modified copies of several R scripts I wrote between 2017 and 2021, which appear in my dissertation **Analysis of Process Criticality Accident Risk Using a Metamodel-Driven Bayesian Network**. This is a long term work-in-progress, which morphed into a CRAN package (https://www.github.com/willzywiec/criticality).  
+This repository contains slightly modified copies of several R scripts I wrote between 2017 and 2021, which appear in my dissertation. This is a long term work-in-progress, which morphed into a CRAN package (https://www.github.com/willzywiec/criticality).  
 
 These scripts build a deep neural network metamodel of Monte Carlo radiation transport simulations, which are used to estimate process criticality accident risk (P(keff) >= 1 🤯). The default configuration of these scripts generate approximately 85 GB of data, which are saved to the **test** folder. The hardware and software I used are provided below.  
 
