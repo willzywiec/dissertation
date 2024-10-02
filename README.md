@@ -6,9 +6,13 @@ https://www.github.com/willzywiec/criticality
 
 These scripts build a deep neural network metamodel of Monte Carlo radiation transport simulations, which are subsequently used to estimate process criticality accident risk [P(keff) $\geq$ 1 🤯]. The default configuration of these scripts generate approximately 85 GB of data, which are saved to the **test** folder. The hardware and software I used are provided below.  
 
-GWU dissertations don't allow an epigraph, but the one I would've used is provided below.
+GWU dissertations don't allow an epigraph. If they did, I would've selected two.  
 
 "Risk comes from not knowing what you're doing." - Warren Buffett  
+
+"I prefer to be alive, so I'm cautious about taking risks." - Werner Herzog
+
+The second one is best if you can read it in Werner Herzog's voice.  
 
 ## Deep Learning Desktop Computer
 AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
