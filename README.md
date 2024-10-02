@@ -10,9 +10,7 @@ GWU dissertations don't allow an epigraph. If they did, I would've selected two.
 
 "Risk comes from not knowing what you're doing." - Warren Buffett  
 
-"I prefer to be alive, so I'm cautious about taking risks." - Werner Herzog
-
-The second one is best if you can read it in Werner Herzog's voice.  
+"I prefer to be alive, so I'm cautious about taking risks." - Werner Herzog  
 
 ## Deep Learning Desktop Computer
 AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
