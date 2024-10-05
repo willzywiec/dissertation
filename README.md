@@ -1,6 +1,6 @@
 # Dissertation
 
-This repository contains slightly modified copies of several R scripts I wrote between 2017 and 2021, which appear in my dissertation. This is a long term work-in-progress, which morphed into a CRAN package.  
+This repository contains slightly modified copies of several R scripts I wrote between 2017 and 2021, which appear in my dissertation. This is a long term work-in-progress, which morphed into a CRAN package:  
 
 https://www.github.com/willzywiec/criticality  
 
