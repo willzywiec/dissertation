@@ -10,6 +10,8 @@ GWU dissertations don't allow an epigraph. If they did, I would've selected this
 
 "Risk comes from not knowing what you're doing." - Warren Buffett  
 
+I initially started out with 16 GB (2 x 8 GB) DDR4 3000 MHz RAM and ended up running into issues loading some of the larger datasets. Upgrading to 32 GB solved them.  
+
 ## Deep Learning Desktop Computer
 AMD Ryzen 7 1700 3.0 GHz 8-core CPU  
 Asus ROG Strix B350-i Motherboard  
