@@ -4,7 +4,7 @@ This repository contains slightly modified copies of several R scripts I wrote b
 
 https://www.github.com/willzywiec/criticality  
 
-These scripts build a deep neural network metamodel of Monte Carlo radiation transport simulations, which are subsequently used to estimate process criticality accident risk [P(keff) $\geq$ 1 🤯]. The default configuration of these scripts generate approximately 85 GB of data, which are saved to the **test** folder.
+The scripts in this repository can be used to build a deep neural network metamodel of Monte Carlo radiation transport simulations, which are subsequently used to estimate process criticality accident risk [P(keff) $\geq$ 1 🤯]. The default configuration of these scripts generate approximately 85 GB of data, which are saved to the **test** folder.
 
 At the time, the GWU dissertation style guide prohibited epigraphs. If they had been allowed, I would've chosen this one:  
 
