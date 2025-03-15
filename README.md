@@ -4,9 +4,9 @@ This repository contains slightly modified copies of several R scripts I wrote b
 
 https://www.github.com/willzywiec/criticality  
 
-These scripts build a deep neural network metamodel of Monte Carlo radiation transport simulations, which are subsequently used to estimate process criticality accident risk [P(keff) $\geq$ 1 🤯]. The default configuration of these scripts generate approximately 85 GB of data, which are saved to the **test** folder. The hardware and software I used are provided below.  
+These scripts build a deep neural network metamodel of Monte Carlo radiation transport simulations, which are subsequently used to estimate process criticality accident risk [P(keff) $\geq$ 1 🤯]. The default configuration of these scripts generate approximately 85 GB of data, which are saved to the **test** folder.
 
-GWU dissertations don't allow an epigraph. If they did, I would've selected this one:  
+At the time, the GWU dissertation style guide prohibited epigraphs. If they had been allowed, I would've chosen this one:  
 
 "Risk comes from not knowing what you're doing." - Warren Buffett  
 
@@ -35,7 +35,7 @@ ENDF/B-VII.1 nuclear data (optional)
 ## Running the Code
 **install.R** installs all necessary R packages.
 
-MCNP input decks were built using **build/grid.R** and run using **linux/copy.py** and **linux/volley.py**, which are configured to run on Red Hat Linux using Slurm. The data I used in my dissertation consisted of a 130 MB **mcnp-output.csv** file, which contains output from 1,542,397 MCNP simulations that were run on the Quartz supercomputer at LLNL. I haven't posted the .csv file or simulation output, but an example of the required .csv file format is shown below. With the exception of the MCNP simulations, everything was run on a desktop computer I built for this project.  
+MCNP input decks were built using **build/grid.R** and run using **linux/copy.py** and **linux/volley.py**, which are configured to run on Red Hat Linux using Slurm. The data I used in my dissertation consisted of a 130 MB **mcnp-output.csv** file, which contains output from 1,542,397 MCNP simulations that were run on the Quartz supercomputer at LLNL. I haven't posted the .csv file or simulation output, but an example of the required .csv file format is shown below. With the exception of the MCNP simulations, everything was run on a desktop computer I built specifically for training neural networks.  
 
 ![excel-screenshot](https://github.com/willzywiec/dissertation/assets/30445407/b9c383c8-bd33-432e-8bec-06a833e3d3f8)
 
@@ -72,4 +72,4 @@ snow
 xfun  
 
 ## Closing Remarks
-I recently compiled an updated PDF of my dissertation using MiKTeX and the **latexmk dissertation.tex** command. I didn't include the LaTeX source code here, but if I forget how it's done or someone else stumbles upon this thread, it's generally easier to install LaTeXTools and compile PDFs directly in Sublime Text using **package control**.  
+I recently compiled an updated PDF of my dissertation using MiKTeX and the **latexmk dissertation.tex** command. I didn't include the LaTeX source code here, but if I forget how it's done, it's generally easier to install LaTeXTools and compile PDFs directly in Sublime Text using **package control**.  
