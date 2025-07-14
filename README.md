@@ -72,4 +72,4 @@ snow
 xfun  
 
 ## Closing Remarks
-I recently compiled an updated PDF of my dissertation using MiKTeX and the **latexmk dissertation.tex** command. I didn't include the LaTeX source code here, but if I forget how it's done, it's generally easier to install LaTeXTools and compile PDFs directly in Sublime Text using **package control**.  
+I recently compiled an updated PDF of my dissertation using MiKTeX and the **latexmk dissertation.tex** command. If I forget how it's done, just remember that it's easier to install LaTeXTools and compile PDFs directly in Sublime Text using **package control**.  
