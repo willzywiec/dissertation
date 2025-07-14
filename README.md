@@ -39,7 +39,7 @@ MCNP input decks were built using **build/grid.R** and run using **linux/copy.py
 
 ![excel-screenshot](https://github.com/willzywiec/dissertation/assets/30445407/b9c383c8-bd33-432e-8bec-06a833e3d3f8)
 
-**dist/dist.R** needs to be run for the truncated probability distribution fits called in **source/notebook.Rmd** (e.g., 'gamma'). Once that's done, everything else can be run from **source/notebook.Rmd**.    
+**dist/dist.R** needs to be run for the truncated probability distribution fits called in **source/notebook.Rmd** (e.g., 'gamma', 'normal'). Once that's done, everything else can be run from **source/notebook.Rmd**.    
   
 All scripts were tested on 4/24/2021 using R 4.0.2, Python 3.8.5, TensorFlow 2.4, and CUDA 11.3.  
 
